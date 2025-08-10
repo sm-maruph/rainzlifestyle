@@ -41,7 +41,12 @@ const navLinks = [
   },
   {
     name: "Consultancy",
-    sub: ["Lab Setup", "Lab Layout", "ISO 17025 Development", "Technical Training"],
+    sub: [
+      "Lab Setup",
+      "Lab Layout",
+      "ISO 17025 Development",
+      "Technical Training",
+    ],
   },
   {
     name: "Calibration",
@@ -49,7 +54,11 @@ const navLinks = [
   },
   {
     name: "Others",
-    sub: ["Supportive Equipment", "Safety Products/PPE", "Test Standard/Method"],
+    sub: [
+      "Supportive Equipment",
+      "Safety Products/PPE",
+      "Test Standard/Method",
+    ],
   },
   { name: "Contact Us" },
 ];
@@ -111,7 +120,10 @@ const Navbar = forwardRef(({ onCategorySelect }, ref) => {
   }, [lastScrollY]);
 
   return (
-    <nav ref={ref} className="w-full bg-white fixed top-0 left-0 z-50 shadow-md">
+    <nav
+      ref={ref}
+      className="w-full bg-white fixed top-0 left-0 z-50 shadow-md"
+    >
       <div
         className={`w-[90%] mx-auto flex items-center justify-between transition-all duration-500 ease-in-out ${
           showHeader
@@ -126,7 +138,8 @@ const Navbar = forwardRef(({ onCategorySelect }, ref) => {
             className="h-12 md:h-16 xl:h-24 w-auto mr-2 md:mr-4 rounded"
             onError={(e) => {
               e.target.onerror = null;
-              e.target.src = "https://placehold.co/64x64/000000/FFFFFF?text=Logo";
+              e.target.src =
+                "https://placehold.co/64x64/000000/FFFFFF?text=Logo";
             }}
           />
           <span className="text-lg md:text-xl xl:text-2xl font-semibold text-mm-primary">
@@ -159,12 +172,13 @@ const Navbar = forwardRef(({ onCategorySelect }, ref) => {
       </div>
 
       {/* Desktop Navbar */}
-      <div className="w-full mx-auto hidden xl:flex justify-center bg-mm-secondery">
-        <div className="flex w-[85%] justify-between items-center relative">
+      <div className="w-full bg-mm-secondery hidden xl:flex">
+        <div className="w-[90%] mx-auto flex items-center">
+          {/* Nav items go here */}
           {navLinks.map((item) => (
-            <div key={item.name} className="relative group">
+            <div key={item.name} className="relative group flex-1">
               <button
-                className={`px-7 py-3 text-white text-xs font-bold hover:bg-mm-primary transition duration-150 ${
+                className={`w-full text-center py-3 text-white text-xs font-bold hover:bg-mm-primary transition duration-150 ${
                   currentPath === item.name.toLowerCase() ? "bg-mm-primary" : ""
                 }`}
                 onClick={() => handleNavLinkClick(item.name)}
@@ -185,7 +199,10 @@ const Navbar = forwardRef(({ onCategorySelect }, ref) => {
                       className="text-center px-3 py-2 hover:bg-mm-primary text-sm"
                       onClick={() =>
                         handleNavLinkClick(
-                          `${item.name.replace(/\//g, "-")}/${subItem.replace(/\//g, "-")}`
+                          `${item.name.replace(/\//g, "-")}/${subItem.replace(
+                            /\//g,
+                            "-"
+                          )}`
                         )
                       }
                     >
@@ -233,9 +250,12 @@ const Navbar = forwardRef(({ onCategorySelect }, ref) => {
                     <button
                       key={idx}
                       className="text-white text-sm py-2 block w-full text-left hover:text-mm-primary"
-                     onClick={() =>
+                      onClick={() =>
                         handleNavLinkClick(
-                          `${item.name.replace(/\//g, "-")}/${subItem.replace(/\//g, "-")}`
+                          `${item.name.replace(/\//g, "-")}/${subItem.replace(
+                            /\//g,
+                            "-"
+                          )}`
                         )
                       }
                     >

@@ -69,7 +69,7 @@ function App() {
       <AutoScrollUp />
       <main
         className={`w-full mx-auto min-h-screen bg-gray-100 ${
-          isAdminPage ? "" : "mt-12 lg:pt-20"
+          isAdminPage ? "" : "mt-8 lg:pt-20"
         }`}
       >
         <LoadingWrapper>
