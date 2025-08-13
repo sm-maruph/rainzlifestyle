@@ -7,7 +7,7 @@ const Footer = () => {
   {/* Payment Icons */}
   <div className="flex space-x-4 mb-2 md:mb-0">
     <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/PayPal.svg/2560px-PayPal.svg.png" alt="PayPal" className="h-4 object-contain" />
-    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Visa_2021.svg/2560px-Visa_2021.svg.png" alt="Visa" className="h-4 object-contain" />
+    <img src="https://ts3.mm.bing.net/th?id=OIP.Y6-wJg-HiIJqiI8nok881AHaFr&pid=15.1" alt="Visa" className="h-4 object-contain" />
     <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Mastercard-logo.svg/200px-Mastercard-logo.svg.png" alt="Mastercard" className="h-4 object-contain" />
   </div>
 

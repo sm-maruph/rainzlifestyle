@@ -129,7 +129,7 @@ const ProductDetails = () => {
   </div>
   <button
     onClick={() => setIsModalOpen(true)}
-    className="bg-mm-primary text-white rounded-lg px-5 py-2 font-bold text-lg text-center shadow-md flex-shrink-0 max-w-full sm:max-w-[200px] w-full sm:w-auto"
+    className="bg-mm-primary text-white rounded-lg px-3 py-2 font-bold text-lg text-center shadow-md flex-shrink-0 max-w-full sm:max-w-[200px] w-full sm:w-auto"
   >
     ✉️ Enquiry Now
   </button>

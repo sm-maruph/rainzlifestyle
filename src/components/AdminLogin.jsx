@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import ReCAPTCHA from "react-google-recaptcha";
 
-const SITE_KEY = "6Ld3oZwrAAAAAD9aybn4CSdXnqakNoU6WkSKP3ba"; // Your Google Site Key
+const SITE_KEY = "6LfqSaUrAAAAAOCkX0ejkEGHPYpwnyQssi7jxuLv"; // Your Google Site Key
 const API_BASE = process.env.REACT_APP_API_BASE_URL;
 function AdminLogin({ onLogin }) {
   const [username, setUsername] = useState("");
