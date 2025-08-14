@@ -2,7 +2,7 @@ import React, { useState, useRef } from "react";
 import ReCAPTCHA from "react-google-recaptcha";
 
 const SITE_KEY = "6Ld3oZwrAAAAAD9aybn4CSdXnqakNoU6WkSKP3ba"; // Your Google reCAPTCHA key
-const FORMSPREE_ENDPOINT = "https://formspree.io/f/xwpqzkvg"; // Replace with your Formspree ID
+const FORMSPREE_ENDPOINT = "https://formspree.io/f/xwpqzkvg"; // Replace with your Formspree endpoint
 
 const ContactUsForm = () => {
   const [formData, setFormData] = useState({
@@ -33,6 +33,7 @@ const ContactUsForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Validate required fields
     if (!formData.name || !formData.gender || !formData.tel || !formData.email) {
       setError("Please fill in all required fields.");
       return;
@@ -51,12 +52,17 @@ const ContactUsForm = () => {
       const response = await fetch(FORMSPREE_ENDPOINT, {
         method: "POST",
         headers: {
+          "Content-Type": "application/json",
           Accept: "application/json",
         },
-        body: new FormData(Object.entries(formData).reduce((fd, [key, value]) => {
-          fd.append(key, value);
-          return fd;
-        }, new FormData()))
+        body: JSON.stringify({
+          name: formData.name,
+          gender: formData.gender,
+          tel: formData.tel,
+          email: formData.email,
+          message: formData.message,
+          "g-recaptcha-response": captchaToken,
+        }),
       });
 
       const result = await response.json();
@@ -75,7 +81,7 @@ const ContactUsForm = () => {
       } else {
         setError(result?.errors?.[0]?.message || "Submission failed.");
       }
-    } catch (error) {
+    } catch (err) {
       setError("Failed to send enquiry. Please try again later.");
     } finally {
       setLoading(false);
