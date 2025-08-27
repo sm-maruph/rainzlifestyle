@@ -4,8 +4,14 @@ import axios from "axios";
 import Navbar from "../Navbar";
 import SidebarSection from "./SidebarSection";
 import ProductCard from "./ProductCard";
-import heroBannerImageEquipment from "../../assets/global/equipment.png";
-import heroBannerImageTest from "../../assets/global/testing.png";
+import equipmentBanner from "../../assets/global/equipment.png";
+import testMaterialsBanner from "../../assets/global/test_materials.png";
+import moldPreventionBanner from "../../assets/global/mold_prevention.png";
+import proficiencyTestBanner from "../../assets/global/proficiency_test.png";
+import consultancyBanner from "../../assets/global/conseltancy.webp";
+import calibrationBanner from "../../assets/global/calibration.webp";
+import othersBanner from "../../assets/global/others.webp";
+
 import LoadWithText from "./LoadWithText";
 const API_BASE = process.env.REACT_APP_API_BASE_URL;
 
@@ -102,15 +108,22 @@ const ReusableHome = () => {
     );
   }
 
+  // Define your background images with normalized keys
   const backgroundImages = {
-    Equipment: heroBannerImageEquipment,
-    "Test Materials": heroBannerImageTest,
-    Category2: heroBannerImageEquipment,
-    // ...other categories
-  };
+  equipment: equipmentBanner,
+  testmaterials: testMaterialsBanner,
+  moldprevention: moldPreventionBanner,
+  proficiencytest: proficiencyTestBanner,
+  consultancy: consultancyBanner,
+  calibration: calibrationBanner,
+  others: othersBanner,
+};
+
+
   console.log("Mateched ", matchedCategoryKey);
-  const bgImage =
-    backgroundImages[matchedCategoryKey] || heroBannerImageEquipment;
+ const bgImage =
+  backgroundImages[normalize(matchedCategoryKey)] || equipmentBanner;
+
 
   const normalizeText = (text) => {
     if (!text) return "";
@@ -124,9 +137,13 @@ const ReusableHome = () => {
     <div>
       <Navbar />
       <div
-        className="relative bg-cover bg-center h-48 md:h-64 flex flex-col items-center justify-center text-white"
-        style={{ backgroundImage: `url(${bgImage})` }}
-      >
+  className="relative bg-center h-[350px] flex flex-col items-center justify-center text-white"
+  style={{
+    backgroundImage: `url(${bgImage})`,
+    //  backgroundSize: "100% 100%", // stretches to fill
+  }}
+>
+
         <div className="absolute inset-0 bg-black opacity-50"></div>
 
         {/* Normalized Category */}

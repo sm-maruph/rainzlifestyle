@@ -1,7 +1,7 @@
 // src/components/ContactUs.jsx
 import React, { useState, useEffect } from "react";
 
-import heroBannerImage from "../assets/global/hero.png"; // Assuming this is your contact page banner
+import heroBannerImage from "../assets/global/aboutus.webp"; // Assuming this is your contact page banner
 import ContactUsForm from "./ReusableComponent/ContactUsForm";
 import ImageWithLoader from "./ReusableComponent/ImageWithLoader";
 const API_BASE = process.env.REACT_APP_API_BASE_URL;
@@ -66,7 +66,7 @@ const AboutUs = () => {
               Company Profile
             </h2>
             <p className="text-gray-700 leading-relaxed mb-6">
-              Fineetex Company Limited was established in 2003, specializing in
+              Materials & More Enterprise (M&M) was established in 2003, specializing in
               providing textiles, toys and other high-quality testing equipment,
               consumables supplies and related services.
             </p>

@@ -59,7 +59,7 @@ const Hero = () => {
   }
 
   return (
-    <div className="relative w-full aspect-[16/9] max-h-[400px] md:max-h-[350px] lg:max-h-[520px] overflow-hidden bg-gray-100">
+    <div className="relative w-full aspect-[16/9] max-h-[700px] md:max-h-[650px] lg:max-h-[650px] overflow-hidden bg-gray-100">
       {banners.map((banner, idx) => (
         <img
           key={banner.id}

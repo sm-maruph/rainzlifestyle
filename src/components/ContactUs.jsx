@@ -2,7 +2,7 @@
 import React from "react";
 
 // Ensure these paths are correct relative to your ContactUs.jsx file
-import heroBannerImage from "../assets/global/hero.png"; // Assuming this is your contact page banner
+import contactBanner from "../assets/global/contactus.webp"; // Assuming this is your contact page banner
 import ContactUsForm from "./ReusableComponent/ContactUsForm";
 const ContactUs = () => {
   return (
@@ -10,7 +10,7 @@ const ContactUs = () => {
       {/* 1. Hero/Banner Section (Remains the same) */}
       <div
         className="relative bg-cover bg-center h-48 md:h-64 flex items-center justify-center text-white "
-        style={{ backgroundImage: `url(${heroBannerImage})` }}
+        style={{ backgroundImage: `url(${contactBanner})` }}
       >
         <div className="absolute inset-0 bg-black opacity-50"></div>
         <h1 className="relative z-10 text-3xl sm:text-4xl md:text-5xl font-bold text-center">

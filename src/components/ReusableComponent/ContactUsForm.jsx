@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import ReCAPTCHA from "react-google-recaptcha";
 
-const SITE_KEY = "6Ld3oZwrAAAAAD9aybn4CSdXnqakNoU6WkSKP3ba"; // your Google reCAPTCHA key
-const FORMSPREE_ENDPOINT = "https://formspree.io/f/xwpqzkvg"; // replace with your Formspree ID
+const SITE_KEY = "6Ld3oZwrAAAAAD9aybn4CSdXnqakNoU6WkSKP3ba"; // Your Google reCAPTCHA key
+const FORMSPREE_ENDPOINT = "https://formspree.io/f/xwpqzkvg"; // Replace with your Formspree endpoint
 
 const ContactUsForm = () => {
   const [formData, setFormData] = useState({
@@ -18,6 +18,8 @@ const ContactUsForm = () => {
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const captchaRef = useRef(null);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -31,6 +33,7 @@ const ContactUsForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Validate required fields
     if (!formData.name || !formData.gender || !formData.tel || !formData.email) {
       setError("Please fill in all required fields.");
       return;
@@ -46,19 +49,20 @@ const ContactUsForm = () => {
     setLoading(true);
 
     try {
-      const form = new FormData();
-      form.append("name", formData.name);
-      form.append("gender", formData.gender);
-      form.append("tel", formData.tel);
-      form.append("email", formData.email);
-      form.append("message", formData.message);
-
       const response = await fetch(FORMSPREE_ENDPOINT, {
         method: "POST",
-        body: form,
         headers: {
+          "Content-Type": "application/json",
           Accept: "application/json",
         },
+        body: JSON.stringify({
+          name: formData.name,
+          gender: formData.gender,
+          tel: formData.tel,
+          email: formData.email,
+          message: formData.message,
+          "g-recaptcha-response": captchaToken,
+        }),
       });
 
       const result = await response.json();
@@ -73,11 +77,11 @@ const ContactUsForm = () => {
           message: "",
         });
         setCaptchaToken(null);
-        window.grecaptcha?.reset();
+        captchaRef.current?.reset();
       } else {
         setError(result?.errors?.[0]?.message || "Submission failed.");
       }
-    } catch (error) {
+    } catch (err) {
       setError("Failed to send enquiry. Please try again later.");
     } finally {
       setLoading(false);
@@ -86,8 +90,10 @@ const ContactUsForm = () => {
 
   return (
     <section className="py-12 px-4 md:px-8 bg-white">
-      <div className="max-full mx-auto">
-        <h2 className="text-3xl font-bold text-gray-800 mb-6 text-center">Send Us an Enquiry</h2>
+      <div className="max-w-3xl mx-auto">
+        <h2 className="text-3xl font-bold text-gray-800 mb-6 text-center">
+          Send Us an Enquiry
+        </h2>
         <p className="text-gray-700 mb-6 text-center">
           You can send us an enquiry by using the form below:
         </p>
@@ -100,7 +106,7 @@ const ContactUsForm = () => {
           className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-gray-50 p-6 rounded-lg shadow-md"
         >
           <div>
-            <label htmlFor="name" className="block text-gray-700 text-sm font-bold mb-2">
+            <label className="block text-gray-700 text-sm font-bold mb-2">
               Name *
             </label>
             <input
@@ -114,7 +120,7 @@ const ContactUsForm = () => {
           </div>
 
           <div>
-            <label htmlFor="gender" className="block text-gray-700 text-sm font-bold mb-2">
+            <label className="block text-gray-700 text-sm font-bold mb-2">
               Gender *
             </label>
             <select
@@ -132,7 +138,7 @@ const ContactUsForm = () => {
           </div>
 
           <div>
-            <label htmlFor="tel" className="block text-gray-700 text-sm font-bold mb-2">
+            <label className="block text-gray-700 text-sm font-bold mb-2">
               Telephone *
             </label>
             <input
@@ -146,7 +152,7 @@ const ContactUsForm = () => {
           </div>
 
           <div>
-            <label htmlFor="email" className="block text-gray-700 text-sm font-bold mb-2">
+            <label className="block text-gray-700 text-sm font-bold mb-2">
               Email *
             </label>
             <input
@@ -160,7 +166,7 @@ const ContactUsForm = () => {
           </div>
 
           <div className="md:col-span-2">
-            <label htmlFor="message" className="block text-gray-700 text-sm font-bold mb-2">
+            <label className="block text-gray-700 text-sm font-bold mb-2">
               Message
             </label>
             <textarea
@@ -172,16 +178,27 @@ const ContactUsForm = () => {
             />
           </div>
 
+          <div className="md:col-span-2 flex justify-center">
+            <ReCAPTCHA
+              ref={captchaRef}
+              sitekey={SITE_KEY}
+              onChange={handleCaptchaChange}
+            />
+          </div>
+
           <div className="md:col-span-2">
-  <p className="text-center text-mm-primary">
-    <strong>After submitting Enquiry, Materials and More will contact your email soon. Thank you.</strong>
-  </p>
-</div>
+            <p className="text-center text-mm-primary">
+              <strong>
+                After submitting Enquiry, Materials and More will contact your
+                email soon. Thank you.
+              </strong>
+            </p>
+          </div>
 
           <div className="md:col-span-2">
             <button
               type="submit"
-              className="w-full bg-mm-primary hover:mm-primary text-white py-2 px-4 rounded disabled:opacity-50"
+              className="w-full bg-mm-primary hover:bg-mm-primary-dark text-white py-2 px-4 rounded disabled:opacity-50"
               disabled={loading}
             >
               {loading ? "Sending..." : "Submit Enquiry"}
