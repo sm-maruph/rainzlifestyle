@@ -7,6 +7,7 @@ import LinkedInIcon from "@mui/icons-material/LinkedIn";
 import YouTubeIcon from "@mui/icons-material/YouTube";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
+import { Link } from "react-router-dom";
 
 const navLinks = [
   { name: "Home" },
@@ -131,21 +132,23 @@ const Navbar = forwardRef(({ onCategorySelect }, ref) => {
             : "xl:h-0 xl:opacity-0 xl:scale-y-0"
         } overflow-hidden`}
       >
-        <div className="flex items-center">
-          <img
-            src={logo}
-            alt="Logo"
-            className="h-12 md:h-16 xl:h-24 w-auto mr-2 md:mr-4 rounded"
-            onError={(e) => {
-              e.target.onerror = null;
-              e.target.src =
-                "https://placehold.co/64x64/000000/FFFFFF?text=Logo";
-            }}
-          />
-          <span className="text-lg md:text-xl xl:text-2xl font-semibold text-mm-primary">
-            Materials & More Enterprise (M&M)
-          </span>
-        </div>
+        <Link to="/" className="no-underline text-inherit">
+          <div className="flex items-center cursor-pointer">
+            <img
+              src={logo}
+              alt="Logo"
+              className="h-12 md:h-16 xl:h-24 w-auto mr-2 md:mr-4 rounded"
+              onError={(e) => {
+                e.target.onerror = null;
+                e.target.src =
+                  "https://placehold.co/64x64/000000/FFFFFF?text=Logo";
+              }}
+            />
+            <span className="text-lg md:text-xl xl:text-2xl font-semibold text-mm-primary">
+              Materials & More Enterprise (M&M)
+            </span>
+          </div>
+        </Link>
 
         <div className="flex items-center space-x-4">
           <div className="hidden md:flex items-center space-x-3">
