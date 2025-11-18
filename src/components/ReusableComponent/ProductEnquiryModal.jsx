@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const FORMSPREE_ENDPOINT = "https://formspree.io/f/xwpqzkvg";
+const FORMSPREE_ENDPOINT = "https://formspree.io/f/mkgyogdy";
 
 const ProductEnquiryModal = ({ isOpen, onClose, product }) => {
   const [formData, setFormData] = useState({
