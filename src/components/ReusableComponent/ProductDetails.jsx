@@ -124,9 +124,9 @@ const ProductDetails = () => {
 
              {/* Price + Enquiry */}
 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4 flex-wrap">
-  <div className="bg-mm-secondery text-white rounded-lg px-5 py-2 font-bold text-lg text-center shadow-md flex-shrink-0 max-w-full sm:max-w-[150px] w-full sm:w-auto">
+  {/* <div className="bg-mm-secondery text-white rounded-lg px-5 py-2 font-bold text-lg text-center shadow-md flex-shrink-0 max-w-full sm:max-w-[150px] w-full sm:w-auto">
     ৳ {product.price}
-  </div>
+  </div> */}
   <button
     onClick={() => setIsModalOpen(true)}
     className="bg-mm-primary text-white rounded-lg px-3 py-2 font-bold text-lg text-center shadow-md flex-shrink-0 max-w-full sm:max-w-[200px] w-full sm:w-auto"
