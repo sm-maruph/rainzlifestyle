@@ -2,7 +2,7 @@ import React, { useState, useRef } from "react";
 import ReCAPTCHA from "react-google-recaptcha";
 
 const SITE_KEY = "6Ld3oZwrAAAAAD9aybn4CSdXnqakNoU6WkSKP3ba"; // Your Google reCAPTCHA key
-const FORMSPREE_ENDPOINT = "https://formspree.io/f/xwpqzkvg"; // Replace with your Formspree endpoint
+const FORMSPREE_ENDPOINT = "https://formspree.io/f/mkgyogdy"; // Replace with your Formspree endpoint
 
 const ContactUsForm = () => {
   const [formData, setFormData] = useState({
