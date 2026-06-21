@@ -130,8 +130,8 @@ module.exports = {
       },
       colors: {
         // Custom colors based on image analysis
-        "mm-primary": "#05b088",
-        "mm-secondery": "#27006f",
+        "mm-primary": "#5ca391",
+        "mm-secondery": "#083541",
         "fineetex-gray-button": "#707070", // Sample hex color for the button
         "fineetex-gray-text": "#666666", // Sample hex color for copyright text
       },

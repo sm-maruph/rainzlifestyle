@@ -1,11 +1,11 @@
 .primary-color {
-  color: #05b088 !important;
+  color: #000000 !important;
 }
 .bg-primary-color {
-  background-color: #05b088 !important;
-  color:black !important;
+  background-color: #0e887e !important;
+  color:rgb(255, 255, 255) !important;
 }
 
 .bg-custom-teal {
-  background-color: #05b088 !important;
+  background-color: #1a1f1e !important;
 }

@@ -25,7 +25,7 @@ const ReusableComponent = ({
         )}
         <button
           onClick={onButtonClick}
-          className="bg-mm-primary text-white px-6 py-2 rounded-full font-semibold shadow hover:bg-orange-600 transition"
+          className="bg-mm-primary text-white px-6 py-2 rounded-full font-semibold shadow hover:bg-mm-secondery transition"
         >
           {buttonText}
         </button>

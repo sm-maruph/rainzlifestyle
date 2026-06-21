@@ -4,11 +4,14 @@ import "bootstrap/dist/css/bootstrap.min.css";
 
 import Navbar from "./components/Navbar";
 import LandingComponent from "./components/LandingPage";
+import CategoryPage from "./components/CategoryPage";
+import ProductDetail from "./components/ProductDetail";
 import AboutUs from "./components/AboutUs";
 import ContactUs from "./components/ContactUs";
 import ReusableHome from "./components/ReusableComponent/ReusableHome";
 import AdminLogin from "./components/AdminLogin";
 import AdminHome from "./components/AdminComponent/AdminHome";
+import Partners from "./components/Partner";
 import BottomHeader from "./components/BottomHeader";
 import Footer from "./components/Footer";
 import "./App.css";
@@ -68,9 +71,8 @@ function App() {
       {!isAdminPage && <Navbar />}
       <AutoScrollUp />
       <main
-        className={`w-full mx-auto min-h-screen bg-gray-100 ${
-          isAdminPage ? "" : "mt-8 lg:pt-20"
-        }`}
+        className={`w-full mx-auto min-h-screen bg-gray-100 ${isAdminPage ? "" : "mt-8 lg:pt-20"
+          }`}
       >
         <LoadingWrapper>
           <Routes>
@@ -86,6 +88,11 @@ function App() {
             />
             <Route path="/" element={<LandingComponent />} />
             <Route path="/about-us" element={<AboutUs />} />
+            <Route path="/new-arrivals" element={<CategoryPage />} />
+            <Route path="/:category" element={<CategoryPage />} />
+            <Route path="/:category/:subcategory" element={<CategoryPage />} />
+            <Route path="/product/:slug" element={<ProductDetail />} />
+
             <Route path="/contact-us" element={<ContactUs />} />
             <Route path="/:category" element={<ReusableHome />} />
             <Route path="/:category/:subcategory" element={<ReusableHome />} />
@@ -107,6 +114,7 @@ function App() {
       </main>
       {!isAdminPage && (
         <>
+          <Partners />
           <BottomHeader />
           <Footer />
         </>
