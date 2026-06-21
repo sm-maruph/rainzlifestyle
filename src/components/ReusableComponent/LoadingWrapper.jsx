@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigationType, useLocation } from "react-router-dom";
-import LoadingMM from "./LoadingMM";
+import LoadingRainz from "./LoadingRainz";
 function LoadingWrapper({ children }) {
   const [loading, setLoading] = useState(false);
   const location = useLocation();
@@ -14,7 +14,7 @@ function LoadingWrapper({ children }) {
     return () => clearTimeout(timer);
   }, [location]);
 
-  return loading ? <LoadingMM /> : children;
+  return loading ? <LoadingRainz /> : children;
 }
 
 export default LoadingWrapper;
