@@ -51,8 +51,8 @@ const LoadingRainz = () => {
                 top: "55%",
                 backgroundColor: Math.random() > 0.5 ? BRAND : "#ffffff",
                 opacity: 0.0,
-                animationDuration: `${Math.random() * 3 + 3}s`,
-                animationDelay: `${Math.random() * 2}s`,
+                animationDuration: `${Math.random() * 1.5 + 1.5}s`,
+                animationDelay: `${Math.random() * 1}s`,
                 "--tx": `${tx}px`,
                 "--ty": `${ty}px`,
               }}
@@ -64,9 +64,9 @@ const LoadingRainz = () => {
       {/* Sparkle crown */}
       <div className="relative z-10 flex items-end gap-2 mb-3">
         <Sparkle size={16} className="rz-twinkle" style={{ animationDelay: "0s", filter: `drop-shadow(0 0 6px ${BRAND})` }} />
-        <Sparkle size={26} className="rz-twinkle" style={{ animationDelay: ".5s", filter: "drop-shadow(0 0 8px rgba(255,255,255,.6))" }} />
-        <Sparkle size={20} className="rz-twinkle" style={{ animationDelay: ".25s", filter: `drop-shadow(0 0 6px ${BRAND})` }} />
-        <Sparkle size={30} className="rz-twinkle" style={{ animationDelay: ".75s", filter: "drop-shadow(0 0 10px rgba(255,255,255,.7))" }} />
+        <Sparkle size={26} className="rz-twinkle" style={{ animationDelay: ".2s", filter: "drop-shadow(0 0 8px rgba(255,255,255,.6))" }} />
+        <Sparkle size={20} className="rz-twinkle" style={{ animationDelay: ".1s", filter: `drop-shadow(0 0 6px ${BRAND})` }} />
+        <Sparkle size={30} className="rz-twinkle" style={{ animationDelay: ".3s", filter: "drop-shadow(0 0 10px rgba(255,255,255,.7))" }} />
       </div>
 
       {/* RAINZ wordmark */}
@@ -77,7 +77,7 @@ const LoadingRainz = () => {
             className="rz-letter text-white text-6xl md:text-8xl font-light"
             style={{
               letterSpacing: "0.12em",
-              animationDelay: `${i * 0.12}s`,
+              animationDelay: `${i * 0.06}s`,
               textShadow: "0 0 18px rgba(255,255,255,0.25)",
             }}
           >
@@ -89,7 +89,7 @@ const LoadingRainz = () => {
       {/* Subtitle */}
       <p
         className="z-10 mt-2 text-xs md:text-sm font-light text-gray-400 rz-fade"
-        style={{ letterSpacing: "0.5em", paddingLeft: "0.5em", animationDelay: "0.9s" }}
+        style={{ letterSpacing: "0.5em", paddingLeft: "0.5em", animationDelay: "0.45s" }}
       >
         LIFESTYLE
       </p>
@@ -115,22 +115,22 @@ const LoadingRainz = () => {
           0%, 100% { transform: scale(.7) rotate(0deg); opacity: .35; }
           50%      { transform: scale(1.15) rotate(45deg); opacity: 1; }
         }
-        .rz-twinkle { color: #fff; animation: rzTwinkle 1.8s ease-in-out infinite; }
+        .rz-twinkle { color: #fff; animation: rzTwinkle 1.1s ease-in-out infinite; }
 
         @keyframes rzLetter {
           0%   { opacity: 0; transform: translateY(18px); filter: blur(6px); }
           100% { opacity: 1; transform: translateY(0); filter: blur(0); }
         }
-        .rz-letter { display: inline-block; opacity: 0; animation: rzLetter .7s ease forwards; }
+        .rz-letter { display: inline-block; opacity: 0; animation: rzLetter .4s ease forwards; }
 
         @keyframes rzFade { to { opacity: 1; } }
-        .rz-fade { opacity: 0; animation: rzFade .8s ease forwards; }
+        .rz-fade { opacity: 0; animation: rzFade .5s ease forwards; }
 
         @keyframes rzShimmer {
           0%   { transform: translateX(-150%); }
           100% { transform: translateX(450%); }
         }
-        .rz-shimmer { animation: rzShimmer 1.4s linear infinite; }
+        .rz-shimmer { animation: rzShimmer 0.9s linear infinite; }
       `}</style>
     </div>
   );

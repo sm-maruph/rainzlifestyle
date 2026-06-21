@@ -9,7 +9,7 @@ function LoadingWrapper({ children }) {
     setLoading(true);
 
     // Simulate loading delay or actual data fetching
-    const timer = setTimeout(() => setLoading(false), 1300);
+    const timer = setTimeout(() => setLoading(false), 1000);
 
     return () => clearTimeout(timer);
   }, [location]);
