@@ -6,6 +6,9 @@ import Navbar from "./components/Navbar";
 import LandingComponent from "./components/LandingPage";
 import CategoryPage from "./components/CategoryPage";
 import ProductDetail from "./components/ProductDetail";
+import Checkout from "./components/Checkout";
+import Login from "./components/Login";
+import Register from "./components/Register";
 import AboutUs from "./components/AboutUs";
 import ContactUs from "./components/ContactUs";
 import ReusableHome from "./components/ReusableComponent/ReusableHome";
@@ -92,23 +95,25 @@ function App() {
             <Route path="/:category" element={<CategoryPage />} />
             <Route path="/:category/:subcategory" element={<CategoryPage />} />
             <Route path="/product/:slug" element={<ProductDetail />} />
-
-            <Route path="/contact-us" element={<ContactUs />} />
-            <Route path="/:category" element={<ReusableHome />} />
-            <Route path="/:category/:subcategory" element={<ReusableHome />} />
-            <Route
-              path="/:category/:subcategory/:id"
-              element={<ProductDetails />}
-            />
-            <Route
-              path="*"
-              element={
-                <div className="p-10 text-center text-red-500 text-xl">
-                  404 - Page Not Found
-                </div>
-              }
-            />
-          </Routes>
+            <Route path="/checkout" element={<Checkout />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/contact-us" element={<ContactUs />} />
+              <Route path="/:category" element={<ReusableHome />} />
+              <Route path="/:category/:subcategory" element={<ReusableHome />} />
+              <Route
+                path="/:category/:subcategory/:id"
+                element={<ProductDetails />}
+              />
+              <Route
+                path="*"
+                element={
+                  <div className="p-10 text-center text-red-500 text-xl">
+                    404 - Page Not Found
+                  </div>
+                }
+              />
+            </Routes>
         </LoadingWrapper>
         <ScrollToTop />
       </main>

@@ -110,7 +110,7 @@ export default function ProductDetail() {
         setProduct(p);
         if (p) {
           setMainImg(p.images?.[0] || p.image);
-          setColor(p.colors?.[0]?.name || null);
+          setColor(null);
           setSize(null);
           setQty(1);
           // "More from this category" (exclude current + the same-subcategory related)
@@ -132,10 +132,19 @@ export default function ProductDetail() {
   const openProduct = (p) => navigate(`/product/${p.slug}`);
 
   const needsSize = product?.sizes?.length > 0;
+  const needsColor = product?.colors?.length > 0;
 
   const validate = () => {
+    if (needsColor && !color) {
+      setError("Please select a color first.");
+      return false;
+    }
     if (needsSize && !size) {
-      setError("Please select a size.");
+      setError("Please select a size first.");
+      return false;
+    }
+    if (!qty || qty < 1) {
+      setError("Please select a quantity.");
       return false;
     }
     setError("");
@@ -151,8 +160,19 @@ export default function ProductDetail() {
 
   const buyNow = () => {
     if (!validate()) return;
-    // TODO: add to cart, then go to checkout
-    navigate("/cart");
+    // Carry the selected item into checkout (until CartContext exists)
+    const item = {
+      id: product.id,
+      slug: product.slug,
+      name: product.name,
+      image: product.image,
+      price: product.price,
+      oldPrice: product.oldPrice,
+      size,
+      color,
+      qty,
+    };
+    navigate("/checkout", { state: { items: [item] } });
   };
 
   if (loading) {
@@ -249,13 +269,13 @@ export default function ProductDetail() {
           {product.colors?.length > 0 && (
             <div className="mt-5">
               <p className="text-sm font-semibold text-gray-700 mb-2">
-                Color: <span className="font-normal text-gray-500">{color}</span>
+                Color: <span className="font-normal text-gray-500">{color || "Please select"}</span>
               </p>
               <div className="flex gap-2">
                 {product.colors.map((c) => (
                   <button
                     key={c.name}
-                    onClick={() => setColor(c.name)}
+                    onClick={() => { setColor(c.name); setError(""); }}
                     title={c.name}
                     className="h-8 w-8 rounded-full border-2 transition-transform hover:scale-110"
                     style={{ backgroundColor: c.hex, borderColor: color === c.name ? BRAND : "#e5e7eb" }}
@@ -285,7 +305,6 @@ export default function ProductDetail() {
                   </button>
                 ))}
               </div>
-              {error && <p className="mt-2 text-sm text-red-500">{error}</p>}
             </div>
           )}
 
@@ -303,8 +322,13 @@ export default function ProductDetail() {
             </div>
           </div>
 
+          {/* Validation message */}
+          {error && (
+            <p className="mt-5 -mb-1 text-sm font-medium text-red-500">{error}</p>
+          )}
+
           {/* Actions */}
-          <div className="mt-6 flex flex-wrap gap-3">
+          <div className="mt-4 flex flex-wrap gap-3">
             <button
               onClick={addToCart}
               disabled={!product.inStock}
