@@ -1,6 +1,16 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+
 const API_BASE = process.env.REACT_APP_API_BASE_URL;
+
+// Dummy slides shown when there's no backend yet (or the request fails).
+// Shape matches the API: { id, image_url, title }.
+const DUMMY_BANNERS = [
+  { id: "d1", title: "New Arrivals 2026", image_url: "https://loremflickr.com/1600/600/fashion?lock=9001" },
+  { id: "d2", title: "Premium Polo Collection", image_url: "https://loremflickr.com/1600/600/clothing?lock=9002" },
+  { id: "d3", title: "Women's Ethnic Edit", image_url: "https://loremflickr.com/1600/600/style?lock=9003" },
+  { id: "d4", title: "World Cup Jerseys", image_url: "https://loremflickr.com/1600/600/soccer?lock=9004" },
+];
 
 const Hero = () => {
   const [banners, setBanners] = useState([]);
@@ -9,12 +19,19 @@ const Hero = () => {
 
   useEffect(() => {
     const fetchBanners = async () => {
+      // No backend configured → use dummy data immediately
+      if (!API_BASE) {
+        setBanners(DUMMY_BANNERS);
+        setLoading(false);
+        return;
+      }
       try {
         const res = await axios.get(`${API_BASE}/banners`);
-        setBanners(res.data);
+        const data = Array.isArray(res.data) ? res.data : [];
+        setBanners(data.length ? data : DUMMY_BANNERS); // fall back if API returns nothing
       } catch (err) {
-        console.error("Failed to fetch banners:", err);
-        setBanners([]); // fallback to empty array
+        console.error("Failed to fetch banners, using dummy data:", err);
+        setBanners(DUMMY_BANNERS);
       } finally {
         setLoading(false);
       }
@@ -26,11 +43,9 @@ const Hero = () => {
   // Auto-slide only if banners exist
   useEffect(() => {
     if (banners.length === 0) return;
-
     const interval = setInterval(() => {
       setCurrent((prev) => (prev + 1) % banners.length);
     }, 5000);
-
     return () => clearInterval(interval);
   }, [banners]);
 
@@ -40,68 +55,58 @@ const Hero = () => {
 
   if (loading) {
     return (
-       <div className="w-full aspect-[16/9] max-h-[200px] md:max-h-[350px] lg:max-h-[420px] flex items-center justify-center bg-gray-100 overflow-hidden">
-      <div className="w-full h-full bg-gray-200 animate-pulse">
-        <div className="h-full w-full bg-gray-300 rounded-md" />
+      <div className="w-full aspect-[16/9] max-h-[200px] md:max-h-[350px] lg:max-h-[420px] flex items-center justify-center bg-gray-100 overflow-hidden">
+        <div className="w-full h-full bg-gray-200 animate-pulse">
+          <div className="h-full w-full bg-gray-300 rounded-md" />
+        </div>
       </div>
-    </div>
     );
   }
 
   if (banners.length === 0) {
     return (
       <div className="w-full aspect-[16/9] max-h-[200px] md:max-h-[350px] lg:max-h-[420px] flex items-center justify-center bg-gray-100 overflow-hidden">
-      <div className="w-full h-full bg-gray-200 animate-pulse">
-        <div className="h-full w-full bg-gray-300 rounded-md" />
+        <div className="w-full h-full bg-gray-200 animate-pulse">
+          <div className="h-full w-full bg-gray-300 rounded-md" />
+        </div>
       </div>
-    </div>
     );
   }
 
   return (
-    <div className="relative w-full aspect-[16/9] max-h-[700px] md:max-h-[650px] lg:max-h-[650px] overflow-hidden bg-gray-100">
+    <div className="relative w-full aspect-[16/9] max-h-[200px] md:max-h-[420px] lg:max-h-[520px] overflow-hidden bg-gray-100">
       {banners.map((banner, idx) => (
         <img
           key={banner.id}
           src={banner.image_url}
           alt={banner.title}
-          className={`absolute top-0 left-0 w-full h-full object-fill transition-opacity duration-1000 ease-in-out ${
+          className={`absolute top-0 left-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out ${
             idx === current ? "opacity-100 z-10" : "opacity-0 z-0"
           }`}
           onError={(e) => {
             e.target.onerror = null;
-            e.target.src = `https://placehold.co/1200x675/CCCCCC/000000?text=Banner+${idx + 1}`;
+            e.target.src = `https://placehold.co/1600x600/CCCCCC/000000?text=Banner+${idx + 1}`;
           }}
         />
       ))}
 
       {/* Navigation buttons */}
       <button
-        className="absolute left-3 top-1/2 -translate-y-1/2 bg-white/80 rounded-full p-2 shadow hover:bg-orange-500 transition z-30"
+        className="absolute left-3 top-1/2 -translate-y-1/2 bg-white/80 rounded-full p-2 shadow hover:bg-rose-600 hover:text-white transition z-30"
         onClick={prevSlide}
         aria-label="Previous Slide"
       >
-        <svg
-          className="w-6 h-6 text-black"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
+        <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
         </svg>
       </button>
 
       <button
-        className="absolute right-3 top-1/2 -translate-y-1/2 bg-white/80 rounded-full p-2 shadow hover:bg-orange-500 transition z-30"
+        className="absolute right-3 top-1/2 -translate-y-1/2 bg-white/80 rounded-full p-2 shadow hover:bg-rose-600 hover:text-white transition z-30"
         onClick={nextSlide}
         aria-label="Next Slide"
       >
-        <svg
-          className="w-6 h-6 text-black"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
+        <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
         </svg>
       </button>
@@ -113,7 +118,7 @@ const Hero = () => {
             key={idx}
             onClick={() => setCurrent(idx)}
             className={`w-3 h-3 rounded-full focus:outline-none transition ${
-              idx === current ? "bg-orange-500 scale-110" : "bg-white"
+              idx === current ? "bg-rose-600 scale-110" : "bg-white"
             }`}
             aria-label={`Go to slide ${idx + 1}`}
           />
