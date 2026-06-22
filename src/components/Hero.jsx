@@ -3,8 +3,6 @@ import axios from "axios";
 
 const API_BASE = process.env.REACT_APP_API_BASE_URL;
 
-// Dummy slides shown when there's no backend yet (or the request fails).
-// Shape matches the API: { id, image_url, title }.
 const DUMMY_BANNERS = [
   { id: "d1", title: "New Arrivals 2026", image_url: "https://loremflickr.com/1600/600/fashion?lock=9001" },
   { id: "d2", title: "Premium Polo Collection", image_url: "https://loremflickr.com/1600/600/clothing?lock=9002" },
@@ -19,7 +17,6 @@ const Hero = () => {
 
   useEffect(() => {
     const fetchBanners = async () => {
-      // No backend configured → use dummy data immediately
       if (!API_BASE) {
         setBanners(DUMMY_BANNERS);
         setLoading(false);
@@ -28,7 +25,7 @@ const Hero = () => {
       try {
         const res = await axios.get(`${API_BASE}/banners`);
         const data = Array.isArray(res.data) ? res.data : [];
-        setBanners(data.length ? data : DUMMY_BANNERS); // fall back if API returns nothing
+        setBanners(data.length ? data : DUMMY_BANNERS);
       } catch (err) {
         console.error("Failed to fetch banners, using dummy data:", err);
         setBanners(DUMMY_BANNERS);
@@ -40,7 +37,6 @@ const Hero = () => {
     fetchBanners();
   }, []);
 
-  // Auto-slide only if banners exist
   useEffect(() => {
     if (banners.length === 0) return;
     const interval = setInterval(() => {
@@ -53,9 +49,12 @@ const Hero = () => {
   const prevSlide = () =>
     setCurrent((prev) => (prev - 1 + banners.length) % banners.length);
 
+  // Define the same max heights for loading, empty, and actual carousel
+  const maxHeightClasses = "max-h-[500px] md:max-h-[650px] lg:max-h-[700px]";
+
   if (loading) {
     return (
-      <div className="w-full aspect-[16/9] max-h-[200px] md:max-h-[350px] lg:max-h-[420px] flex items-center justify-center bg-gray-100 overflow-hidden">
+      <div className={`w-full aspect-[16/9] ${maxHeightClasses} flex items-center justify-center bg-gray-100 overflow-hidden`}>
         <div className="w-full h-full bg-gray-200 animate-pulse">
           <div className="h-full w-full bg-gray-300 rounded-md" />
         </div>
@@ -65,7 +64,7 @@ const Hero = () => {
 
   if (banners.length === 0) {
     return (
-      <div className="w-full aspect-[16/9] max-h-[200px] md:max-h-[350px] lg:max-h-[420px] flex items-center justify-center bg-gray-100 overflow-hidden">
+      <div className={`w-full aspect-[16/9] ${maxHeightClasses} flex items-center justify-center bg-gray-100 overflow-hidden`}>
         <div className="w-full h-full bg-gray-200 animate-pulse">
           <div className="h-full w-full bg-gray-300 rounded-md" />
         </div>
@@ -74,7 +73,7 @@ const Hero = () => {
   }
 
   return (
-    <div className="relative w-full aspect-[16/9] max-h-[200px] md:max-h-[420px] lg:max-h-[520px] overflow-hidden bg-gray-100">
+    <div className={`relative w-full aspect-[16/9] ${maxHeightClasses} overflow-hidden bg-gray-100`}>
       {banners.map((banner, idx) => (
         <img
           key={banner.id}

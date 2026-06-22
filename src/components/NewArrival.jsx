@@ -7,8 +7,8 @@ import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
 import { getNewArrivals } from "../api/mockApi"; // adjust path if your api lives elsewhere
 
 const BRAND = "#E11D48"; // RAINZLIFESTYLE primary (keep in sync with Navbar / tailwind.config)
-const BANNER_BG = "#FBF3E5"; // cream banner
-const BANNER_TEXT = "#C9912A"; // gold heading
+const BANNER_BG = "#ebebeb"; // cream banner
+const BANNER_TEXT = "#000000"; // gold heading
 
 const taka = (n) => `\u09F3${Number(n).toLocaleString("en-BD")}`;
 
@@ -20,7 +20,7 @@ function ProductTile({ product, onOpen, onAddToCart, onToggleWishlist, isWishlis
 
   return (
     <div
-      className="group relative rounded-xl bg-white shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1 overflow-hidden cursor-pointer"
+      className="group relative rounded-xl bg-white shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1 overflow-hidden cursor-pointer flex flex-col"
       onClick={() => onOpen(product)}
     >
       {discount > 0 && (
@@ -32,6 +32,7 @@ function ProductTile({ product, onOpen, onAddToCart, onToggleWishlist, isWishlis
         </span>
       )}
 
+      {/* Wishlist button – visible on hover (optional; can be made always visible if you prefer) */}
       <button
         aria-label="Add to wishlist"
         onClick={(e) => {
@@ -44,6 +45,7 @@ function ProductTile({ product, onOpen, onAddToCart, onToggleWishlist, isWishlis
         {isWishlisted ? <FavoriteIcon fontSize="small" /> : <FavoriteBorderIcon fontSize="small" />}
       </button>
 
+      {/* Image – full width, always shows the whole picture */}
       <div className="aspect-[3/4] bg-gradient-to-b from-gray-50 to-gray-100 flex items-center justify-center p-3">
         <img
           src={product.image}
@@ -57,7 +59,8 @@ function ProductTile({ product, onOpen, onAddToCart, onToggleWishlist, isWishlis
         />
       </div>
 
-      <div className="absolute inset-x-0 bottom-0 bg-white/95 backdrop-blur-sm px-3 pt-2 pb-3 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+      {/* Info panel – always visible below the image, no overlay */}
+      <div className="w-full bg-white px-3 pt-2 pb-3">
         <p className="text-sm text-gray-800 truncate">{product.name}</p>
         <div className="flex items-center gap-2 mt-0.5">
           <span className="text-sm font-bold text-gray-900">{taka(product.price)}</span>
@@ -80,7 +83,6 @@ function ProductTile({ product, onOpen, onAddToCart, onToggleWishlist, isWishlis
     </div>
   );
 }
-
 function SkeletonTile() {
   return (
     <div className="rounded-xl bg-white shadow-sm overflow-hidden">
@@ -127,9 +129,9 @@ export default function NewArrival({
   return (
     <section className="w-full bg-gray-50">
       {/* Cream banner header */}
-      <div className="w-full py-5" style={{ backgroundColor: BANNER_BG }}>
+      <div className="w-full py-1" style={{ backgroundColor: BANNER_BG }}>
         <h2
-          className="text-center text-2xl md:text-3xl font-extrabold uppercase tracking-[0.15em]"
+          className="text-center text-xl md:text-2xl font-extrabold uppercase tracking-[0.15em]"
           style={{ color: BANNER_TEXT }}
         >
           {title}
@@ -142,15 +144,15 @@ export default function NewArrival({
           {loading
             ? Array.from({ length: limit }).map((_, i) => <SkeletonTile key={i} />)
             : products.map((product) => (
-                <ProductTile
-                  key={product.id ?? product.slug}
-                  product={product}
-                  onOpen={handleOpen}
-                  onAddToCart={handleAdd}
-                  onToggleWishlist={handleWish}
-                  isWishlisted={wishlistIds.includes(product.id)}
-                />
-              ))}
+              <ProductTile
+                key={product.id ?? product.slug}
+                product={product}
+                onOpen={handleOpen}
+                onAddToCart={handleAdd}
+                onToggleWishlist={handleWish}
+                isWishlisted={wishlistIds.includes(product.id)}
+              />
+            ))}
         </div>
 
         {!loading && products.length === 0 && (

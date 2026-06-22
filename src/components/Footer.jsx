@@ -15,7 +15,7 @@ const COLORS = {
 };
 
 const NAV_LINKS = [
-  { label: "About M&M", href: "#" },
+  { label: "About RainzLifestyle", href: "#" },
   { label: "Terms & Conditions", href: "#" },
   { label: "Privacy Policy", href: "#" },
   { label: "Cancellation & Return Policy", href: "#" },
@@ -107,9 +107,9 @@ const Footer = () => {
               className="flex h-12 w-12 items-center justify-center rounded-md text-2xl font-black text-white"
               style={{ backgroundColor: COLORS.accent }}
             >
-              M
+              R
             </div>
-            <span className="text-lg font-bold text-white">M&amp;M</span>
+            <span className="text-lg font-bold text-white">RainzLifestyle</span>
           </div>
 
           <ul className="space-y-3 text-sm">
@@ -226,7 +226,7 @@ const Footer = () => {
           <p style={{ color: COLORS.textMuted }}>
             Copyright &copy; 2025{" "}
             <span className="font-semibold text-white">
-              Materials &amp; More Enterprise (M&amp;M)
+             RainzLifestyle
             </span>{" "}
             All rights reserved.
           </p>

@@ -2,6 +2,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
+
 import { getProducts, getCategories } from "../api/mockApi"; // adjust path if needed
 
 const BRAND = "#E11D48";
@@ -23,40 +25,104 @@ const FEATURE_IMAGES = {
   sale: "https://loremflickr.com/800/1000/fashion?lock=5105",
 };
 
-function ProductMini({ product, isViewMore, onOpen, onViewMore }) {
+function ProductMini({
+  product,
+  isViewMore,
+  onOpen,
+  onViewMore,
+  onAddToCart,   // new: optional callback
+}) {
+  // If it's the "View More" placeholder, render a card with the same height
+  if (isViewMore) {
+    return (
+      <div
+        className="flex flex-col rounded-xl bg-white shadow-sm overflow-hidden cursor-pointer group"
+        onClick={onViewMore}
+      >
+        {/* Image area – square */}
+        <div className="aspect-square bg-gray-50 relative">
+          <div className="absolute inset-0 bg-black/45 flex items-center justify-center">
+            <span className="text-white font-bold tracking-widest text-base md:text-lg text-center leading-tight">
+              VIEW
+              <br />
+              MORE
+            </span>
+          </div>
+        </div>
+        {/* Invisible spacer to match the info panel height of product cards */}
+        <div className="h-[4.5rem] md:h-[5rem]" />
+      </div>
+    );
+  }
+
+  // Regular product card
+  const discount =
+    product.oldPrice && product.oldPrice > product.price
+      ? Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100)
+      : 0;
+
+  const handleAddToBag = (e) => {
+    e.stopPropagation();
+    if (onAddToCart) {
+      onAddToCart(product);
+    } else {
+      // fallback: navigate to product detail (same as clicking the card)
+      onOpen(product);
+    }
+  };
+
   return (
     <div
-      className="relative group rounded-lg overflow-hidden bg-gray-50 cursor-pointer aspect-square"
-      onClick={() => (isViewMore ? onViewMore() : onOpen(product))}
+      className="group flex flex-col rounded-xl bg-white shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1 overflow-hidden cursor-pointer"
+      onClick={() => onOpen(product)}
     >
-      <img
-        src={product.image}
-        alt={product.name}
-        loading="lazy"
-        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-        onError={(e) => imgFallback(e, product.name)}
-      />
-      {isViewMore ? (
-        <div className="absolute inset-0 bg-black/45 flex items-center justify-center">
-          <span className="text-white font-bold tracking-widest text-base md:text-lg text-center leading-tight">
-            VIEW
-            <br />
-            MORE
-          </span>
-        </div>
-      ) : (
-        <div className="absolute bottom-0 inset-x-0 bg-white/95 backdrop-blur-sm px-2 py-1 flex items-center gap-1.5 text-[11px] md:text-xs">
-          <span className="font-bold text-gray-900">{taka(product.price)}</span>
+      {/* Discount badge */}
+      {discount > 0 && (
+        <span
+          className="absolute top-2 left-2 z-10 text-[10px] font-bold text-white px-1.5 py-0.5 rounded"
+          style={{ backgroundColor: BRAND }}
+        >
+          -{discount}%
+        </span>
+      )}
+
+      {/* Image container – square, object-contain to show full product */}
+      <div className="aspect-square bg-gradient-to-b from-gray-50 to-gray-100 flex items-center justify-center p-3">
+        <img
+          src={product.image}
+          alt={product.name}
+          loading="lazy"
+          className="max-h-full max-w-full object-contain transition-transform duration-300 group-hover:scale-105"
+          onError={(e) => {
+            e.target.onerror = null;
+            e.target.src = `https://placehold.co/600x600/f3f4f6/9ca3af?text=${encodeURIComponent(product.name)}`;
+          }}
+        />
+      </div>
+
+      {/* Info panel – always visible below the image */}
+      <div className="w-full bg-white px-3 pt-2 pb-3">
+        <p className="text-sm text-gray-800 truncate">{product.name}</p>
+        <div className="flex items-center gap-2 mt-0.5">
+          <span className="text-sm font-bold text-gray-900">{taka(product.price)}</span>
           {product.oldPrice && (
-            <span className="line-through text-gray-400">{taka(product.oldPrice)}</span>
+            <span className="text-xs text-gray-400 line-through">{taka(product.oldPrice)}</span>
           )}
         </div>
-      )}
+        <button
+          onClick={handleAddToBag}
+          className="mt-2 w-full flex items-center justify-center gap-1.5 rounded-md py-1.5 text-xs font-semibold text-white transition-opacity hover:opacity-90"
+          style={{ backgroundColor: BRAND }}
+        >
+          <ShoppingBagOutlinedIcon style={{ fontSize: 15 }} />
+          Add to Bag
+        </button>
+      </div>
     </div>
   );
 }
 
-function Spotlight({ spotlight, products, loading, onOpen, onGo }) {
+function Spotlight({ spotlight, products, loading, onOpen, onGo, onAddToCart }) {
   const count = spotlight.count || 8;
   const accent = spotlight.accent || BRAND;
   const [activeSub, setActiveSub] = useState(null); // null = "All"
@@ -163,6 +229,7 @@ function Spotlight({ spotlight, products, loading, onOpen, onGo }) {
               isViewMore={!activeSub && i === slots.length - 1 && products.length > count}
               onOpen={onOpen}
               onViewMore={() => onGo(spotlight.link)}
+              onAddToCart={onAddToCart}   // pass down
             />
           ))
         )}
@@ -193,23 +260,23 @@ export default function FeaturedCategories({
     const resolveSpots = spotlightsProp
       ? Promise.resolve(spotlightsProp)
       : getCategories().then((cats) =>
-          cats.map((c) => ({
-            id: c.slug,
-            label: c.name,
-            accent: c.accent,
-            featureImage: FEATURE_IMAGES[c.slug] || FEATURE_IMAGES.sale,
-            category: c.slug,
-            link: `/${c.slug}`,
-            count: perCategory,
-            subcategories: Array.from(
-              new Map(
-                (c.groups || [])
-                  .flatMap((g) => g.items)
-                  .map((it) => [slugify(it), { name: it, slug: slugify(it) }])
-              ).values()
-            ),
-          }))
-        );
+        cats.map((c) => ({
+          id: c.slug,
+          label: c.name,
+          accent: c.accent,
+          featureImage: FEATURE_IMAGES[c.slug] || FEATURE_IMAGES.sale,
+          category: c.slug,
+          link: `/${c.slug}`,
+          count: perCategory,
+          subcategories: Array.from(
+            new Map(
+              (c.groups || [])
+                .flatMap((g) => g.items)
+                .map((it) => [slugify(it), { name: it, slug: slugify(it) }])
+            ).values()
+          ),
+        }))
+      );
 
     resolveSpots
       .then((spots) => {
@@ -222,7 +289,7 @@ export default function FeaturedCategories({
           )
         ).then((entries) => alive && setProductsBySpot(Object.fromEntries(entries)));
       })
-      .catch(() => {})
+      .catch(() => { })
       .finally(() => alive && setLoading(false));
 
     return () => {
