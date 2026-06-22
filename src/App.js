@@ -13,6 +13,7 @@ import Wishlist from "./components/Wishlist";
 import Cart from "./components/Cart";
 import TrackOrder from "./components/TrackOrder";
 import Stores from "./components/Stores";
+import SalePage from "./components/SalePage";
 
 import AboutUs from "./components/AboutUs";
 import ContactUs from "./components/ContactUs";
@@ -125,6 +126,8 @@ function App() {
             <Route path="/track-order" element={<TrackOrder />} />
             <Route path="/account/orders" element={<TrackOrder />} />
             <Route path="/stores" element={<Stores />} />
+            <Route path="/sale" element={<SalePage />} />
+
             {/* Dynamic category / subcategory listing */}
             <Route path="/:category" element={<CategoryPage />} />
             <Route path="/:category/:subcategory" element={<CategoryPage />} />
