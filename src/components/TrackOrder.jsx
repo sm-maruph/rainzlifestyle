@@ -39,7 +39,6 @@ async function fetchDummyOrder(id) {
   }));
   const subtotal = items.reduce((s, it) => s + it.price * it.qty, 0);
   const delivery = 80;
-  // Pick a "current step" deterministically from the id so it varies but stays stable
   const hash = id.split("").reduce((a, c) => a + c.charCodeAt(0), 0);
   const currentStep = 2 + (hash % 3); // packed → shipped → out for delivery
   const placed = new Date();
@@ -71,10 +70,10 @@ function Timeline({ currentStep }) {
         const Icon = step.icon;
         const isLast = i === STEPS.length - 1;
         return (
-          <div key={step.key} className="flex gap-4 min-h-[58px]">
+          <div key={step.key} className="flex gap-3 sm:gap-4 min-h-[54px] sm:min-h-[58px]">
             <div className="flex flex-col items-center">
               <div
-                className="h-9 w-9 rounded-full flex items-center justify-center shrink-0 transition-colors"
+                className="h-8 w-8 sm:h-9 sm:w-9 rounded-full flex items-center justify-center shrink-0 transition-colors"
                 style={{ backgroundColor: done ? BRAND : "#e5e7eb", color: done ? "#fff" : "#9ca3af" }}
               >
                 <Icon style={{ fontSize: 18 }} />
@@ -115,7 +114,6 @@ export default function TrackOrder() {
     setLoading(false);
   };
 
-  // Auto-load the demo order on mount
   useEffect(() => {
     track("RZ482193");
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -127,44 +125,48 @@ export default function TrackOrder() {
   };
 
   return (
-    <div className="w-[94%] max-w-[1000px] mx-auto py-8">
-      <h1 className="text-2xl md:text-3xl font-extrabold text-gray-900">Track Your Order</h1>
+    <div className="w-[92%] sm:w-[94%] max-w-[1000px] mx-auto py-6 sm:py-8">
+      <h1 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-gray-900">Track Your Order</h1>
       <p className="mt-1 text-sm text-gray-500">Enter your order ID to see its current status.</p>
 
-      {/* Search */}
-      <form onSubmit={submit} className="mt-5 flex gap-2 max-w-md">
-        <div className="flex-1 flex items-center rounded-md border border-gray-200 px-3 focus-within:border-gray-400">
+      {/* Search — stacks on tiny phones, inline from sm up */}
+      <form onSubmit={submit} className="mt-5 flex flex-col sm:flex-row gap-2 w-full max-w-md">
+        <div className="flex-1 min-w-0 flex items-center rounded-md border border-gray-200 px-3 focus-within:border-gray-400">
           <ReceiptLongOutlinedIcon style={{ fontSize: 18, color: "#9ca3af" }} />
           <input
             value={orderId}
             onChange={(e) => setOrderId(e.target.value)}
             placeholder="e.g. RZ482193"
-            className="flex-1 bg-transparent px-2 py-2.5 text-sm outline-none uppercase"
+            className="flex-1 min-w-0 bg-transparent px-2 py-2.5 text-sm outline-none uppercase"
           />
         </div>
-        <button type="submit" className="rounded-md px-5 text-sm font-semibold text-white flex items-center gap-1" style={{ backgroundColor: BRAND }}>
+        <button
+          type="submit"
+          className="shrink-0 w-full sm:w-auto rounded-md px-5 py-2.5 sm:py-0 text-sm font-semibold text-white flex items-center justify-center gap-1"
+          style={{ backgroundColor: BRAND }}
+        >
           <SearchIcon style={{ fontSize: 18 }} /> Track
         </button>
       </form>
       {error && <p className="text-sm text-red-500 mt-2">{error}</p>}
 
       {loading ? (
-        <div className="mt-8 grid lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-1 h-80 bg-gray-100 rounded-xl animate-pulse" />
-          <div className="lg:col-span-2 h-80 bg-gray-100 rounded-xl animate-pulse" />
+        <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
+          <div className="md:col-span-1 h-72 sm:h-80 bg-gray-100 rounded-xl animate-pulse" />
+          <div className="md:col-span-2 h-72 sm:h-80 bg-gray-100 rounded-xl animate-pulse" />
         </div>
       ) : order ? (
-        <div className="mt-8 grid lg:grid-cols-3 gap-8">
+        <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
           {/* Timeline */}
-          <div className="lg:col-span-1">
-            <div className="rounded-xl border border-gray-200 p-5">
-              <div className="flex items-center justify-between mb-4">
+          <div className="md:col-span-1">
+            <div className="rounded-xl border border-gray-200 p-4 sm:p-5">
+              <div className="flex items-center justify-between flex-wrap gap-2 mb-4">
                 <div>
                   <p className="text-xs text-gray-500">Order ID</p>
-                  <p className="text-base font-bold text-gray-900">#{order.id}</p>
+                  <p className="text-base font-bold text-gray-900 break-all">#{order.id}</p>
                 </div>
                 <span
-                  className="text-xs font-semibold px-2.5 py-1 rounded-full text-white"
+                  className="text-xs font-semibold px-2.5 py-1 rounded-full text-white whitespace-nowrap"
                   style={{ backgroundColor: BRAND }}
                 >
                   {STEPS[order.currentStep].label}
@@ -175,9 +177,9 @@ export default function TrackOrder() {
           </div>
 
           {/* Details */}
-          <div className="lg:col-span-2 space-y-5">
+          <div className="md:col-span-2 space-y-5">
             {/* Meta */}
-            <div className="rounded-xl border border-gray-200 p-5 grid sm:grid-cols-3 gap-4 text-sm">
+            <div className="rounded-xl border border-gray-200 p-4 sm:p-5 grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 gap-4 text-sm">
               <div>
                 <p className="text-xs text-gray-500">Placed on</p>
                 <p className="font-semibold text-gray-800">{fmtDate(order.placedDate)}</p>
@@ -192,12 +194,12 @@ export default function TrackOrder() {
               </div>
               <div className="sm:col-span-3">
                 <p className="text-xs text-gray-500">Delivery address</p>
-                <p className="font-semibold text-gray-800">{order.address} • {order.phone}</p>
+                <p className="font-semibold text-gray-800 break-words">{order.address} • {order.phone}</p>
               </div>
             </div>
 
             {/* Items */}
-            <div className="rounded-xl border border-gray-200 p-5">
+            <div className="rounded-xl border border-gray-200 p-4 sm:p-5">
               <h2 className="text-sm font-bold text-gray-900 mb-3">Items</h2>
               <div className="space-y-3">
                 {order.items.map((it, i) => (
@@ -205,15 +207,15 @@ export default function TrackOrder() {
                     <img
                       src={it.image}
                       alt={it.name}
-                      className="h-16 w-14 rounded object-cover bg-gray-100 cursor-pointer"
+                      className="h-16 w-14 shrink-0 rounded object-cover bg-gray-100 cursor-pointer"
                       onClick={() => navigate(`/product/${it.slug}`)}
                       onError={imgFallback}
                     />
                     <div className="flex-1 min-w-0">
                       <p className="text-sm text-gray-800 truncate">{it.name}</p>
-                      <p className="text-xs text-gray-500">{[it.size, it.color].filter(Boolean).join(" • ")} • Qty {it.qty}</p>
+                      <p className="text-xs text-gray-500 truncate">{[it.size, it.color].filter(Boolean).join(" • ")} • Qty {it.qty}</p>
                     </div>
-                    <p className="text-sm font-semibold text-gray-900">{taka(it.price * it.qty)}</p>
+                    <p className="text-sm font-semibold text-gray-900 shrink-0">{taka(it.price * it.qty)}</p>
                   </div>
                 ))}
               </div>
