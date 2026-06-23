@@ -28,6 +28,12 @@ import AdminLayout from "./components/admin/AdminLayout";
 import AdminDashboard from "./components/admin/AdminDashboard";
 import AdminProducts from "./components/admin/AdminProducts";
 import AdminCategories from "./components/admin/AdminCategories";
+import AdminOrders from "./components/admin/AdminOrders";
+import AdminDiscounts from "./components/admin/AdminDiscounts";
+import AdminSale from "./components/admin/AdminSale";
+import AdminCustomers from "./components/admin/AdminCustomers";
+import AdminSettings from "./components/admin/AdminSettings";
+
 
 
 import Partners from "./components/Partner";
@@ -132,11 +138,11 @@ function App() {
               {/* Build these one by one — just drop the component + uncomment: */}
               <Route path="products" element={<AdminProducts />} />
               <Route path="categories" element={<AdminCategories />} />
-              {/* <Route path="orders" element={<AdminOrders />} /> */}
-              {/* <Route path="discounts" element={<AdminDiscounts />} /> */}
-              {/* <Route path="sale" element={<AdminSale />} /> */}
-              {/* <Route path="customers" element={<AdminCustomers />} /> */}
-              {/* <Route path="settings" element={<AdminSettings />} /> */}
+              <Route path="orders" element={<AdminOrders />} />
+              <Route path="discounts" element={<AdminDiscounts />} />
+              <Route path="sale" element={<AdminSale />} />
+              <Route path="customers" element={<AdminCustomers />} />
+              <Route path="settings" element={<AdminSettings />} />
             </Route>
 
             {/* Static routes (rank above the dynamic /:category in React Router v6) */}
