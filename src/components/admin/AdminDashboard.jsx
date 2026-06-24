@@ -10,7 +10,7 @@ import PeopleAltOutlinedIcon from "@mui/icons-material/PeopleAltOutlined";
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 import LocalOfferOutlinedIcon from "@mui/icons-material/LocalOfferOutlined";
 import SellOutlinedIcon from "@mui/icons-material/SellOutlined";
-import { getProducts } from "../../api/mockApi"; // adjust path if needed
+import { getProducts } from "../../api"; // adjust path if needed
 
 const BRAND = "#E11D48";
 const taka = (n) => `\u09F3${Number(n).toLocaleString("en-BD")}`;

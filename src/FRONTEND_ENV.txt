@@ -1,0 +1,4 @@
+# Add to your React app's .env (project root, next to package.json), then restart `npm start`.
+REACT_APP_API_BASE_URL=http://localhost:5000/api
+REACT_APP_SUPABASE_URL=https://YOUR-PROJECT.supabase.co
+REACT_APP_SUPABASE_ANON_KEY=your-anon-public-key

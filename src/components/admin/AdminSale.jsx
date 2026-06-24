@@ -6,7 +6,7 @@ import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import CloseIcon from "@mui/icons-material/Close";
 import SearchIcon from "@mui/icons-material/Search";
 import CampaignOutlinedIcon from "@mui/icons-material/CampaignOutlined";
-import { getProducts } from "../../api/mockApi"; // adjust path if needed
+import { getProducts } from "../../api"; // adjust path if needed
 
 const BRAND = "#E11D48";
 const SALE = "#7C3AED";

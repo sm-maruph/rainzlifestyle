@@ -1,146 +1,93 @@
 // src/components/Register.jsx
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import AuthLayout from "./AuthLayout";
+import { useNavigate, Link } from "react-router-dom";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
-import MailOutlineIcon from "@mui/icons-material/MailOutline";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
-import PhoneIphoneOutlinedIcon from "@mui/icons-material/PhoneIphoneOutlined";
+import { useAuth } from "../context/AuthContext";
 
 const BRAND = "#E11D48";
 
-const Field = ({ icon: Icon, error, children }) => (
-  <div>
-    <div className="mt-1 flex items-center rounded-md border border-gray-200 px-3 focus-within:border-gray-400">
-      <Icon style={{ fontSize: 18, color: "#9ca3af" }} />
-      {children}
-    </div>
-    {error && <p className="text-xs text-red-500 mt-1">{error}</p>}
-  </div>
-);
-
 export default function Register() {
   const navigate = useNavigate();
-  const [form, setForm] = useState({ name: "", email: "", phone: "", password: "", confirm: "" });
-  const [showPw, setShowPw] = useState(false);
-  const [agree, setAgree] = useState(false);
-  const [errors, setErrors] = useState({});
+  const { register } = useAuth();
+
+  const [form, setForm] = useState({ full_name: "", email: "", phone: "", password: "", confirm: "", terms: false });
+  const [show, setShow] = useState(false);
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
+  const set = (k, v) => setForm((f) => ({ ...f, [k]: v }));
 
-  const validate = () => {
-    const e = {};
-    if (!form.name.trim()) e.name = "Enter your full name";
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) e.email = "Enter a valid email";
-    if (!/^[0-9+\-\s]{6,}$/.test(form.phone.trim())) e.phone = "Enter a valid phone number";
-    if (form.password.length < 6) e.password = "Password must be at least 6 characters";
-    if (form.confirm !== form.password) e.confirm = "Passwords do not match";
-    if (!agree) e.agree = "Please accept the terms to continue";
-    setErrors(e);
-    return Object.keys(e).length === 0;
-  };
-
-  const submit = (e) => {
+  const submit = async (e) => {
     e.preventDefault();
-    if (!validate()) return;
+    setError("");
+    if (!form.full_name || !form.email || !form.password) { setError("Please fill in all required fields."); return; }
+    if (form.password.length < 6) { setError("Password must be at least 6 characters."); return; }
+    if (form.password !== form.confirm) { setError("Passwords do not match."); return; }
+    if (!form.terms) { setError("Please accept the terms to continue."); return; }
     setLoading(true);
-    // TODO: replace with AuthContext.register(form).then(...)
-    setTimeout(() => {
+    try {
+      await register({ full_name: form.full_name.trim(), email: form.email.trim(), password: form.password, phone: form.phone.trim() });
+      navigate("/", { replace: true });
+    } catch (err) {
+      setError(err.message || "Could not create account.");
+    } finally {
       setLoading(false);
-      navigate("/login"); // or auto-login and go to "/"
-    }, 800);
+    }
   };
-
-  const inputCls = "flex-1 bg-transparent px-2 py-2.5 text-sm outline-none";
 
   return (
-    <AuthLayout
-      title="Create your account"
-      subtitle="Join RAINZLIFESTYLE in a few seconds"
-      footer={
-        <>
-          Already have an account?{" "}
-          <Link to="/login" className="font-semibold" style={{ color: BRAND }}>
-            Sign in
-          </Link>
-        </>
-      }
-    >
-      <form onSubmit={submit} className="space-y-4">
-        <div>
-          <label className="text-sm font-medium text-gray-700">Full Name</label>
-          <Field icon={PersonOutlineIcon} error={errors.name}>
-            <input value={form.name} onChange={set("name")} className={inputCls} placeholder="Your name" />
-          </Field>
-        </div>
+    <div className="min-h-[70vh] grid lg:grid-cols-2">
+      <div className="hidden lg:flex flex-col justify-center px-12 text-white" style={{ background: `linear-gradient(135deg, ${BRAND}, #9f1239)` }}>
+        <h1 className="text-4xl font-black">RAINZLIFESTYLE</h1>
+        <p className="mt-3 text-white/90 max-w-sm">Create an account to save your favorites, track orders, and check out in seconds.</p>
+      </div>
 
-        <div>
-          <label className="text-sm font-medium text-gray-700">Email</label>
-          <Field icon={MailOutlineIcon} error={errors.email}>
-            <input value={form.email} onChange={set("email")} className={inputCls} placeholder="you@example.com" />
-          </Field>
-        </div>
+      <div className="flex items-center justify-center p-6">
+        <form onSubmit={submit} className="w-full max-w-sm">
+          <h2 className="text-2xl font-extrabold text-gray-900">Create account</h2>
+          <p className="text-sm text-gray-500 mt-1">It only takes a minute.</p>
 
-        <div>
-          <label className="text-sm font-medium text-gray-700">Phone</label>
-          <Field icon={PhoneIphoneOutlinedIcon} error={errors.phone}>
-            <input value={form.phone} onChange={set("phone")} className={inputCls} placeholder="01XXXXXXXXX" />
-          </Field>
-        </div>
+          {error && <div className="mt-4 rounded-lg bg-red-50 text-red-700 text-sm px-3 py-2">{error}</div>}
 
-        <div>
-          <label className="text-sm font-medium text-gray-700">Password</label>
-          <Field icon={LockOutlinedIcon} error={errors.password}>
-            <input
-              type={showPw ? "text" : "password"}
-              value={form.password}
-              onChange={set("password")}
-              className={inputCls}
-              placeholder="At least 6 characters"
-            />
-            <button type="button" onClick={() => setShowPw((v) => !v)} className="text-gray-400" aria-label="Toggle password">
-              {showPw ? <VisibilityOffOutlinedIcon style={{ fontSize: 18 }} /> : <VisibilityOutlinedIcon style={{ fontSize: 18 }} />}
-            </button>
-          </Field>
-        </div>
-
-        <div>
-          <label className="text-sm font-medium text-gray-700">Confirm Password</label>
-          <Field icon={LockOutlinedIcon} error={errors.confirm}>
-            <input
-              type={showPw ? "text" : "password"}
-              value={form.confirm}
-              onChange={set("confirm")}
-              className={inputCls}
-              placeholder="Re-enter password"
-            />
-          </Field>
-        </div>
-
-        <div>
-          <label className="flex items-start gap-2 text-sm text-gray-600">
-            <input type="checkbox" checked={agree} onChange={(e) => setAgree(e.target.checked)} className="mt-0.5" style={{ accentColor: BRAND }} />
-            <span>
-              I agree to the{" "}
-              <Link to="/terms" className="font-medium" style={{ color: BRAND }}>Terms</Link> &{" "}
-              <Link to="/privacy" className="font-medium" style={{ color: BRAND }}>Privacy Policy</Link>.
-            </span>
+          <label className="block mt-5">
+            <span className="text-sm font-medium text-gray-700">Full name</span>
+            <input value={form.full_name} onChange={(e) => set("full_name", e.target.value)} className="mt-1 w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm outline-none focus:border-gray-400" placeholder="Your name" />
           </label>
-          {errors.agree && <p className="text-xs text-red-500 mt-1">{errors.agree}</p>}
-        </div>
+          <label className="block mt-4">
+            <span className="text-sm font-medium text-gray-700">Email</span>
+            <input type="email" value={form.email} onChange={(e) => set("email", e.target.value)} className="mt-1 w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm outline-none focus:border-gray-400" placeholder="you@example.com" />
+          </label>
+          <label className="block mt-4">
+            <span className="text-sm font-medium text-gray-700">Phone (optional)</span>
+            <input value={form.phone} onChange={(e) => set("phone", e.target.value)} className="mt-1 w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm outline-none focus:border-gray-400" placeholder="01XXXXXXXXX" />
+          </label>
+          <label className="block mt-4">
+            <span className="text-sm font-medium text-gray-700">Password</span>
+            <div className="mt-1 flex items-center rounded-lg border border-gray-200 px-3 focus-within:border-gray-400">
+              <input type={show ? "text" : "password"} value={form.password} onChange={(e) => set("password", e.target.value)} className="flex-1 py-2.5 text-sm outline-none bg-transparent" placeholder="At least 6 characters" />
+              <button type="button" onClick={() => setShow((s) => !s)} className="text-gray-400">{show ? <VisibilityOffOutlinedIcon style={{ fontSize: 20 }} /> : <VisibilityOutlinedIcon style={{ fontSize: 20 }} />}</button>
+            </div>
+          </label>
+          <label className="block mt-4">
+            <span className="text-sm font-medium text-gray-700">Confirm password</span>
+            <input type={show ? "text" : "password"} value={form.confirm} onChange={(e) => set("confirm", e.target.value)} className="mt-1 w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm outline-none focus:border-gray-400" placeholder="Re-enter password" />
+          </label>
 
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full rounded-md py-2.5 text-sm font-bold text-white transition-opacity hover:opacity-90 disabled:opacity-60"
-          style={{ backgroundColor: BRAND }}
-        >
-          {loading ? "Creating account…" : "Create Account"}
-        </button>
-      </form>
-    </AuthLayout>
+          <label className="flex items-center gap-2 mt-4 text-sm text-gray-600">
+            <input type="checkbox" checked={form.terms} onChange={(e) => set("terms", e.target.checked)} style={{ accentColor: BRAND }} />
+            I agree to the Terms & Privacy Policy
+          </label>
+
+          <button type="submit" disabled={loading} className="mt-5 w-full rounded-lg py-2.5 text-sm font-bold text-white disabled:opacity-60" style={{ backgroundColor: BRAND }}>
+            {loading ? "Creating…" : "Create account"}
+          </button>
+
+          <p className="mt-4 text-sm text-gray-600 text-center">
+            Already have an account? <Link to="/login" className="font-semibold" style={{ color: BRAND }}>Sign in</Link>
+          </p>
+        </form>
+      </div>
+    </div>
   );
 }

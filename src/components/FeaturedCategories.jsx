@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
 
-import { getProducts, getCategories } from "../api/mockApi"; // adjust path if needed
+import { getProducts, getCategories } from "../api"; // adjust path if needed
 
 const BRAND = "#E11D48";
 const taka = (n) => `\u09F3${Number(n).toLocaleString("en-BD")}`;

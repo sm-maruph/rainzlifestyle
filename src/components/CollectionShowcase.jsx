@@ -1,7 +1,7 @@
 // src/components/CollectionShowcase.jsx
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getBanners, getCollections } from "../api/mockApi"; // adjust path if needed
+import { getBanners, getCollections } from "../api"; // adjust path if needed
 
 const fallback = (e, label = "RAINZ") => {
   e.target.onerror = null;

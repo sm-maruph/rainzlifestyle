@@ -9,7 +9,7 @@ import StarBorderRoundedIcon from "@mui/icons-material/StarBorderRounded";
 import LocalShippingOutlinedIcon from "@mui/icons-material/LocalShippingOutlined";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
-import { getProductBySlug, getProducts } from "../api/mockApi"; // adjust path if needed
+import { getProductBySlug, getProducts } from "../api"; // adjust path if needed
 
 const BRAND = "#E11D48";
 const taka = (n) => `\u09F3${Number(n).toLocaleString("en-BD")}`;

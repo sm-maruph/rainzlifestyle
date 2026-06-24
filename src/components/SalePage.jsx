@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
 import LocalOfferOutlinedIcon from "@mui/icons-material/LocalOfferOutlined";
-import { getProducts } from "../api/mockApi"; // adjust path if needed
+import { getProducts } from "../api"; // adjust path if needed
 
 const BRAND = "#E11D48";   // rose
 const SALE = "#7C3AED";    // violet (Sale accent)

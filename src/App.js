@@ -2,6 +2,10 @@ import React, { useLayoutEffect, useRef, useState } from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 
+import { useAuth } from "./context/AuthContext";
+import { useCart } from "./context/CartContext";
+import { useWishlist } from "./context/WishlistContext";
+
 import Navbar from "./components/Navbar";
 import LandingComponent from "./components/LandingPage";
 import CategoryPage from "./components/CategoryPage";
@@ -18,11 +22,6 @@ import SalePage from "./components/SalePage";
 import AboutUs from "./components/AboutUs";
 import ContactUs from "./components/ContactUs";
 
-// ===== Admin auth temporarily disabled — re-enable later =====
-// import AdminLogin from "./components/AdminLogin";
-// import AdminHome from "./components/AdminComponent/AdminHome";
-// import { jwtDecode } from "jwt-decode";
-
 // New admin dashboard (sidebar shell + landing page)
 import AdminLayout from "./components/admin/AdminLayout";
 import AdminDashboard from "./components/admin/AdminDashboard";
@@ -33,8 +32,7 @@ import AdminDiscounts from "./components/admin/AdminDiscounts";
 import AdminSale from "./components/admin/AdminSale";
 import AdminCustomers from "./components/admin/AdminCustomers";
 import AdminSettings from "./components/admin/AdminSettings";
-
-
+import RequireAdmin from "./components/admin/RequireAdmin";
 
 import Partners from "./components/Partner";
 import BottomHeader from "./components/BottomHeader";
@@ -46,41 +44,13 @@ import LoadingWrapper from "./components/ReusableComponent/LoadingWrapper";
 
 function App() {
   const location = useLocation();
-  // const navigate = useNavigate();
+  const { user, logout } = useAuth();
+  const { count: cartCount } = useCart();
+  const { count: wishlistCount } = useWishlist();
+
   // Both /howdy (old admin) and /admin (new dashboard) hide the storefront chrome
   const isAdminPage =
     location.pathname.startsWith("/howdy") || location.pathname.startsWith("/admin");
-
-  // ===== Admin login / JWT logic temporarily disabled — re-enable later =====
-  // const [token, setToken] = useState(() => localStorage.getItem("adminToken"));
-  //
-  // const isTokenValid = (token) => {
-  //   if (!token) return false;
-  //   try {
-  //     const decoded = jwtDecode(token);
-  //     if (decoded.exp * 1000 < Date.now()) return false;
-  //     return true;
-  //   } catch (error) {
-  //     return false;
-  //   }
-  // };
-  //
-  // const handleLogout = () => {
-  //   setToken(null);
-  //   localStorage.removeItem("adminToken");
-  //   if (isAdminPage) navigate("/howdy");
-  // };
-  //
-  // const handleLogin = (newToken) => {
-  //   setToken(newToken);
-  //   localStorage.setItem("adminToken", newToken);
-  //   navigate("/howdy");
-  // };
-  //
-  // useEffect(() => {
-  //   if (token && !isTokenValid(token)) handleLogout();
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [token]);
 
   // Measure the fixed navbar so <main> always starts right below it (any screen size)
   const navRef = useRef(null);
@@ -110,7 +80,15 @@ function App() {
 
   return (
     <>
-      {!isAdminPage && <Navbar ref={navRef} />}
+      {!isAdminPage && (
+        <Navbar
+          ref={navRef}
+          user={user}
+          cartCount={cartCount}
+          wishlistCount={wishlistCount}
+          onLogout={logout}
+        />
+      )}
       <AutoScrollUp />
 
       <main
@@ -119,23 +97,16 @@ function App() {
       >
         <LoadingWrapper>
           <Routes>
-            {/* ===== Old /howdy admin login route — disabled for now =====
+            {/* ===== Admin dashboard — guarded: only logged-in admins ===== */}
             <Route
-              path="/howdy"
+              path="/admin"
               element={
-                isTokenValid(token) ? (
-                  <AdminHome token={token} onLogout={handleLogout} />
-                ) : (
-                  <AdminLogin onLogin={handleLogin} />
-                )
+                <RequireAdmin>
+                  <AdminLayout />
+                </RequireAdmin>
               }
-            />
-            */}
-
-            {/* ===== New Admin dashboard (open while building — no auth guard yet) ===== */}
-            <Route path="/admin" element={<AdminLayout />}>
+            >
               <Route index element={<AdminDashboard />} />
-              {/* Build these one by one — just drop the component + uncomment: */}
               <Route path="products" element={<AdminProducts />} />
               <Route path="categories" element={<AdminCategories />} />
               <Route path="orders" element={<AdminOrders />} />

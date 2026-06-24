@@ -11,57 +11,25 @@ import Inventory2OutlinedIcon from "@mui/icons-material/Inventory2Outlined";
 import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
+import { getCategories } from "../api";
 
-const BRAND = "#E11D48"; // RAINZLIFESTYLE primary (rose). Move to tailwind.config later.
+const BRAND = "#E11D48";
+const slugify = (s) => String(s).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 
-const slugify = (s) =>
-  s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
-
-/**
- * DEFAULT category data — swap this for data fetched from your CategoryManager
- * by passing a `categories` prop. Shape:
- *   { name, accent, groups: [{ title, items: [string] }], featured?: [{name,image,price,slug}] }
- */
-const defaultCategories = [
-  {
-    name: "Men",
-    accent: "#E11D48",
-    groups: [
-      { title: "Topwear", items: ["T-Shirts", "Polo Shirts", "Shirts", "Hoodies", "Jackets", "Sweatshirts"] },
-      { title: "Bottomwear", items: ["Jeans", "Trousers", "Joggers", "Shorts"] },
-      { title: "Accessories", items: ["Caps", "Belts", "Socks"] },
-    ],
-  },
-  {
-    name: "Women",
-    accent: "#DB2777",
-    groups: [
-      { title: "Western", items: ["Tops", "T-Shirts", "Dresses", "Jeans"] },
-      { title: "Ethnic", items: ["Kurti", "Salwar Kameez", "Co-ords", "Palazzo"] },
-      { title: "Accessories", items: ["Bags", "Scarves"] },
-    ],
-  },
-  {
-    name: "Kids",
-    accent: "#F59E0B",
-    groups: [
-      { title: "Boys", items: ["T-Shirts", "Shorts", "Combo Sets", "Polo Shirts"] },
-      { title: "Girls", items: ["Frocks", "T-Shirts", "Combo Sets", "Skirts"] },
-    ],
-  },
-  {
-    name: "Accessories",
-    accent: "#0D9488",
-    groups: [{ title: "All Accessories", items: ["Caps", "Belts", "Socks", "Wallets", "Bags"] }],
-  },
-  { name: "Sale", accent: "#7C3AED", groups: [] }, // plain link, no dropdown
+// Fallback shown only until the API responds (prevents an empty flash)
+const fallbackCategories = [
+  { name: "Men", slug: "men", accent: "#E11D48", groups: [] },
+  { name: "Women", slug: "women", accent: "#DB2777", groups: [] },
+  { name: "Kids", slug: "kids", accent: "#F59E0B", groups: [] },
+  { name: "Accessories", slug: "accessories", accent: "#0D9488", groups: [] },
+  { name: "Sale", slug: "sale", accent: "#7C3AED", groups: [] },
 ];
 
 const Navbar = forwardRef(
   (
     {
-      categories = defaultCategories,
-      user = null, // { name } when logged in, else null
+      categories: categoriesProp = null, // parent can still supply; otherwise we fetch
+      user = null,
       cartCount = 0,
       wishlistCount = 0,
       onLogout = () => {},
@@ -71,10 +39,27 @@ const Navbar = forwardRef(
     const [menuOpen, setMenuOpen] = useState(false);
     const [showHeader, setShowHeader] = useState(true);
     const [lastScrollY, setLastScrollY] = useState(0);
-    const [openDropdown, setOpenDropdown] = useState(null); // mobile accordions
+    const [openDropdown, setOpenDropdown] = useState(null);
     const [search, setSearch] = useState("");
-    const [activeMenu, setActiveMenu] = useState(null); // desktop mega-menu (hover intent)
+    const [activeMenu, setActiveMenu] = useState(null);
+    const [fetchedCats, setFetchedCats] = useState(null);
     const closeTimer = useRef(null);
+
+    // Load real categories (with groups + subcategories) from the API
+    useEffect(() => {
+      if (categoriesProp) return; // parent supplied them
+      let alive = true;
+      getCategories()
+        .then((tree) => {
+          if (!alive || !tree || !tree.length) return;
+          // append the Sale link (not a DB category)
+          setFetchedCats([...tree, { name: "Sale", slug: "sale", accent: "#7C3AED", groups: [] }]);
+        })
+        .catch(() => {});
+      return () => { alive = false; };
+    }, [categoriesProp]);
+
+    const categories = categoriesProp || fetchedCats || fallbackCategories;
 
     const openMenu = (name) => {
       if (closeTimer.current) clearTimeout(closeTimer.current);
@@ -95,8 +80,9 @@ const Navbar = forwardRef(
       navigate(path);
     };
 
-    const goCategory = (cat) => go(`/${slugify(cat)}`);
-    const goSub = (cat, item) => go(`/${slugify(cat)}/${slugify(item)}`);
+    const catSlug = (cat) => cat.slug || slugify(cat.name);
+    const goCategory = (cat) => go(`/${catSlug(cat)}`);
+    const goSub = (cat, item) => go(`/${catSlug(cat)}/${slugify(item)}`);
 
     const handleSearch = (e) => {
       e.preventDefault();
@@ -105,7 +91,6 @@ const Navbar = forwardRef(
       go(`/search?q=${encodeURIComponent(q)}`);
     };
 
-    // Slide the whole bar up on scroll-down (keeps mega-menus from being clipped)
     useEffect(() => {
       const onScroll = () => {
         const y = window.scrollY;
@@ -118,107 +103,55 @@ const Navbar = forwardRef(
       return () => window.removeEventListener("scroll", onScroll);
     }, [lastScrollY]);
 
-    // Lock body scroll while the mobile drawer is open
     useEffect(() => {
       document.body.style.overflow = menuOpen ? "hidden" : "";
-      return () => {
-        document.body.style.overflow = "";
-      };
+      return () => { document.body.style.overflow = ""; };
     }, [menuOpen]);
 
-    // Clean up the hover-intent timer on unmount
     useEffect(() => () => closeTimer.current && clearTimeout(closeTimer.current), []);
 
     const Badge = ({ count }) =>
       count > 0 ? (
-        <span
-          className="absolute -top-1.5 -right-2 min-w-[16px] h-4 px-1 rounded-full text-[10px] font-bold text-white flex items-center justify-center"
-          style={{ backgroundColor: BRAND }}
-        >
+        <span className="absolute -top-1.5 -right-2 min-w-[16px] h-4 px-1 rounded-full text-[10px] font-bold text-white flex items-center justify-center" style={{ backgroundColor: BRAND }}>
           {count > 99 ? "99+" : count}
         </span>
       ) : null;
 
     return (
       <>
-        <nav
-          ref={ref}
-          className="w-full bg-white fixed top-0 left-0 z-50 shadow-sm border-b border-gray-100 transition-transform duration-500 ease-in-out"
-          style={{ transform: showHeader ? "translateY(0)" : "translateY(-100%)" }}
-        >
-          {/* ===== Single row: logo - nav - search - actions ===== */}
-          <div className="w-[94%] max-w-[1500px] mx-auto relative flex items-center gap-4 lg:gap-6 py-3">
-            {/* Wordmark logo (swap for an <img> of your logo if you have one) */}
+        <nav ref={ref} className="w-full bg-white fixed top-0 left-0 z-50 shadow-sm border-b border-gray-100 transition-transform duration-500 ease-in-out" style={{ transform: showHeader ? "translateY(0)" : "translateY(-100%)" }}>
+          <div className="w-[94%] max-w-[1500px] mx-auto relative flex items-center gap-2 lg:gap-3 py-3">
             <Link to="/" className="no-underline shrink-0 flex items-center gap-2">
-              <span
-                className="inline-flex h-9 w-9 items-center justify-center rounded-md text-white font-black"
-                style={{ backgroundColor: BRAND }}
-              >
-                R
-              </span>
-              <span className="text-xl font-extrabold tracking-tight text-gray-900">
-                RAINZ<span className="font-light text-gray-500">LIFESTYLE</span>
-              </span>
+              <span className="inline-flex h-9 w-9 items-center justify-center rounded-md text-white font-black" style={{ backgroundColor: BRAND }}>R</span>
+              <span className="text-xl font-extrabold tracking-tight text-gray-900">RAINZ<span className="font-light text-gray-500">LIFESTYLE</span></span>
             </Link>
 
-            {/* ===== Desktop categories with full-width mega-menus ===== */}
+            {/* Desktop categories with mega-menus */}
             <ul className="hidden xl:flex items-stretch shrink-0">
               {categories.map((cat) => {
-                const isActive = currentSlug === slugify(cat.name);
+                const isActive = currentSlug === catSlug(cat);
                 const hasMenu = cat.groups && cat.groups.length > 0;
                 const isOpen = activeMenu === cat.name;
                 return (
-                  <li
-                    key={cat.name}
-                    className="flex"
-                    onMouseEnter={() => (hasMenu ? openMenu(cat.name) : scheduleClose())}
-                    onMouseLeave={scheduleClose}
-                  >
-                    <button
-                      className="relative flex items-center gap-0.5 px-3 py-2 text-[13px] font-bold uppercase tracking-wide text-gray-800 hover:text-gray-900"
-                      onClick={() => goCategory(cat.name)}
-                      style={isActive || isOpen ? { color: cat.accent } : undefined}
-                    >
+                  <li key={cat.name} className="flex" onMouseEnter={() => (hasMenu ? openMenu(cat.name) : scheduleClose())} onMouseLeave={scheduleClose}>
+                    <button className="relative flex items-center gap-0.5 px-2 py-1.5 text-[12px] font-bold uppercase tracking-tight text-gray-800 hover:text-gray-900" onClick={() => goCategory(cat)} style={isActive || isOpen ? { color: cat.accent } : undefined}>
                       {cat.name}
-                      {hasMenu && <KeyboardArrowDownIcon style={{ fontSize: 16 }} />}
-                      <span
-                        className={`absolute left-2 right-2 -bottom-2 h-[3px] origin-left rounded-full transition-transform duration-200 ${
-                          isActive || isOpen ? "scale-x-100" : "scale-x-0"
-                        }`}
-                        style={{ backgroundColor: cat.accent }}
-                      />
+                      {hasMenu && <KeyboardArrowDownIcon style={{ fontSize: 14 }} />}
+                      <span className={`absolute left-1 right-1 -bottom-1.5 h-[3px] origin-left rounded-full transition-transform duration-200 ${isActive || isOpen ? "scale-x-100" : "scale-x-0"}`} style={{ backgroundColor: cat.accent }} />
                     </button>
 
                     {hasMenu && isOpen && (
-                      <div
-                        className="absolute left-0 right-0 top-full z-50 pt-3 -mt-3"
-                        onMouseEnter={() => openMenu(cat.name)}
-                        onMouseLeave={scheduleClose}
-                      >
-                        <div
-                          className="bg-white shadow-xl border-t-[3px] rounded-b-lg overflow-hidden"
-                          style={{ borderTopColor: cat.accent }}
-                        >
+                      <div className="absolute left-0 right-0 top-full z-50 pt-3 -mt-3" onMouseEnter={() => openMenu(cat.name)} onMouseLeave={scheduleClose}>
+                        <div className="bg-white shadow-xl border-t-[3px] rounded-b-lg overflow-hidden" style={{ borderTopColor: cat.accent }}>
                           <div className="flex px-8 py-6 gap-10">
-                            {/* group columns */}
                             <div className="flex-1 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-8 gap-y-1">
                               {cat.groups.map((group) => (
                                 <div key={group.title}>
-                                  <h4
-                                    className="text-xs font-bold uppercase tracking-widest mb-3"
-                                    style={{ color: cat.accent }}
-                                  >
-                                    {group.title}
-                                  </h4>
+                                  <h4 className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: cat.accent }}>{group.title}</h4>
                                   <ul className="space-y-1.5">
                                     {group.items.map((item) => (
                                       <li key={item}>
-                                        <button
-                                          className="text-sm text-gray-600 hover:text-gray-900 transition-all hover:translate-x-1"
-                                          onClick={() => goSub(cat.name, item)}
-                                        >
-                                          {item}
-                                        </button>
+                                        <button className="text-sm text-gray-600 hover:text-gray-900 transition-all hover:translate-x-1" onClick={() => goSub(cat, item)}>{item}</button>
                                       </li>
                                     ))}
                                   </ul>
@@ -226,26 +159,13 @@ const Navbar = forwardRef(
                               ))}
                             </div>
 
-                            {/* optional New Arrivals preview (renders only if featured passed) */}
                             {cat.featured?.length > 0 && (
                               <div className="w-[320px] border-l border-gray-100 pl-8">
-                                <h4 className="text-xs font-bold uppercase tracking-widest mb-3 text-gray-500">
-                                  New Arrivals
-                                </h4>
+                                <h4 className="text-xs font-bold uppercase tracking-widest mb-3 text-gray-500">New Arrivals</h4>
                                 <div className="grid grid-cols-2 gap-3">
                                   {cat.featured.slice(0, 4).map((p) => (
-                                    <button
-                                      key={p.slug}
-                                      onClick={() => go(`/product/${p.slug}`)}
-                                      className="text-left group/card"
-                                    >
-                                      <div className="aspect-square bg-gray-100 rounded overflow-hidden">
-                                        <img
-                                          src={p.image}
-                                          alt={p.name}
-                                          className="h-full w-full object-cover group-hover/card:scale-105 transition"
-                                        />
-                                      </div>
+                                    <button key={p.slug} onClick={() => go(`/product/${p.slug}`)} className="text-left group/card">
+                                      <div className="aspect-square bg-gray-100 rounded overflow-hidden"><img src={p.image} alt={p.name} className="h-full w-full object-cover group-hover/card:scale-105 transition" /></div>
                                       <p className="mt-1 text-xs text-gray-700 truncate">{p.name}</p>
                                       {p.price && <p className="text-xs font-semibold">৳{p.price}</p>}
                                     </button>
@@ -256,13 +176,7 @@ const Navbar = forwardRef(
                           </div>
 
                           <div className="border-t border-gray-100 bg-gray-50 px-8 py-3">
-                            <button
-                              className="text-sm font-semibold"
-                              style={{ color: cat.accent }}
-                              onClick={() => goCategory(cat.name)}
-                            >
-                              View All {cat.name} &rarr;
-                            </button>
+                            <button className="text-sm font-semibold" style={{ color: cat.accent }} onClick={() => goCategory(cat)}>View All {cat.name} &rarr;</button>
                           </div>
                         </div>
                       </div>
@@ -273,34 +187,18 @@ const Navbar = forwardRef(
             </ul>
 
             {/* Search */}
-            <form
-              onSubmit={handleSearch}
-              className="hidden md:flex flex-1 min-w-0 items-center bg-gray-100 rounded-full px-4 py-2.5 focus-within:ring-2"
-              style={{ "--tw-ring-color": BRAND }}
-            >
-              <input
-                type="text"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search for products, brands and more"
-                className="flex-1 min-w-0 bg-transparent text-sm text-gray-700 placeholder-gray-400 outline-none"
-              />
-              <button type="submit" aria-label="Search" className="text-gray-400">
-                <SearchIcon fontSize="small" />
-              </button>
+            <form onSubmit={handleSearch} className="hidden md:flex flex-1 min-w-[220px] items-center bg-gray-100 rounded-full px-4 py-2 focus-within:ring-2" style={{ "--tw-ring-color": BRAND }}>
+              <input type="text" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search for products, brands and more" className="flex-1 min-w-0 bg-transparent text-sm text-gray-700 placeholder-gray-400 outline-none" />
+              <button type="submit" aria-label="Search" className="text-gray-400"><SearchIcon fontSize="small" /></button>
             </form>
 
             {/* Actions */}
-            <div className="hidden md:flex items-center gap-5 lg:gap-6 shrink-0">
-              <button
-                onClick={() => go("/stores")}
-                className="flex flex-col items-center gap-0.5 text-gray-700 hover:text-rose-600 transition-colors"
-              >
+            <div className="hidden md:flex items-center gap-3.5 lg:gap-4 shrink-0">
+              <button onClick={() => go("/stores")} className="flex flex-col items-center gap-0.5 text-gray-700 hover:text-rose-600 transition-colors">
                 <LocationOnOutlinedIcon fontSize="medium" />
                 <span className="text-[11px] font-medium">Stores</span>
               </button>
 
-              {/* Profile (auth-aware dropdown) */}
               <div className="relative group">
                 <button className="flex flex-col items-center gap-0.5 text-gray-700 group-hover:text-rose-600 transition-colors">
                   <PersonOutlineOutlinedIcon fontSize="medium" />
@@ -310,20 +208,14 @@ const Navbar = forwardRef(
                   <div className="bg-white shadow-xl border border-gray-100 rounded-md overflow-hidden">
                     <div className="px-4 py-3">
                       {user ? (
-                        <p className="text-sm">
-                          Hi, <span className="font-bold">{user.name}</span>
-                        </p>
+                        <p className="text-sm">Hi, <span className="font-bold">{user.name}</span></p>
                       ) : (
                         <>
                           <p className="text-sm text-gray-600">Welcome</p>
                           <div className="mt-1 flex items-center gap-2 text-sm font-bold">
-                            <button onClick={() => go("/login")} style={{ color: BRAND }}>
-                              Sign in
-                            </button>
+                            <button onClick={() => go("/login")} style={{ color: BRAND }}>Sign in</button>
                             <span className="text-gray-300">/</span>
-                            <button onClick={() => go("/register")} style={{ color: BRAND }}>
-                              Sign up
-                            </button>
+                            <button onClick={() => go("/register")} style={{ color: BRAND }}>Sign up</button>
                           </div>
                         </>
                       )}
@@ -332,72 +224,41 @@ const Navbar = forwardRef(
                       <ProfileItem icon={Inventory2OutlinedIcon} label="My Orders" onClick={() => go("/account/orders")} />
                       <ProfileItem icon={LocalShippingOutlinedIcon} label="Track Order" onClick={() => go("/track-order")} />
                       <ProfileItem icon={PersonOutlineOutlinedIcon} label="My Account" onClick={() => go("/account")} />
-                      {user && (
-                        <ProfileItem icon={LogoutOutlinedIcon} label="Logout" onClick={() => { onLogout(); }} />
-                      )}
+                      {user && <ProfileItem icon={LogoutOutlinedIcon} label="Logout" onClick={() => { onLogout(); }} />}
                     </div>
                   </div>
                 </div>
               </div>
 
-              <button
-                onClick={() => go("/wishlist")}
-                className="relative flex flex-col items-center gap-0.5 text-gray-700 hover:text-rose-600 transition-colors"
-              >
-                <span className="relative">
-                  <FavoriteBorderOutlinedIcon fontSize="medium" />
-                  <Badge count={wishlistCount} />
-                </span>
+              <button onClick={() => go("/wishlist")} className="relative flex flex-col items-center gap-0.5 text-gray-700 hover:text-rose-600 transition-colors">
+                <span className="relative"><FavoriteBorderOutlinedIcon fontSize="medium" /><Badge count={wishlistCount} /></span>
                 <span className="text-[11px] font-medium">Wishlist</span>
               </button>
 
-              <button
-                onClick={() => go("/cart")}
-                className="relative flex flex-col items-center gap-0.5 text-gray-700 hover:text-rose-600 transition-colors"
-              >
-                <span className="relative">
-                  <ShoppingBagOutlinedIcon fontSize="medium" />
-                  <Badge count={cartCount} />
-                </span>
+              <button onClick={() => go("/cart")} className="relative flex flex-col items-center gap-0.5 text-gray-700 hover:text-rose-600 transition-colors">
+                <span className="relative"><ShoppingBagOutlinedIcon fontSize="medium" /><Badge count={cartCount} /></span>
                 <span className="text-[11px] font-medium">Bag</span>
               </button>
             </div>
 
             {/* Mobile: bag + hamburger */}
             <div className="flex items-center gap-2 ml-auto xl:hidden">
-              <button onClick={() => go("/cart")} className="relative p-2 text-gray-700">
-                <ShoppingBagOutlinedIcon />
-                <Badge count={cartCount} />
-              </button>
-              <button
-                className="text-white p-2 rounded-md"
-                style={{ backgroundColor: BRAND }}
-                onClick={() => { setMenuOpen(!menuOpen); setOpenDropdown(null); }}
-              >
+              <button onClick={() => go("/cart")} className="relative p-2 text-gray-700"><ShoppingBagOutlinedIcon /><Badge count={cartCount} /></button>
+              <button className="text-white p-2 rounded-md" style={{ backgroundColor: BRAND }} onClick={() => { setMenuOpen(!menuOpen); setOpenDropdown(null); }}>
                 {menuOpen ? <CloseIcon /> : <MenuIcon />}
               </button>
             </div>
           </div>
         </nav>
 
-        {/* ===== Mobile drawer (OUTSIDE <nav> so the nav's transform doesn't trap the fixed overlay) ===== */}
+        {/* Mobile drawer */}
         {menuOpen && (
           <div className="fixed inset-0 bg-white flex flex-col px-4 pt-16 pb-10 xl:hidden z-[100] overflow-y-auto">
-            <button className="absolute top-4 right-4 text-gray-700" onClick={() => setMenuOpen(false)}>
-              <CloseIcon />
-            </button>
+            <button className="absolute top-4 right-4 text-gray-700" onClick={() => setMenuOpen(false)}><CloseIcon /></button>
 
             <form onSubmit={handleSearch} className="flex items-center bg-gray-100 rounded-full px-4 py-3 mb-4">
-              <input
-                type="text"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search"
-                className="flex-1 bg-transparent text-sm text-gray-700 placeholder-gray-400 outline-none"
-              />
-              <button type="submit" aria-label="Search" className="text-gray-400">
-                <SearchIcon fontSize="small" />
-              </button>
+              <input type="text" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search" className="flex-1 bg-transparent text-sm text-gray-700 placeholder-gray-400 outline-none" />
+              <button type="submit" aria-label="Search" className="text-gray-400"><SearchIcon fontSize="small" /></button>
             </form>
 
             <div className="flex justify-around mb-4 border-b border-gray-200 pb-4">
@@ -411,11 +272,7 @@ const Navbar = forwardRef(
               const hasMenu = cat.groups && cat.groups.length > 0;
               return (
                 <div key={cat.name} className="w-full">
-                  <button
-                    className="text-gray-800 text-base font-semibold py-3 w-full text-left border-b border-gray-100 flex justify-between items-center"
-                    onClick={() => (hasMenu ? setOpenDropdown(openDropdown === cat.name ? null : cat.name) : goCategory(cat.name))}
-                    style={openDropdown === cat.name ? { color: cat.accent } : undefined}
-                  >
+                  <button className="text-gray-800 text-base font-semibold py-3 w-full text-left border-b border-gray-100 flex justify-between items-center" onClick={() => (hasMenu ? setOpenDropdown(openDropdown === cat.name ? null : cat.name) : goCategory(cat))} style={openDropdown === cat.name ? { color: cat.accent } : undefined}>
                     {cat.name}
                     {hasMenu && <span className="ml-4 text-gray-400">{openDropdown === cat.name ? "-" : "+"}</span>}
                   </button>
@@ -423,27 +280,13 @@ const Navbar = forwardRef(
                     <div className="bg-gray-50 py-2">
                       {cat.groups.map((group) => (
                         <div key={group.title} className="px-4 py-1">
-                          <p className="text-[11px] font-bold uppercase tracking-widest mb-1" style={{ color: cat.accent }}>
-                            {group.title}
-                          </p>
+                          <p className="text-[11px] font-bold uppercase tracking-widest mb-1" style={{ color: cat.accent }}>{group.title}</p>
                           {group.items.map((item) => (
-                            <button
-                              key={item}
-                              className="text-gray-600 text-sm py-1.5 block w-full text-left"
-                              onClick={() => goSub(cat.name, item)}
-                            >
-                              {item}
-                            </button>
+                            <button key={item} className="text-gray-600 text-sm py-1.5 block w-full text-left" onClick={() => goSub(cat, item)}>{item}</button>
                           ))}
                         </div>
                       ))}
-                      <button
-                        className="text-sm font-semibold px-4 py-2 block w-full text-left"
-                        style={{ color: cat.accent }}
-                        onClick={() => goCategory(cat.name)}
-                      >
-                        View All {cat.name} &rarr;
-                      </button>
+                      <button className="text-sm font-semibold px-4 py-2 block w-full text-left" style={{ color: cat.accent }} onClick={() => goCategory(cat)}>View All {cat.name} &rarr;</button>
                     </div>
                   )}
                 </div>
@@ -471,10 +314,7 @@ const Navbar = forwardRef(
 
 function ProfileItem({ icon: Icon, label, onClick }) {
   return (
-    <button
-      onClick={onClick}
-      className="flex w-full items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-rose-600 transition-colors"
-    >
+    <button onClick={onClick} className="flex w-full items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-rose-600 transition-colors">
       <Icon fontSize="small" className="text-gray-400" />
       {label}
     </button>
@@ -484,10 +324,7 @@ function ProfileItem({ icon: Icon, label, onClick }) {
 function MobileAction({ icon: Icon, label, onClick, badge = 0, BadgeCmp }) {
   return (
     <button onClick={onClick} className="relative flex flex-col items-center gap-0.5 text-gray-700">
-      <span className="relative">
-        <Icon fontSize="medium" />
-        {BadgeCmp && <BadgeCmp count={badge} />}
-      </span>
+      <span className="relative"><Icon fontSize="medium" />{BadgeCmp && <BadgeCmp count={badge} />}</span>
       <span className="text-[11px] font-medium">{label}</span>
     </button>
   );

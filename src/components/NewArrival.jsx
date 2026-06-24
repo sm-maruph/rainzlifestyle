@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
-import { getNewArrivals } from "../api/mockApi"; // adjust path if your api lives elsewhere
+import { getNewArrivals } from "../api"; // adjust path if your api lives elsewhere
 
 const BRAND = "#E11D48"; // RAINZLIFESTYLE primary (keep in sync with Navbar / tailwind.config)
 const BANNER_BG = "#ebebeb"; // cream banner
