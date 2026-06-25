@@ -33,6 +33,8 @@ import AdminSale from "./components/admin/AdminSale";
 import AdminCustomers from "./components/admin/AdminCustomers";
 import AdminSettings from "./components/admin/AdminSettings";
 import RequireAdmin from "./components/admin/RequireAdmin";
+import AdminCollections from "./components/admin/AdminCollections";
+
 
 import Partners from "./components/Partner";
 import BottomHeader from "./components/BottomHeader";
@@ -111,6 +113,7 @@ function App() {
               <Route path="categories" element={<AdminCategories />} />
               <Route path="orders" element={<AdminOrders />} />
               <Route path="discounts" element={<AdminDiscounts />} />
+              <Route path="collections" element={<AdminCollections />} />
               <Route path="sale" element={<AdminSale />} />
               <Route path="customers" element={<AdminCustomers />} />
               <Route path="settings" element={<AdminSettings />} />

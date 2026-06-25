@@ -25,8 +25,8 @@ function BannerCard({ banner, onClick }) {
       </div>
       <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
       <div className="absolute bottom-4 left-5 text-white">
-        {banner.subtitle && (
-          <p className="text-[11px] uppercase tracking-widest opacity-80">{banner.subtitle}</p>
+        {(banner.caption || banner.subtitle) && (
+          <p className="text-[11px] uppercase tracking-widest opacity-80">{banner.caption || banner.subtitle}</p>
         )}
         <h3 className="text-xl md:text-2xl font-extrabold leading-tight">{banner.title}</h3>
         <span className="mt-1 inline-block text-sm font-semibold opacity-0 group-hover:opacity-100 transition-opacity">
@@ -46,15 +46,15 @@ function CollectionCard({ item, onClick }) {
       <div className="aspect-square bg-gray-100">
         <img
           src={item.image}
-          alt={item.label}
+          alt={item.title || item.label}
           loading="lazy"
           className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-          onError={(e) => fallback(e, item.label)}
+          onError={(e) => fallback(e, item.title || item.label)}
         />
       </div>
       <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/5 to-transparent" />
       <h3 className="absolute inset-x-0 bottom-4 text-center text-white text-base md:text-lg font-bold tracking-wide drop-shadow">
-        {item.label}
+        {item.title || item.label}
       </h3>
     </button>
   );

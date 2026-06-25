@@ -5,6 +5,7 @@ import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import CloseIcon from "@mui/icons-material/Close";
 import CreateNewFolderOutlinedIcon from "@mui/icons-material/CreateNewFolderOutlined";
+import AddPhotoAlternateOutlinedIcon from "@mui/icons-material/AddPhotoAlternateOutlined";
 import {
   getCategoriesRaw,
   createCategory, updateCategory, deleteCategory,
@@ -48,12 +49,12 @@ export default function AdminCategories() {
       if (modal.mode === "add") {
         const slug = slugify(name);
         if (cats.some((c) => c.slug === slug)) { setError("A category with that name already exists."); return; }
-        const created = await createCategory({ name, slug, accent: modal.accent, is_active: true, position: cats.length });
-        setCats((list) => [...list, { ...created, groups: [], category_groups: [] }]);
+        const created = await createCategory({ name, slug, accent: modal.accent, is_active: true, position: cats.length }, modal.file);
+        setCats((list) => [...list, { ...created, image: created.image || null, groups: [], category_groups: [] }]);
         setSelectedId(created.id);
       } else {
-        const updated = await updateCategory(modal.id, { name, accent: modal.accent });
-        patchCat(modal.id, { name: updated.name, accent: updated.accent });
+        const updated = await updateCategory(modal.id, { name, accent: modal.accent }, modal.file);
+        patchCat(modal.id, { name: updated.name, accent: updated.accent, image: updated.image ?? undefined });
       }
       setModal(null);
     });
@@ -163,7 +164,7 @@ export default function AdminCategories() {
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <button onClick={() => setModal({ mode: "edit", id: sel.id, name: sel.name, accent: sel.accent, slug: sel.slug })} className="inline-flex items-center gap-1 rounded-lg border border-gray-200 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"><EditOutlinedIcon style={{ fontSize: 17 }} /> Edit</button>
+                  <button onClick={() => setModal({ mode: "edit", id: sel.id, name: sel.name, accent: sel.accent, slug: sel.slug, image: sel.image })} className="inline-flex items-center gap-1 rounded-lg border border-gray-200 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"><EditOutlinedIcon style={{ fontSize: 17 }} /> Edit</button>
                   <button onClick={() => removeCategory(sel)} className="inline-flex items-center gap-1 rounded-lg border border-gray-200 px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50"><DeleteOutlineIcon style={{ fontSize: 17 }} /> Delete</button>
                 </div>
               </div>
@@ -217,6 +218,27 @@ export default function AdminCategories() {
                 <input autoFocus value={modal.name} onChange={(e) => setModal((m) => ({ ...m, name: e.target.value }))} onKeyDown={(e) => { if (e.key === "Enter") saveModal(); }} className="mt-1 w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm outline-none focus:border-gray-400" placeholder="e.g. Footwear" />
                 {modal.name && modal.mode === "add" && <span className="text-xs text-gray-400 mt-1 block">URL: /{slugify(modal.name)}</span>}
               </label>
+              <div>
+                <span className="text-xs font-medium text-gray-500">Category image</span>
+                <div className="mt-2 flex items-center gap-3">
+                  <div className="h-20 w-20 rounded-lg overflow-hidden border border-gray-200 bg-gray-50 flex items-center justify-center">
+                    {modal.preview || modal.image ? (
+                      <img src={modal.preview || modal.image} alt="category" className="h-full w-full object-cover" />
+                    ) : (
+                      <AddPhotoAlternateOutlinedIcon style={{ color: "#9ca3af" }} />
+                    )}
+                  </div>
+                  <label className="cursor-pointer rounded-lg border border-gray-200 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">
+                    {modal.image || modal.preview ? "Change image" : "Upload image"}
+                    <input type="file" accept="image/*" className="hidden" onChange={(e) => {
+                      const f = e.target.files?.[0];
+                      if (f) setModal((m) => ({ ...m, file: f, preview: URL.createObjectURL(f) }));
+                      e.target.value = "";
+                    }} />
+                  </label>
+                </div>
+              </div>
+
               <div>
                 <span className="text-xs font-medium text-gray-500">Accent color</span>
                 <div className="mt-2 flex items-center gap-2 flex-wrap">

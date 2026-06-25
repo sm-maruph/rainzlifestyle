@@ -2,8 +2,8 @@ import { api } from "./apiClient";
 import { mapProduct } from "./mappers";
 
 // Public reads
-export async function getProducts({ category, search, sort = "newest", page = 1, pageSize = 24 } = {}) {
-  const data = await api.get("/products", { params: { category, search, sort, page, pageSize } });
+export async function getProducts({ category, subcategory, search, sort = "newest", page = 1, pageSize = 24 } = {}) {
+  const data = await api.get("/products", { params: { category, subcategory, search, sort, page, pageSize } });
   return { items: (data.items || []).map(mapProduct), total: data.total, page: data.page };
 }
 export async function getProductBySlug(slug) {

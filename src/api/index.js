@@ -7,5 +7,6 @@ export * from "./auth";
 export * from "./cart";
 export * from "./wishlist";
 export * from "./content";
+export * from "./customers";
 export { api } from "./apiClient";
 export { supabase } from "./supabaseClient";

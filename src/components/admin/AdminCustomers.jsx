@@ -1,5 +1,5 @@
-// src/components/admin/AdminCustomers.jsx
-import { useMemo, useState } from "react";
+// src/components/admin/AdminCustomers.jsx — wired to the real API
+import { useEffect, useMemo, useState } from "react";
 import SearchIcon from "@mui/icons-material/Search";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import CloseIcon from "@mui/icons-material/Close";
@@ -9,87 +9,65 @@ import CallOutlinedIcon from "@mui/icons-material/CallOutlined";
 import PeopleAltOutlinedIcon from "@mui/icons-material/PeopleAltOutlined";
 import WorkspacePremiumOutlinedIcon from "@mui/icons-material/WorkspacePremiumOutlined";
 import PaymentsOutlinedIcon from "@mui/icons-material/PaymentsOutlined";
+import RefreshIcon from "@mui/icons-material/Refresh";
+import { getCustomers } from "../../api";
 
 const BRAND = "#E11D48";
-const taka = (n) => `\u09F3${Number(n).toLocaleString("en-BD")}`;
-const ORDER_STATUSES = ["Delivered", "Delivered", "Shipped", "Processing", "Cancelled"];
+const taka = (n) => `\u09F3${Number(n || 0).toLocaleString("en-BD")}`;
 const ORDER_STATUS_STYLE = {
   Delivered: "bg-green-50 text-green-700", Shipped: "bg-blue-50 text-blue-700",
   Processing: "bg-violet-50 text-violet-700", Pending: "bg-amber-50 text-amber-700", Cancelled: "bg-red-50 text-red-600",
 };
 const CUST_STATUS_STYLE = { VIP: "bg-amber-50 text-amber-700", Active: "bg-green-50 text-green-700", New: "bg-blue-50 text-blue-700" };
-const fmtDate = (d) => d.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
-
-const BASE = [
-  { name: "Ayesha Rahman", email: "ayesha.r@gmail.com", phone: "01711-000001", city: "Dhaka", address: "House 12, Road 5, Mirpur, Dhaka", joined: "2025-02-14" },
-  { name: "Tanvir Hasan", email: "tanvir.h@gmail.com", phone: "01711-000002", city: "Chittagong", address: "Agrabad C/A, Chittagong", joined: "2025-05-02" },
-  { name: "Nusrat Jahan", email: "nusrat.j@gmail.com", phone: "01711-000003", city: "Dhaka", address: "Flat 4B, Dhanmondi 27, Dhaka", joined: "2024-11-20" },
-  { name: "Rakib Khan", email: "rakib.k@gmail.com", phone: "01711-000004", city: "Sylhet", address: "Zindabazar, Sylhet", joined: "2026-06-01" },
-  { name: "Sadia Islam", email: "sadia.i@gmail.com", phone: "01711-000005", city: "Dhaka", address: "Bashundhara R/A, Block C, Dhaka", joined: "2025-08-09" },
-  { name: "Imran Hossain", email: "imran.h@gmail.com", phone: "01711-000006", city: "Khulna", address: "KDA Avenue, Khulna", joined: "2025-01-30" },
-  { name: "Farhana Akter", email: "farhana.a@gmail.com", phone: "01711-000007", city: "Dhaka", address: "Uttara Sector 7, Dhaka", joined: "2024-09-12" },
-  { name: "Mahin Chowdhury", email: "mahin.c@gmail.com", phone: "01711-000008", city: "Chittagong", address: "Khulshi, Chittagong", joined: "2026-06-10" },
-  { name: "Sabrina Karim", email: "sabrina.k@gmail.com", phone: "01711-000009", city: "Dhaka", address: "Gulshan 2, Dhaka", joined: "2025-03-22" },
-  { name: "Naimur Rahman", email: "naimur.r@gmail.com", phone: "01711-000010", city: "Rajshahi", address: "Shaheb Bazar, Rajshahi", joined: "2025-07-18" },
-];
-
-function genOrders(seed) {
-  const count = 2 + (seed % 7);
-  return Array.from({ length: count }).map((_, i) => {
-    const total = 800 + ((seed * 31 + i * 97) % 5200);
-    const date = new Date();
-    date.setDate(date.getDate() - (i * 18 + (seed % 20)));
-    return {
-      id: "RZ" + (470000 + seed * 13 + i),
-      total, date,
-      status: ORDER_STATUSES[(seed + i) % ORDER_STATUSES.length],
-      items: 1 + ((seed + i) % 3),
-    };
-  });
-}
-
-const CUSTOMERS = BASE.map((b, idx) => {
-  const orders = genOrders(idx + 1);
-  const paid = orders.filter((o) => o.status !== "Cancelled");
-  const totalSpent = paid.reduce((s, o) => s + o.total, 0);
-  const ordersCount = orders.length;
-  const lastOrder = orders.reduce((a, o) => (o.date > a ? o.date : a), orders[0].date);
-  const avg = paid.length ? Math.round(totalSpent / paid.length) : 0;
-  const status = totalSpent > 15000 ? "VIP" : ordersCount <= 2 ? "New" : "Active";
-  return { id: idx + 1, ...b, joinedDate: new Date(b.joined), orders, ordersCount, totalSpent, lastOrder, avg, status };
-});
+const fmtDate = (d) => (d ? new Date(d).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" }) : "—");
 
 export default function AdminCustomers() {
+  const [customers, setCustomers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState("spend");
   const [openId, setOpenId] = useState(null);
 
+  const load = () => {
+    setLoading(true);
+    getCustomers()
+      .then(setCustomers)
+      .catch((e) => setError(e.message))
+      .finally(() => setLoading(false));
+  };
+  useEffect(() => { load(); }, []);
+
   const summary = useMemo(() => ({
-    total: CUSTOMERS.length,
-    vip: CUSTOMERS.filter((c) => c.status === "VIP").length,
-    neu: CUSTOMERS.filter((c) => c.status === "New").length,
-    revenue: CUSTOMERS.reduce((s, c) => s + c.totalSpent, 0),
-  }), []);
+    total: customers.length,
+    vip: customers.filter((c) => c.status === "VIP").length,
+    neu: customers.filter((c) => c.status === "New").length,
+    revenue: customers.reduce((s, c) => s + c.totalSpent, 0),
+  }), [customers]);
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
-    let list = CUSTOMERS.filter((c) => !q || `${c.name} ${c.email} ${c.phone}`.toLowerCase().includes(q));
+    let list = customers.filter((c) => !q || `${c.name} ${c.email} ${c.phone}`.toLowerCase().includes(q));
     if (sort === "spend") list = [...list].sort((a, b) => b.totalSpent - a.totalSpent);
     else if (sort === "orders") list = [...list].sort((a, b) => b.ordersCount - a.ordersCount);
-    else if (sort === "recent") list = [...list].sort((a, b) => b.lastOrder - a.lastOrder);
+    else if (sort === "recent") list = [...list].sort((a, b) => (b.lastOrderDate?.getTime() || 0) - (a.lastOrderDate?.getTime() || 0));
     else if (sort === "name") list = [...list].sort((a, b) => a.name.localeCompare(b.name));
     return list;
-  }, [search, sort]);
+  }, [customers, search, sort]);
 
-  const open = CUSTOMERS.find((c) => c.id === openId) || null;
+  const open = customers.find((c) => c.id === openId) || null;
 
   return (
     <div className="space-y-5">
-      {/* Header */}
-      <div>
-        <h2 className="text-xl sm:text-2xl font-extrabold text-gray-900">Customers</h2>
-        <p className="text-sm text-gray-500">{CUSTOMERS.length} customers</p>
+      <div className="flex items-center justify-between flex-wrap gap-3">
+        <div>
+          <h2 className="text-xl sm:text-2xl font-extrabold text-gray-900">Customers</h2>
+          <p className="text-sm text-gray-500">{loading ? "Loading…" : `${customers.length} customers`}</p>
+        </div>
+        <button onClick={load} className="p-2.5 rounded-lg border border-gray-200 text-gray-500 hover:bg-gray-50" title="Refresh"><RefreshIcon style={{ fontSize: 18 }} /></button>
       </div>
+
+      {error && <div className="rounded-lg bg-red-50 text-red-700 text-sm px-4 py-2 flex items-center justify-between"><span>{error}</span><button onClick={() => setError("")}><CloseIcon style={{ fontSize: 16 }} /></button></div>}
 
       {/* Summary */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
@@ -130,25 +108,29 @@ export default function AdminCustomers() {
               </tr>
             </thead>
             <tbody>
-              {filtered.length === 0 ? (
+              {loading ? (
+                Array.from({ length: 6 }).map((_, i) => (
+                  <tr key={i} className="border-b border-gray-50"><td className="py-3 px-4" colSpan={8}><div className="h-9 bg-gray-100 rounded animate-pulse" /></td></tr>
+                ))
+              ) : filtered.length === 0 ? (
                 <tr><td colSpan={8} className="py-12 text-center text-gray-400">No customers found.</td></tr>
               ) : filtered.map((c) => (
                 <tr key={c.id} className="border-b border-gray-50 last:border-0 hover:bg-gray-50/50">
                   <td className="py-3 px-4">
                     <div className="flex items-center gap-3">
-                      <span className="h-9 w-9 rounded-full flex items-center justify-center text-sm font-bold text-white shrink-0" style={{ backgroundColor: BRAND }}>{c.name[0]}</span>
+                      <span className="h-9 w-9 rounded-full flex items-center justify-center text-sm font-bold text-white shrink-0" style={{ backgroundColor: BRAND }}>{(c.name || "?")[0].toUpperCase()}</span>
                       <div className="min-w-0">
                         <p className="font-semibold text-gray-800 truncate">{c.name}</p>
                         <p className="text-xs text-gray-400 truncate">{c.email}</p>
                       </div>
                     </div>
                   </td>
-                  <td className="py-3 px-4 text-gray-600 whitespace-nowrap">{c.phone}</td>
-                  <td className="py-3 px-4 text-gray-600">{c.city}</td>
+                  <td className="py-3 px-4 text-gray-600 whitespace-nowrap">{c.phone || "—"}</td>
+                  <td className="py-3 px-4 text-gray-600">{c.city || "—"}</td>
                   <td className="py-3 px-4 text-gray-600">{c.ordersCount}</td>
                   <td className="py-3 px-4 font-semibold text-gray-800">{taka(c.totalSpent)}</td>
-                  <td className="py-3 px-4 text-gray-500 whitespace-nowrap">{fmtDate(c.lastOrder)}</td>
-                  <td className="py-3 px-4"><span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${CUST_STATUS_STYLE[c.status]}`}>{c.status}</span></td>
+                  <td className="py-3 px-4 text-gray-500 whitespace-nowrap">{fmtDate(c.lastOrderDate)}</td>
+                  <td className="py-3 px-4"><span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${CUST_STATUS_STYLE[c.status] || "bg-gray-100 text-gray-600"}`}>{c.status}</span></td>
                   <td className="py-3 px-4 text-right">
                     <button onClick={() => setOpenId(c.id)} className="p-1.5 rounded hover:bg-gray-100 text-gray-500 hover:text-gray-900" title="View"><VisibilityOutlinedIcon style={{ fontSize: 19 }} /></button>
                   </td>
@@ -159,51 +141,51 @@ export default function AdminCustomers() {
         </div>
       </div>
 
-      {/* ===== Detail modal ===== */}
+      {/* Detail modal */}
       {open && (
         <div className="fixed inset-0 z-50 flex items-start sm:items-center justify-center p-3 sm:p-6 bg-black/40 overflow-y-auto">
           <div className="bg-white rounded-2xl w-full max-w-2xl my-4 shadow-xl">
             <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100 sticky top-0 bg-white rounded-t-2xl">
               <div className="flex items-center gap-3">
-                <span className="h-11 w-11 rounded-full flex items-center justify-center text-lg font-bold text-white" style={{ backgroundColor: BRAND }}>{open.name[0]}</span>
+                <span className="h-11 w-11 rounded-full flex items-center justify-center text-lg font-bold text-white" style={{ backgroundColor: BRAND }}>{(open.name || "?")[0].toUpperCase()}</span>
                 <div>
                   <h3 className="text-lg font-bold text-gray-900">{open.name}</h3>
-                  <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${CUST_STATUS_STYLE[open.status]}`}>{open.status} customer</span>
+                  <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${CUST_STATUS_STYLE[open.status] || "bg-gray-100 text-gray-600"}`}>{open.status} customer</span>
                 </div>
               </div>
               <button onClick={() => setOpenId(null)} className="text-gray-400 hover:text-gray-700"><CloseIcon /></button>
             </div>
 
             <div className="p-5 space-y-5">
-              {/* Contact */}
               <div className="grid sm:grid-cols-2 gap-3 text-sm">
-                <p className="flex items-center gap-2 text-gray-600"><MailOutlineIcon style={{ fontSize: 17, color: "#9ca3af" }} /> {open.email}</p>
-                <p className="flex items-center gap-2 text-gray-600"><CallOutlinedIcon style={{ fontSize: 17, color: "#9ca3af" }} /> {open.phone}</p>
-                <p className="flex items-start gap-2 text-gray-600 sm:col-span-2"><LocationOnOutlinedIcon style={{ fontSize: 17, color: "#9ca3af" }} /> {open.address}</p>
+                <p className="flex items-center gap-2 text-gray-600"><MailOutlineIcon style={{ fontSize: 17, color: "#9ca3af" }} /> {open.email || "—"}</p>
+                <p className="flex items-center gap-2 text-gray-600"><CallOutlinedIcon style={{ fontSize: 17, color: "#9ca3af" }} /> {open.phone || "—"}</p>
+                <p className="flex items-start gap-2 text-gray-600 sm:col-span-2"><LocationOnOutlinedIcon style={{ fontSize: 17, color: "#9ca3af" }} /> {open.address || "—"}{open.city ? `, ${open.city}` : ""}</p>
                 <p className="text-gray-400 text-xs sm:col-span-2">Customer since {fmtDate(open.joinedDate)}</p>
               </div>
 
-              {/* Stat tiles */}
               <div className="grid grid-cols-3 gap-3">
                 <Tile label="Orders" value={open.ordersCount} />
                 <Tile label="Total spent" value={taka(open.totalSpent)} />
                 <Tile label="Avg order" value={taka(open.avg)} />
               </div>
 
-              {/* Order history */}
               <div>
                 <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">Order history</p>
-                <div className="rounded-lg border border-gray-100 divide-y divide-gray-50">
-                  {open.orders.map((o) => (
-                    <div key={o.id} className="flex items-center gap-3 px-3 py-2.5 text-sm">
-                      <span className="font-semibold text-gray-800">#{o.id}</span>
-                      <span className="text-gray-400">{fmtDate(o.date)}</span>
-                      <span className="text-gray-400 hidden sm:inline">· {o.items} item{o.items > 1 ? "s" : ""}</span>
-                      <span className={`ml-auto text-xs font-semibold px-2 py-0.5 rounded-full ${ORDER_STATUS_STYLE[o.status]}`}>{o.status}</span>
-                      <span className="font-semibold text-gray-800 w-20 text-right">{taka(o.total)}</span>
-                    </div>
-                  ))}
-                </div>
+                {open.orders.length === 0 ? (
+                  <p className="text-sm text-gray-400">No orders yet.</p>
+                ) : (
+                  <div className="rounded-lg border border-gray-100 divide-y divide-gray-50">
+                    {open.orders.map((o) => (
+                      <div key={o.id} className="flex items-center gap-3 px-3 py-2.5 text-sm">
+                        <span className="font-semibold text-gray-800">#{o.id}</span>
+                        <span className="text-gray-400">{fmtDate(o.dateObj)}</span>
+                        <span className={`ml-auto text-xs font-semibold px-2 py-0.5 rounded-full ${ORDER_STATUS_STYLE[o.status] || "bg-gray-100 text-gray-600"}`}>{o.status}</span>
+                        <span className="font-semibold text-gray-800 w-20 text-right">{taka(o.total)}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
 
@@ -220,22 +202,14 @@ export default function AdminCustomers() {
 function Summary({ icon: Icon, label, value }) {
   return (
     <div className="rounded-xl border border-gray-100 bg-white p-4 flex items-center gap-3">
-      <span className="h-10 w-10 rounded-lg flex items-center justify-center shrink-0" style={{ backgroundColor: `${BRAND}14`, color: BRAND }}>
-        <Icon style={{ fontSize: 22 }} />
-      </span>
-      <div className="min-w-0">
-        <p className="text-lg font-extrabold text-gray-900 truncate">{value}</p>
-        <p className="text-xs text-gray-500">{label}</p>
-      </div>
+      <span className="h-10 w-10 rounded-lg flex items-center justify-center shrink-0" style={{ backgroundColor: `${BRAND}14`, color: BRAND }}><Icon style={{ fontSize: 22 }} /></span>
+      <div className="min-w-0"><p className="text-lg font-extrabold text-gray-900 truncate">{value}</p><p className="text-xs text-gray-500">{label}</p></div>
     </div>
   );
 }
 
 function Tile({ label, value }) {
   return (
-    <div className="rounded-lg bg-gray-50 p-3 text-center">
-      <p className="text-base font-bold text-gray-900">{value}</p>
-      <p className="text-xs text-gray-500">{label}</p>
-    </div>
+    <div className="rounded-lg bg-gray-50 p-3 text-center"><p className="text-base font-bold text-gray-900">{value}</p><p className="text-xs text-gray-500">{label}</p></div>
   );
 }

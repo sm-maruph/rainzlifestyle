@@ -16,7 +16,7 @@ export async function getCategoriesRaw() {
         title: g.title,
         subcategories: (g.subcategories || []).slice().sort(byPos).map((s) => ({ id: s.id, name: s.name, slug: s.slug })),
       }));
-    return { id: c.id, name: c.name, slug: c.slug, accent: c.accent, groups, category_groups: groups };
+    return { id: c.id, name: c.name, slug: c.slug, accent: c.accent, image: c.image || null, groups, category_groups: groups };
   });
 }
 
@@ -27,13 +27,26 @@ export async function getCategories() {
     name: c.name,
     slug: c.slug,
     accent: c.accent,
+    image: c.image || null,
     groups: c.groups.map((g) => ({ title: g.title, items: g.subcategories.map((s) => s.name) })),
   }));
 }
 
 // Category CRUD
-export const createCategory = (body) => api.post("/categories", body);
-export const updateCategory = (id, body) => api.put(`/categories/${id}`, body);
+export function createCategory(body, file) {
+  if (file) return api.upload("/categories", toCategoryFormData(body, file), "POST");
+  return api.post("/categories", body);
+}
+export function updateCategory(id, body, file) {
+  if (file) return api.upload(`/categories/${id}`, toCategoryFormData(body, file), "PUT");
+  return api.put(`/categories/${id}`, body);
+}
+function toCategoryFormData(body, file) {
+  const fd = new FormData();
+  Object.entries(body || {}).forEach(([k, v]) => { if (v != null) fd.append(k, v); });
+  if (file) fd.append("image", file);
+  return fd;
+}
 export const deleteCategory = (id) => api.del(`/categories/${id}`);
 
 // Group CRUD
