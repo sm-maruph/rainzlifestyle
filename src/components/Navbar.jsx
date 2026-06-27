@@ -12,9 +12,10 @@ import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
 import { getCategories } from "../api";
+import { useSettings } from "../context/SettingsContext";
 
-const BRAND = "#E11D48";
-const slugify = (s) => String(s).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+
+const BRAND = "var(--brand)";const slugify = (s) => String(s).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 
 // Fallback shown only until the API responds (prevents an empty flash)
 const fallbackCategories = [
@@ -32,10 +33,11 @@ const Navbar = forwardRef(
       user = null,
       cartCount = 0,
       wishlistCount = 0,
-      onLogout = () => {},
+      onLogout = () => { },
     },
     ref
   ) => {
+    const { settings } = useSettings();
     const [menuOpen, setMenuOpen] = useState(false);
     const [showHeader, setShowHeader] = useState(true);
     const [lastScrollY, setLastScrollY] = useState(0);
@@ -55,7 +57,7 @@ const Navbar = forwardRef(
           // append the Sale link (not a DB category)
           setFetchedCats([...tree, { name: "Sale", slug: "sale", accent: "#7C3AED", groups: [] }]);
         })
-        .catch(() => {});
+        .catch(() => { });
       return () => { alive = false; };
     }, [categoriesProp]);
 
@@ -119,12 +121,31 @@ const Navbar = forwardRef(
 
     return (
       <>
-        <nav ref={ref} className="w-full bg-white fixed top-0 left-0 z-50 shadow-sm border-b border-gray-100 transition-transform duration-500 ease-in-out" style={{ transform: showHeader ? "translateY(0)" : "translateY(-100%)" }}>
+        <nav ref={ref} className="w-full fixed top-0 left-0 z-50 shadow-sm border-b border-gray-100 transition-transform duration-500 ease-in-out" style={{ backgroundColor: "var(--secondary)" }}>  {/*transform: showHeader ? "translateY(0)" : "translateY(-100%)",*/} 
           <div className="w-[94%] max-w-[1500px] mx-auto relative flex items-center gap-2 lg:gap-3 py-3">
+
             <Link to="/" className="no-underline shrink-0 flex items-center gap-2">
+              {settings.logo ? (
+                <img src={settings.logo} alt={settings.storeName} className="h-9 w-9 rounded-md object-cover" />
+              ) : (
+                <span className="inline-flex h-9 w-9 items-center justify-center rounded-md text-white font-black" style={{ backgroundColor: BRAND }}>
+                  {(settings.storeName || "R")[0]}
+                </span>
+              )}
+              <span className="text-xl font-extrabold tracking-tight text-gray-900">
+                {(() => {
+                  const name = settings.storeName || "RAINZLIFESTYLE";
+                  const i = name.toUpperCase().indexOf("LIFESTYLE");
+                  return i > 0
+                    ? <>{name.slice(0, i)}<span className="font-light text-gray-500">{name.slice(i)}</span></>
+                    : name;
+                })()}
+              </span>
+            </Link>
+            {/* <Link to="/" className="no-underline shrink-0 flex items-center gap-2">
               <span className="inline-flex h-9 w-9 items-center justify-center rounded-md text-white font-black" style={{ backgroundColor: BRAND }}>R</span>
               <span className="text-xl font-extrabold tracking-tight text-gray-900">RAINZ<span className="font-light text-gray-500">LIFESTYLE</span></span>
-            </Link>
+            </Link> */}
 
             {/* Desktop categories with mega-menus */}
             <ul className="hidden xl:flex items-stretch shrink-0">

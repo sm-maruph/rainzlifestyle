@@ -5,7 +5,7 @@ import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
 import { useAuth } from "../context/AuthContext";
 
-const BRAND = "#E11D48";
+const BRAND = "var(--brand)";
 
 export default function Register() {
   const navigate = useNavigate();

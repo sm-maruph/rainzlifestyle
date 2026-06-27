@@ -5,12 +5,18 @@ import { supabase } from "./supabaseClient";
 // so apiClient automatically attaches the token on later requests.
 export async function register({ full_name, email, password, phone }) {
   const res = await api.post("/auth/register", { full_name, email, password, phone });
-  if (res.session) await supabase.auth.setSession(res.session);
+  if (res.session) {
+    await supabase.auth.setSession(res.session);
+    await supabase.auth.getSession(); // ensure it is persisted before we continue
+  }
   return res.user;
 }
 export async function login({ email, password }) {
   const res = await api.post("/auth/login", { email, password });
-  if (res.session) await supabase.auth.setSession(res.session);
+  if (res.session) {
+    await supabase.auth.setSession(res.session);
+    await supabase.auth.getSession(); // ensure it is persisted before we continue
+  }
   return res.user;
 }
 export async function logout() {

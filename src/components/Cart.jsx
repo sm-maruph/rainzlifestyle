@@ -7,9 +7,9 @@ import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
 import LocalShippingOutlinedIcon from "@mui/icons-material/LocalShippingOutlined";
 import { useCart } from "../context/CartContext";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 
-const BRAND = "#E11D48";
-const taka = (n) => `\u09F3${Number(n || 0).toLocaleString("en-BD")}`;
+const BRAND = "var(--brand)"; const taka = (n) => `\u09F3${Number(n || 0).toLocaleString("en-BD")}`;
 const imgFallback = (e, label = "RAINZ") => {
   e.target.onerror = null;
   e.target.src = `https://placehold.co/120x150/f3f4f6/9ca3af?text=${encodeURIComponent(label)}`;
@@ -68,6 +68,11 @@ export default function Cart() {
 
   return (
     <div className="w-[94%] max-w-[1200px] mx-auto py-8">
+      <nav className="text-xs mb-3 flex items-center flex-wrap gap-y-1" style={{ color: "var(--title)" }}>
+        <Crumb to="/">Home</Crumb>
+        <ChevronRightIcon style={{ fontSize: 14, color: "var(--subtitle)" }} className="mx-0.5" />
+        <span className="px-1.5 py-0.5" style={{ color: "var(--subtitle)" }}>Cart</span>
+      </nav>
       <h1 className="text-2xl md:text-3xl font-extrabold text-gray-900 mb-6">
         Shopping Bag <span className="text-base font-medium text-gray-400">({count} item{count !== 1 ? "s" : ""})</span>
       </h1>
@@ -137,4 +142,17 @@ export default function Cart() {
       </div>
     </div>
   );
+  function Crumb({ to, children, className = "" }) {
+    return (
+      <Link
+        to={to}
+        className={`no-underline px-1.5 py-0.5 rounded transition-colors ${className}`}
+        style={{ color: "var(--title)" }}
+        onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = "var(--button)"; e.currentTarget.style.color = "var(--button-text)"; }}
+        onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = "transparent"; e.currentTarget.style.color = "var(--title)"; }}
+      >
+        {children}
+      </Link>
+    );
+  }
 }

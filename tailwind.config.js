@@ -129,11 +129,16 @@ module.exports = {
         },
       },
       colors: {
-        // Custom colors based on image analysis
-        "mm-primary": "#5ca391",
-        "mm-secondery": "#083541",
-        "fineetex-gray-button": "#707070", // Sample hex color for the button
-        "fineetex-gray-text": "#666666", // Sample hex color for copyright text
+        primary: "var(--primary)",
+        secondary: "var(--secondary)",
+        tertiary: "var(--tertiary)",
+        title: "var(--title)",
+        subtitle: "var(--subtitle)",
+        details: "var(--details)",
+        background: "var(--background)",
+        foreground: "var(--foreground)",
+        button: "var(--button)",
+        "button-text": "var(--button-text)",
       },
       fontSize: {
         "xs-custom": "0.75rem", // Example custom font size

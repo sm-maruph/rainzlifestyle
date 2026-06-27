@@ -6,6 +6,8 @@ import { useAuth } from "./context/AuthContext";
 import { useCart } from "./context/CartContext";
 import { useWishlist } from "./context/WishlistContext";
 
+import ScrollToTopOnRefresh from "./components/ScrollToTop";
+
 import Navbar from "./components/Navbar";
 import LandingComponent from "./components/LandingPage";
 import CategoryPage from "./components/CategoryPage";
@@ -34,12 +36,14 @@ import AdminCustomers from "./components/admin/AdminCustomers";
 import AdminSettings from "./components/admin/AdminSettings";
 import RequireAdmin from "./components/admin/RequireAdmin";
 import AdminCollections from "./components/admin/AdminCollections";
+import AdminHero from "./components/admin/AdminHero";
+import AdminInventory from "./components/admin/AdminInventory";
 
 
 import Partners from "./components/Partner";
 import BottomHeader from "./components/BottomHeader";
 import Footer from "./components/Footer";
-import "./App.css";
+import "./index.css";
 import AutoScrollUp from "./components/subcomponent/AutoScrollUp";
 import ScrollToTop from "./components/subcomponent/ScrollToTop";
 import LoadingWrapper from "./components/ReusableComponent/LoadingWrapper";
@@ -91,11 +95,12 @@ function App() {
           onLogout={logout}
         />
       )}
+      <ScrollToTopOnRefresh/>
       <AutoScrollUp />
 
       <main
-        className="w-full mx-auto min-h-screen bg-gray-100 overflow-x-hidden"
-        style={{ paddingTop: isAdminPage ? 0 : navHeight }}
+        className="w-full mx-auto min-h-screen bg-gray-100 overflow-x-hidden "
+        style={{ paddingTop: isAdminPage ? 0 : navHeight, backgroundColor: "var(--primary)" }}
       >
         <LoadingWrapper>
           <Routes>
@@ -110,12 +115,15 @@ function App() {
             >
               <Route index element={<AdminDashboard />} />
               <Route path="products" element={<AdminProducts />} />
+              <Route path="inventory" element={<AdminInventory />} />   {/* <-- ADD THIS */}
+
               <Route path="categories" element={<AdminCategories />} />
               <Route path="orders" element={<AdminOrders />} />
               <Route path="discounts" element={<AdminDiscounts />} />
               <Route path="collections" element={<AdminCollections />} />
               <Route path="sale" element={<AdminSale />} />
               <Route path="customers" element={<AdminCustomers />} />
+              <Route path="hero" element={<AdminHero />} />
               <Route path="settings" element={<AdminSettings />} />
             </Route>
 
@@ -155,7 +163,7 @@ function App() {
       {!isAdminPage && (
         <>
           <Partners />
-          <BottomHeader />
+          {/* <BottomHeader /> */}
           <Footer />
         </>
       )}

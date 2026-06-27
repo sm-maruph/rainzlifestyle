@@ -1,45 +1,46 @@
+// src/components/BottomHeader.jsx
 import React from "react";
+import { MapPin, Mail } from "lucide-react";
 
+const BRAND = "var(--brand)";
 const BottomHeader = () => {
   return (
-    <div className="bg-mm-primary text-white py-2 px-4 w-full">
-      <div className="w-full max-w-[1200px] mx-auto flex flex-wrap items-center justify-center gap-y-2 gap-x-6 text-center sm:text-left text-xs sm:text-sm font-sans leading-tight tracking-wide">
-        
-        {/* <p className="w-full sm:w-auto font-semibold">
-          Materials & More Enterprise (M&M)
-        </p> */}
+    <div className="w-full bg-[#1a1a1a] py-1.5 px-3 text-white">
+      <div className="mx-auto max-w-6xl">
+        <div className="grid grid-cols-1 gap-1.5 text-xs sm:grid-cols-2 lg:grid-cols-3 sm:text-sm leading-relaxed">
+          {/* Corporate Office */}
+          <div className="flex items-center gap-1.5">
+            <MapPin className="h-3.5 w-3.5 shrink-0" style={{ color: BRAND }} />
+            <div>
+              <span className="font-semibold text-white/80">Corporate:</span>
+              <span className="ml-0.5 text-white/70">
+                Setu Homes, 55-Box Nagar, Zoo Road, Mirpur-1, Dhaka-1216
+              </span>
+            </div>
+          </div>
 
-        <p className="w-full sm:w-auto">
-          <strong>Corporate Office:</strong> Setu Homes, 55-Box Nagar, Zoo Road, Mirpur-1, Dhaka-1216
-        </p>
+          {/* Sales Office */}
+          <div className="flex items-center gap-1.5">
+            <MapPin className="h-3.5 w-3.5 shrink-0" style={{ color: BRAND }} />
+            <div>
+              <span className="font-semibold text-white/80">Sales:</span>
+              <span className="ml-0.5 text-white/70">
+                1244/1, Kamrangar Chala, Mouchak, Kaliakoir, Gazipur
+              </span>
+            </div>
+          </div>
 
-        <p className="w-full sm:w-auto">
-          <strong>Sales Office:</strong> 1244/1, Kamrangar Chala, Mouchak, Kaliakoir, Gazipur
-        </p>
-
-        <p className="w-full sm:w-auto">
-          <strong>Contact No.:</strong> +88 01755 736243, +88 01819 757777
-        </p>
-
-        <p className="w-full sm:w-auto">
-  <strong>Email:</strong>{" "}
-  <a
-    href="mailto:sales@materialsnmore.com"
-    className="no-underline hover:underline text-white"
-
-  >
-    sales@materialsnmore.com
-  </a>,{" "}
-  <a
-    href="mailto:mnmenterprise777@gmail.com"
-    className="no-underline hover:underline text-white"
-
-  >
-    mnmenterprise777@gmail.com
-  </a>
-</p>
-
-
+          {/* Email (plain text, no hyperlink) */}
+          <div className="flex items-center gap-1.5">
+            <Mail className="h-3.5 w-3.5 shrink-0" style={{ color: BRAND }} />
+            <div>
+              <span className="font-semibold text-white/80">Email:</span>
+              <span className="ml-0.5 text-white/70">
+                ranzelifestyle.officisa@gmail.com
+              </span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

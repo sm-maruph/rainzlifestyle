@@ -11,9 +11,12 @@ import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import { getProductBySlug, getProducts } from "../api";
 import { useCart } from "../context/CartContext";
+import ProductReviews from "./ProductReviews";
 import { useWishlist } from "../context/WishlistContext";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 
-const BRAND = "#E11D48";
+
+const BRAND = "var(--brand)";
 const taka = (n) => `\u09F3${Number(n || 0).toLocaleString("en-BD")}`;
 const imgFallback = (e, label = "RAINZ") => {
   e.target.onerror = null;
@@ -53,7 +56,7 @@ function MiniCard({ product, onOpen }) {
 function RelatedRow({ title, items, onOpen }) {
   if (!items?.length) return null;
   return (
-    <section className="mt-12">
+    <section className="mt-12" >
       <h2 className="text-xl font-bold text-gray-900 mb-4">
         {title}
         <span className="ml-2 h-1.5 w-10 inline-block rounded-full align-middle" style={{ backgroundColor: BRAND }} />
@@ -161,7 +164,7 @@ export default function ProductDetail() {
 
   if (loading) {
     return (
-      <div className="w-[94%] max-w-[1300px] mx-auto py-10 grid lg:grid-cols-2 gap-10">
+      <div className="w-[94%] max-w-[1300px] mx-auto py-10 grid lg:grid-cols-2 gap-10" style={{ backgroundColor: "var(--primary)" }}>
         <div className="aspect-[3/4] bg-gray-100 rounded-xl animate-pulse" />
         <div className="space-y-4">
           <div className="h-7 bg-gray-100 rounded w-2/3 animate-pulse" />
@@ -175,7 +178,7 @@ export default function ProductDetail() {
 
   if (!product) {
     return (
-      <div className="w-[94%] max-w-[1300px] mx-auto py-24 text-center">
+      <div className="w-[94%] max-w-[1300px] mx-auto py-24 text-center" style={{ backgroundColor: "var(--primary)" }}>
         <p className="text-gray-500">Sorry, this product could not be found.</p>
         <button onClick={() => navigate("/")} className="mt-4 rounded-full px-6 py-2 text-sm font-semibold text-white" style={{ backgroundColor: BRAND }}>Back to Home</button>
       </div>
@@ -184,32 +187,54 @@ export default function ProductDetail() {
 
   const discount = product.oldPrice && product.oldPrice > product.price ? Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100) : 0;
 
+
+  const onZoomMove = (e) => {
+    const r = e.currentTarget.getBoundingClientRect();
+    const x = ((e.clientX - r.left) / r.width) * 100;
+    const y = ((e.clientY - r.top) / r.height) * 100;
+    const img = e.currentTarget.querySelector("img");
+    if (img) img.style.transformOrigin = `${x}% ${y}%`;
+  };
+
   return (
-    <div className="w-[94%] max-w-[1300px] mx-auto py-8">
-      <nav className="text-xs text-gray-500 mb-5">
-        <Link to="/" className="hover:text-gray-800">Home</Link>
-        <span className="mx-1.5">/</span>
-        <Link to={`/${product.category}`} className="hover:text-gray-800">{product.categoryName}</Link>
+    <div className="w-[94%] max-w-[1300px] mx-auto py-8" style={{ backgroundColor: "var(--primary)" }}>
+      <nav className="text-xs mb-5 flex items-center flex-wrap gap-y-1" style={{ color: "var(--title)" }}>
+        <Crumb to="/">Home</Crumb>
+        <ChevronRightIcon style={{ fontSize: 14, color: "var(--subtitle)" }} className="mx-0.5" />
+        <Crumb to={`/${product.category}`}>{product.categoryName}</Crumb>
         {product.subcategory && (
           <>
-            <span className="mx-1.5">/</span>
-            <Link to={`/${product.category}/${product.subcategory}`} className="hover:text-gray-800">{product.subcategoryName}</Link>
+            <ChevronRightIcon style={{ fontSize: 14, color: "var(--subtitle)" }} className="mx-0.5" />
+            <Crumb to={`/${product.category}/${product.subcategory}`}>{product.subcategoryName}</Crumb>
           </>
         )}
       </nav>
-
-      <div className="grid lg:grid-cols-2 gap-10">
+      <div className="grid lg:grid-cols-2 gap-10 items-start">
         {/* Gallery */}
-        <div className="flex gap-3">
+        <div className="flex gap-3 items-start">
           <div className="flex flex-col gap-3 order-1">
             {(product.images || [product.image]).map((src, i) => (
-              <button key={i} onClick={() => setMainImg(src)} className="h-16 w-16 rounded-lg overflow-hidden border-2 transition-colors" style={{ borderColor: mainImg === src ? BRAND : "#e5e7eb" }}>
+              <button
+                key={i}
+                onClick={() => setMainImg(src)}
+                className="h-16 w-16 rounded-lg overflow-hidden border-2 transition-colors shrink-0"
+                style={{ borderColor: mainImg === src ? BRAND : "#e5e7eb" }}
+              >
                 <img src={src} alt="" className="h-full w-full object-cover" onError={(e) => imgFallback(e)} />
               </button>
             ))}
           </div>
-          <div className="flex-1 order-2 rounded-xl bg-gradient-to-b from-gray-50 to-gray-100 flex items-center justify-center p-6">
-            <img src={mainImg} alt={product.name} className="max-h-[520px] w-full object-contain" onError={(e) => imgFallback(e, product.name)} />
+
+          <div
+            className="flex-1 order-2 rounded-xl bg-gradient-to-b from-gray-50 to-gray-100 overflow-hidden group cursor-zoom-in"
+            onMouseMove={onZoomMove}
+          >
+            <img
+              src={mainImg}
+              alt={product.name}
+              className="w-full h-auto max-h-[760px] object-cover transition-transform duration-300 ease-out group-hover:scale-[2]"
+              onError={(e) => imgFallback(e, product.name)}
+            />
           </div>
         </div>
 
@@ -273,18 +298,10 @@ export default function ProductDetail() {
 
           <div className="mt-4 flex flex-wrap gap-3">
             <button onClick={addToCart} disabled={!product.inStock}
-              className="flex-1 min-w-[160px] flex items-center justify-center gap-2 rounded-md border-2 py-3 text-sm font-bold transition-colors hover:text-white disabled:opacity-40"
-              style={{ borderColor: BRAND, color: BRAND, backgroundColor: "transparent" }}
-              onMouseEnter={(e) => {
-                if (product.inStock) {
-                  e.currentTarget.style.backgroundColor = BRAND;
-                  e.currentTarget.style.color = "#fff";
-                }
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = "transparent";
-                e.currentTarget.style.color = BRAND;
-              }}>
+              className="flex-1 min-w-[160px] flex items-center justify-center gap-2 rounded-md border-2 py-3 text-sm font-bold transition-colors disabled:opacity-40"
+              style={{ borderColor: BRAND, color: BRAND }}
+              onMouseEnter={(e) => { if (product.inStock) { e.currentTarget.style.backgroundColor = BRAND; e.currentTarget.style.color = "#fff"; } }}
+              onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = "transparent"; e.currentTarget.style.color = BRAND; }}>
               <ShoppingBagOutlinedIcon style={{ fontSize: 18 }} /> Add to Cart
             </button>
             <button onClick={buyNow} disabled={!product.inStock} className="flex-1 min-w-[160px] rounded-md py-3 text-sm font-bold text-white transition-opacity hover:opacity-90 disabled:opacity-40" style={{ backgroundColor: BRAND }}>
@@ -299,20 +316,36 @@ export default function ProductDetail() {
             <LocalShippingOutlinedIcon style={{ fontSize: 18 }} />
             Cash on delivery available • Delivery in 2–5 days
           </div>
-
-          <div className="mt-6 border-t border-gray-100 pt-5">
-            <h3 className="text-sm font-bold text-gray-800 mb-2">Product Details</h3>
-            <p className="text-sm leading-relaxed text-gray-600">{product.description}</p>
-          </div>
         </div>
       </div>
 
+      {/* Product Details — full width, below the grid */}
+      <div className="mt-10 border-t border-gray-100 pt-6">
+        <h3 className="text-base font-bold text-gray-800 mb-3">Product Details</h3>
+        <p className="text-sm leading-relaxed text-gray-600 max-w-4xl">{product.description}</p>
+      </div>
+      <ProductReviews productId={product.id} />
       <RelatedRow title="You may also like" items={related} onOpen={openProduct} />
       <RelatedRow title={`More from ${product.categoryName}`} items={sameCategory} onOpen={openProduct} />
+
+
 
       {toast && (
         <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[200] rounded-full bg-gray-900 text-white text-sm px-5 py-2.5 shadow-lg">{toast}</div>
       )}
     </div>
   );
+  function Crumb({ to, children }) {
+    return (
+      <Link
+        to={to}
+        className="no-underline px-1.5 py-0.5 rounded transition-colors"
+        style={{ color: "var(--title)" }}
+        onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = "var(--button)"; e.currentTarget.style.color = "var(--button-text)"; }}
+        onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = "transparent"; e.currentTarget.style.color = "var(--title)"; }}
+      >
+        {children}
+      </Link>
+    );
+  }
 }

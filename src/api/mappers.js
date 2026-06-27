@@ -12,6 +12,7 @@ export function mapProduct(p) {
     inStock: p.in_stock ?? (p.stock > 0), stock: p.stock,
     sizes: p.sizes || [], colors: p.colors || [], tags: p.tags || [],
     image: p.image, images: p.images && p.images.length ? p.images : p.image ? [p.image] : [],
+    onSale: !!p.on_sale, saleEnds: p.sale_ends || null, saleCampaign: p.sale_campaign || null,
     createdAt: p.created_at,
   };
 }
@@ -46,10 +47,10 @@ export function mapWishlistItem(row) {
 }
 
 export function mapBanner(b) {
-  return { id: b.id, image: b.image, image_url: b.image, title: b.title, link: b.link };
+  return { id: b.id, image: b.image, image_url: b.image, title: b.title, link: b.link, position: b.position, isActive: b.is_active };
 }
 export function mapCollection(c) {
-  return { id: c.id, title: c.title, caption: c.caption, image: c.image, link: c.link };
+  return { id: c.id, title: c.title, caption: c.caption, image: c.image, link: c.link, position: c.position, isActive: c.is_active };
 }
 export function mapStore(s) {
   return {

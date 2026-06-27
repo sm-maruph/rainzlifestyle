@@ -1,6 +1,6 @@
 // src/components/TrackOrder.jsx — wired to real trackOrder(code)
 import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, Link } from "react-router-dom";
 import SearchIcon from "@mui/icons-material/Search";
 import ReceiptLongOutlinedIcon from "@mui/icons-material/ReceiptLongOutlined";
 import Inventory2OutlinedIcon from "@mui/icons-material/Inventory2Outlined";
@@ -8,8 +8,9 @@ import LocalShippingOutlinedIcon from "@mui/icons-material/LocalShippingOutlined
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
 import { trackOrder } from "../api";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 
-const BRAND = "#E11D48";
+const BRAND = "var(--brand)";
 const taka = (n) => `\u09F3${Number(n || 0).toLocaleString("en-BD")}`;
 const imgFallback = (e) => { e.target.onerror = null; e.target.src = "https://placehold.co/120x150/f3f4f6/9ca3af?text=RAINZ"; };
 
@@ -100,6 +101,11 @@ export default function TrackOrder() {
 
   return (
     <div className="w-[92%] sm:w-[94%] max-w-[1000px] mx-auto py-6 sm:py-8">
+      <nav className="text-xs mb-3 flex items-center flex-wrap gap-y-1" style={{ color: "var(--title)" }}>
+        <Crumb to="/">Home</Crumb>
+        <ChevronRightIcon style={{ fontSize: 14, color: "var(--subtitle)" }} className="mx-0.5" />
+        <span className="px-1.5 py-0.5" style={{ color: "var(--subtitle)" }}>Orders</span>
+      </nav>
       <h1 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-gray-900">Track Your Order</h1>
       <p className="mt-1 text-sm text-gray-500">Enter your order ID to see its current status.</p>
 
@@ -192,4 +198,17 @@ export default function TrackOrder() {
       ) : null}
     </div>
   );
+  function Crumb({ to, children, className = "" }) {
+  return (
+    <Link
+      to={to}
+      className={`no-underline px-1.5 py-0.5 rounded transition-colors ${className}`}
+      style={{ color: "var(--title)" }}
+      onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = "var(--button)"; e.currentTarget.style.color = "var(--button-text)"; }}
+      onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = "transparent"; e.currentTarget.style.color = "var(--title)"; }}
+    >
+      {children}
+    </Link>
+  );
+}
 }

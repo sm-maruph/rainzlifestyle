@@ -1,5 +1,5 @@
-// src/components/admin/AdminSettings.jsx
-import { useState } from "react";
+// src/components/admin/AdminSettings.jsx — wired to real settings API
+import { useEffect, useState } from "react";
 import StorefrontOutlinedIcon from "@mui/icons-material/StorefrontOutlined";
 import LocalShippingOutlinedIcon from "@mui/icons-material/LocalShippingOutlined";
 import PaymentsOutlinedIcon from "@mui/icons-material/PaymentsOutlined";
@@ -12,29 +12,28 @@ import InstagramIcon from "@mui/icons-material/Instagram";
 import YouTubeIcon from "@mui/icons-material/YouTube";
 import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import MusicNoteIcon from "@mui/icons-material/MusicNote";
+import PaletteOutlinedIcon from "@mui/icons-material/PaletteOutlined";
+import { getSettings, updateSettings } from "../../api";
+import { applyTheme } from "../../context/SettingsContext";
 
 const BRAND = "#E11D48";
 
-const DEFAULTS = {
-  storeName: "RAINZLIFESTYLE",
-  tagline: "Fashion for everyone",
-  currency: "BDT (৳)",
-  supportEmail: "support@rainzlifestyle.com",
-  supportPhone: "+880 9600 000000",
-  logo: "",
-  address: "Plot 15, Gulshan Avenue, Gulshan-1, Dhaka 1212",
-  city: "Dhaka",
-  hours: "10:00 AM – 9:00 PM",
-  delivery: { inside: 80, outside: 120, freeThreshold: 1500 },
-  payments: [
-    { key: "cod", label: "Cash on Delivery", enabled: true },
-    { key: "bkash", label: "bKash", enabled: true },
-    { key: "nagad", label: "Nagad", enabled: true },
-    { key: "sslcommerz", label: "Card / SSLCommerz", enabled: false },
-  ],
-  social: { facebook: "", instagram: "", youtube: "", tiktok: "", whatsapp: "" },
-  maintenance: false,
-};
+const DEFAULT_THEME = { brand: "#E11D48", men: "#E11D48", women: "#DB2777", kids: "#F59E0B", accessories: "#0D9488", sale: "#7C3AED" };
+const THEME_FIELDS = [
+  { key: "brand", label: "Primary / Brand" },
+  { key: "men", label: "Men" },
+  { key: "women", label: "Women" },
+  { key: "kids", label: "Kids" },
+  { key: "accessories", label: "Accessories" },
+  { key: "sale", label: "Sale" },
+];
+
+const DEFAULT_PAYMENTS = [
+  { key: "cod", label: "Cash on Delivery", enabled: true },
+  { key: "bkash", label: "bKash", enabled: true },
+  { key: "nagad", label: "Nagad", enabled: true },
+  { key: "sslcommerz", label: "Card / SSLCommerz", enabled: false },
+];
 
 const SOCIALS = [
   { key: "facebook", label: "Facebook", icon: FacebookIcon, ph: "https://facebook.com/rainzlifestyle" },
@@ -45,37 +44,73 @@ const SOCIALS = [
 ];
 
 export default function AdminSettings() {
-  const [s, setS] = useState(DEFAULTS);
+  const [s, setS] = useState(null);
+  const [logoFile, setLogoFile] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
   const [saved, setSaved] = useState(false);
+
+  useEffect(() => {
+    getSettings()
+      .then((data) => {
+        // ensure payments has the standard rows even if DB empty
+        if (!data.payments || data.payments.length === 0) data.payments = DEFAULT_PAYMENTS;
+        if (!data.theme) data.theme = DEFAULT_THEME;
+        setS(data);
+      })
+      .catch((e) => setError(e.message))
+      .finally(() => setLoading(false));
+  }, []);
 
   const set = (k, v) => setS((p) => ({ ...p, [k]: v }));
   const setDelivery = (k, v) => setS((p) => ({ ...p, delivery: { ...p.delivery, [k]: v } }));
   const setSocial = (k, v) => setS((p) => ({ ...p, social: { ...p.social, [k]: v } }));
+  const setTheme = (k, v) => setS((p) => {
+    const theme = { ...(p.theme || DEFAULT_THEME), [k]: v };
+    applyTheme(theme); // live preview across the admin instantly
+    return { ...p, theme };
+  });
+  const resetTheme = () => setS((p) => { applyTheme(DEFAULT_THEME); return { ...p, theme: DEFAULT_THEME }; });
   const togglePay = (key) => setS((p) => ({ ...p, payments: p.payments.map((m) => (m.key === key ? { ...m, enabled: !m.enabled } : m)) }));
 
   const onLogo = (e) => {
     const f = e.target.files?.[0];
-    if (f) set("logo", URL.createObjectURL(f)); // local preview only
+    if (f) { setLogoFile(f); set("logo", URL.createObjectURL(f)); }
   };
 
-  const save = () => {
-    // TODO: POST settings to backend
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2200);
+  const save = async () => {
+    setSaving(true); setError("");
+    try {
+      const updated = await updateSettings(s, logoFile);
+      if (!updated.payments || updated.payments.length === 0) updated.payments = s.payments;
+      setS(updated);
+      setLogoFile(null);
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2200);
+    } catch (e) {
+      setError(e.message || "Could not save settings");
+    } finally {
+      setSaving(false);
+    }
   };
+
+  if (loading || !s) {
+    return <div className="max-w-3xl space-y-4">{Array.from({ length: 4 }).map((_, i) => <div key={i} className="h-40 rounded-xl bg-gray-100 animate-pulse" />)}</div>;
+  }
 
   return (
     <div className="space-y-5 max-w-3xl">
-      {/* Header */}
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
           <h2 className="text-xl sm:text-2xl font-extrabold text-gray-900">Settings</h2>
           <p className="text-sm text-gray-500">Store configuration used across your storefront.</p>
         </div>
-        <button onClick={save} className="rounded-lg px-5 py-2.5 text-sm font-semibold text-white" style={{ backgroundColor: BRAND }}>Save Changes</button>
+        <button onClick={save} disabled={saving} className="rounded-lg px-5 py-2.5 text-sm font-semibold text-white disabled:opacity-60" style={{ backgroundColor: BRAND }}>{saving ? "Saving…" : "Save Changes"}</button>
       </div>
 
-      {/* Store profile */}
+      {error && <div className="rounded-lg bg-red-50 text-red-700 text-sm px-4 py-2">{error}</div>}
+
       <Section icon={StorefrontOutlinedIcon} title="Store Profile">
         <div className="flex items-center gap-4 mb-4">
           <div className="h-20 w-20 rounded-xl bg-gray-100 overflow-hidden flex items-center justify-center shrink-0">
@@ -94,7 +129,7 @@ export default function AdminSettings() {
           <Field label="Tagline"><input value={s.tagline} onChange={(e) => set("tagline", e.target.value)} className="inp" /></Field>
           <Field label="Currency">
             <select value={s.currency} onChange={(e) => set("currency", e.target.value)} className="inp">
-              <option>BDT (৳)</option><option>USD ($)</option><option>INR (₹)</option><option>EUR (€)</option>
+              <option value="BDT">BDT (৳)</option><option value="USD">USD ($)</option><option value="INR">INR (₹)</option><option value="EUR">EUR (€)</option>
             </select>
           </Field>
           <Field label="Support email"><input value={s.supportEmail} onChange={(e) => set("supportEmail", e.target.value)} className="inp" /></Field>
@@ -102,7 +137,6 @@ export default function AdminSettings() {
         </div>
       </Section>
 
-      {/* Contact */}
       <Section icon={ContactPhoneOutlinedIcon} title="Contact & Address">
         <div className="grid sm:grid-cols-2 gap-4">
           <Field label="Address" full><input value={s.address} onChange={(e) => set("address", e.target.value)} className="inp" /></Field>
@@ -111,7 +145,6 @@ export default function AdminSettings() {
         </div>
       </Section>
 
-      {/* Delivery */}
       <Section icon={LocalShippingOutlinedIcon} title="Delivery Charges" desc="Applied at checkout based on the customer's location.">
         <div className="grid sm:grid-cols-3 gap-4">
           <Field label="Inside Dhaka (৳)"><input type="number" value={s.delivery.inside} onChange={(e) => setDelivery("inside", e.target.value)} className="inp" /></Field>
@@ -120,7 +153,6 @@ export default function AdminSettings() {
         </div>
       </Section>
 
-      {/* Payments */}
       <Section icon={PaymentsOutlinedIcon} title="Payment Methods" desc="Turn on the methods you accept.">
         <div className="divide-y divide-gray-50">
           {s.payments.map((m) => (
@@ -132,19 +164,32 @@ export default function AdminSettings() {
         </div>
       </Section>
 
-      {/* Social */}
       <Section icon={ShareOutlinedIcon} title="Social Links">
         <div className="space-y-3">
           {SOCIALS.map(({ key, label, icon: Icon, ph }) => (
             <div key={key} className="flex items-center gap-3">
               <span className="h-9 w-9 rounded-lg bg-gray-100 flex items-center justify-center text-gray-500 shrink-0"><Icon style={{ fontSize: 20 }} /></span>
-              <input value={s.social[key]} onChange={(e) => setSocial(key, e.target.value)} placeholder={ph} className="inp" />
+              <input value={s.social[key] || ""} onChange={(e) => setSocial(key, e.target.value)} placeholder={ph} className="inp" />
             </div>
           ))}
         </div>
       </Section>
 
-      {/* Maintenance */}
+      <Section icon={PaletteOutlinedIcon} title="Theme Colors" desc="Changes apply across the whole storefront. Use the pickers or paste hex codes.">
+        <div className="grid sm:grid-cols-2 gap-4">
+          {THEME_FIELDS.map(({ key, label }) => (
+            <div key={key} className="flex items-center gap-3">
+              <input type="color" value={(s.theme || DEFAULT_THEME)[key] || "#000000"} onChange={(e) => setTheme(key, e.target.value)} className="h-10 w-12 rounded border border-gray-200 cursor-pointer bg-white p-0.5" />
+              <div className="flex-1">
+                <p className="text-xs font-medium text-gray-600">{label}</p>
+                <input value={(s.theme || DEFAULT_THEME)[key] || ""} onChange={(e) => setTheme(key, e.target.value)} className="inp font-mono text-xs" placeholder="#E11D48" />
+              </div>
+            </div>
+          ))}
+        </div>
+        <button onClick={resetTheme} className="mt-4 text-sm font-semibold text-gray-500 hover:text-gray-800">Reset to defaults</button>
+      </Section>
+
       <Section icon={StorefrontOutlinedIcon} title="Maintenance Mode" desc="When on, customers see a 'be right back' page instead of the store.">
         <div className="flex items-center justify-between">
           <span className="text-sm text-gray-700">{s.maintenance ? "Store is currently OFFLINE" : "Store is live"}</span>
@@ -152,12 +197,10 @@ export default function AdminSettings() {
         </div>
       </Section>
 
-      {/* Bottom save */}
       <div className="flex justify-end">
-        <button onClick={save} className="rounded-lg px-6 py-2.5 text-sm font-semibold text-white" style={{ backgroundColor: BRAND }}>Save Changes</button>
+        <button onClick={save} disabled={saving} className="rounded-lg px-6 py-2.5 text-sm font-semibold text-white disabled:opacity-60" style={{ backgroundColor: BRAND }}>{saving ? "Saving…" : "Save Changes"}</button>
       </div>
 
-      {/* Toast */}
       {saved && (
         <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 rounded-lg bg-gray-900 text-white px-4 py-2.5 text-sm shadow-lg">
           <CheckCircleIcon style={{ fontSize: 18, color: "#34d399" }} /> Settings saved
@@ -181,16 +224,9 @@ function Section({ icon: Icon, title, desc, children }) {
     </div>
   );
 }
-
 function Field({ label, full, children }) {
-  return (
-    <label className={`block ${full ? "sm:col-span-2" : ""}`}>
-      <span className="text-xs font-medium text-gray-500">{label}</span>
-      <div className="mt-1">{children}</div>
-    </label>
-  );
+  return (<label className={`block ${full ? "sm:col-span-2" : ""}`}><span className="text-xs font-medium text-gray-500">{label}</span><div className="mt-1">{children}</div></label>);
 }
-
 function Toggle({ on, onChange }) {
   return (
     <button onClick={onChange} className={`relative h-6 w-11 rounded-full transition-colors shrink-0 ${on ? "" : "bg-gray-200"}`} style={on ? { backgroundColor: BRAND } : {}}>

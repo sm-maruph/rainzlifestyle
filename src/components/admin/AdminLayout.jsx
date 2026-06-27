@@ -3,12 +3,15 @@ import { useState } from "react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import DashboardOutlinedIcon from "@mui/icons-material/DashboardOutlined";
 import Inventory2OutlinedIcon from "@mui/icons-material/Inventory2Outlined";
+import WarehouseOutlinedIcon from "@mui/icons-material/WarehouseOutlined";
 import CategoryOutlinedIcon from "@mui/icons-material/CategoryOutlined";
 import ReceiptLongOutlinedIcon from "@mui/icons-material/ReceiptLongOutlined";
 import LocalOfferOutlinedIcon from "@mui/icons-material/LocalOfferOutlined";
 import SellOutlinedIcon from "@mui/icons-material/SellOutlined";
 import PeopleAltOutlinedIcon from "@mui/icons-material/PeopleAltOutlined";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
+import ViewCarouselOutlinedIcon from "@mui/icons-material/ViewCarouselOutlined";
+import CollectionsOutlinedIcon from "@mui/icons-material/CollectionsOutlined";
 import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
@@ -20,8 +23,11 @@ const BRAND = "#E11D48";
 const NAV = [
   { to: "/admin", label: "Dashboard", icon: DashboardOutlinedIcon, end: true },
   { to: "/admin/products", label: "Products", icon: Inventory2OutlinedIcon },
+  { to: "/admin/inventory", label: "Inventory", icon: WarehouseOutlinedIcon },
   { to: "/admin/categories", label: "Categories", icon: CategoryOutlinedIcon },
   { to: "/admin/orders", label: "Orders", icon: ReceiptLongOutlinedIcon },
+  { to: "/admin/hero", label: "Hero Banners", icon: ViewCarouselOutlinedIcon },
+  { to: "/admin/collections", label: "Collections", icon: CollectionsOutlinedIcon },
   { to: "/admin/discounts", label: "Discounts", icon: LocalOfferOutlinedIcon },
   { to: "/admin/sale", label: "Sale", icon: SellOutlinedIcon },
   { to: "/admin/customers", label: "Customers", icon: PeopleAltOutlinedIcon },

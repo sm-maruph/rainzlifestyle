@@ -1,11 +1,13 @@
 // src/components/Stores.jsx
 import { useMemo, useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
 import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
 import CallOutlinedIcon from "@mui/icons-material/CallOutlined";
 import AccessTimeOutlinedIcon from "@mui/icons-material/AccessTimeOutlined";
 import DirectionsOutlinedIcon from "@mui/icons-material/DirectionsOutlined";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 
-const BRAND = "#E11D48";
+const BRAND = "var(--brand)";
 const imgFallback = (e) => {
   e.target.onerror = null;
   e.target.src = "https://placehold.co/600x400/f3f4f6/9ca3af?text=RAINZ+Store";
@@ -106,6 +108,11 @@ export default function Stores() {
 
   return (
     <div className="w-[94%] max-w-[1300px] mx-auto py-8">
+      <nav className="text-xs mb-3 flex items-center flex-wrap gap-y-1" style={{ color: "var(--title)" }}>
+        <Crumb to="/">Home</Crumb>
+        <ChevronRightIcon style={{ fontSize: 14, color: "var(--subtitle)" }} className="mx-0.5" />
+        <span className="px-1.5 py-0.5" style={{ color: "var(--subtitle)" }}>Wishlist</span>
+      </nav>
       {/* Header */}
       <div className="text-center mb-8">
         <h1 className="text-2xl md:text-3xl font-extrabold text-gray-900">Our Stores</h1>
@@ -151,4 +158,17 @@ export default function Stores() {
       </div>
     </div>
   );
+  function Crumb({ to, children, className = "" }) {
+  return (
+    <Link
+      to={to}
+      className={`no-underline px-1.5 py-0.5 rounded transition-colors ${className}`}
+      style={{ color: "var(--title)" }}
+      onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = "var(--button)"; e.currentTarget.style.color = "var(--button-text)"; }}
+      onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = "transparent"; e.currentTarget.style.color = "var(--title)"; }}
+    >
+      {children}
+    </Link>
+  );
+}
 }

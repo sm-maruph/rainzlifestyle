@@ -7,15 +7,31 @@ import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
 import { getNewArrivals } from "../api";
 import { useWishlist } from "../context/WishlistContext";
 import QuickAddModal from "./QuickAddModal";
+import StarRoundedIcon from "@mui/icons-material/StarRounded";
+import StarBorderRoundedIcon from "@mui/icons-material/StarBorderRounded";
 
-const BRAND = "#E11D48";
-const BANNER_BG = "#ebebeb";
+const BRAND = "var(--brand)";
+const BANNER_BG = "var(--primary)";
 const BANNER_TEXT = "#000000";
 const taka = (n) => `\u09F3${Number(n || 0).toLocaleString("en-BD")}`;
 const imgFallback = (e) => { e.target.onerror = null; e.target.src = "https://placehold.co/600x800/f3f4f6/9ca3af?text=RAINZ"; };
 
 function ProductTile({ product, onOpen, onAddToCart, onBuyNow, onToggleWishlist, isWishlisted }) {
   const discount = product.oldPrice && product.oldPrice > product.price ? Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100) : 0;
+
+
+  function Stars({ rating = 0, size = 13 }) {
+    const full = Math.round(rating);
+    return (
+      <span className="inline-flex text-amber-400">
+        {Array.from({ length: 5 }).map((_, i) =>
+          i < full
+            ? <StarRoundedIcon key={i} style={{ fontSize: size }} />
+            : <StarBorderRoundedIcon key={i} style={{ fontSize: size }} />
+        )}
+      </span>
+    );
+  }
 
   return (
     <div className="group relative rounded-xl bg-white shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1 overflow-hidden cursor-pointer flex flex-col" onClick={() => onOpen(product)}>
@@ -41,6 +57,18 @@ function ProductTile({ product, onOpen, onAddToCart, onBuyNow, onToggleWishlist,
       {/* Info — fixed structure keeps all cards equal height */}
       <div className="w-full bg-white px-3 pt-2 pb-3 flex flex-col">
         <p className="text-sm text-gray-800 truncate">{product.name}</p>
+        {/* Rating + review count */}
+        <div className="flex items-center gap-1 mt-0.5 h-4">
+          {product.reviews > 0 ? (
+            <>
+              <Stars rating={product.rating} />
+              <span className="text-[11px] text-gray-500">{Number(product.rating).toFixed(1)}</span>
+              <span className="text-[11px] text-gray-400">({product.reviews})</span>
+            </>
+          ) : (
+            <span className="text-[11px] text-gray-300">No reviews yet</span>
+          )}
+        </div>
         <div className="flex items-center gap-2 mt-0.5 h-5">
           <span className="text-sm font-bold text-gray-900">{taka(product.price)}</span>
           {product.oldPrice && <span className="text-xs text-gray-400 line-through">{taka(product.oldPrice)}</span>}
@@ -125,10 +153,15 @@ export default function NewArrival({
   const handleWish = (p) => (onToggleWishlist ? onToggleWishlist(p) : toggle(p));
   const isWished = (p) => (wishlistIds.length ? wishlistIds.includes(p.id) : has(p.id));
 
+
+
   return (
-    <section className="w-full bg-gray-50">
-      <div className="w-full py-1" style={{ backgroundColor: BANNER_BG }}>
-        <h2 className="text-center text-xl md:text-2xl font-extrabold uppercase tracking-[0.15em]" style={{ color: BANNER_TEXT }}>{title}</h2>
+    <section
+      className="w-full"
+      style={{ backgroundColor: "var(--primary)" }}
+    >
+      <div className="w-full py-1" style={{ backgroundColor: "var(--primary)" }}>
+        <h2 className="text-center text-xl md:text-xl font-regular uppercase tracking-[0.15em]" style={{ color: BRAND }}>{title}</h2>
       </div>
 
       <div className="w-[94%] max-w-[1500px] mx-auto px-1 py-8">

@@ -7,9 +7,9 @@ import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
 import { getProducts, getCategories } from "../api";
 import { useWishlist } from "../context/WishlistContext";
 import QuickAddModal from "./QuickAddModal";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 
-const BRAND = "#E11D48";
-const taka = (n) => `\u09F3${Number(n || 0).toLocaleString("en-BD")}`;
+const BRAND = "var(--brand)"; const taka = (n) => `\u09F3${Number(n || 0).toLocaleString("en-BD")}`;
 const prettify = (s = "") => s.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 const imgFallback = (e, label = "RAINZ") => { e.target.onerror = null; e.target.src = `https://placehold.co/600x800/f3f4f6/9ca3af?text=${encodeURIComponent(label)}`; };
 
@@ -153,20 +153,20 @@ export default function CategoryPage() {
   const handleAdd = (p) => setQuickSlug(p.slug); // popup enforces size/color/qty
 
   return (
-    <div className="w-[94%] max-w-[1500px] mx-auto py-8 min-h-screen">
+    <div className="w-[94%] max-w-[1500px] mx-auto py-8 min-h-screen" style={{ backgroundColor: "var(--primary)" }}>
       {/* Breadcrumb */}
-      <nav className="text-xs text-gray-500 mb-3">
-        <Link to="/" className="hover:text-gray-800">Home</Link>
+      <nav className="text-xs mb-3 flex items-center flex-wrap gap-y-1" style={{ color: "var(--title)" }}>
+        <Crumb to="/">Home</Crumb>
         {!isNewArrivals && category && (
           <>
-            <span className="mx-1.5">/</span>
-            <Link to={`/${category}`} className="hover:text-gray-800 capitalize">{cat?.name || prettify(category)}</Link>
+            <ChevronRightIcon style={{ fontSize: 14, color: "var(--subtitle)" }} className="mx-0.5" />
+            <Crumb to={`/${category}`} className="capitalize">{cat?.name || prettify(category)}</Crumb>
           </>
         )}
         {subcategory && (
           <>
-            <span className="mx-1.5">/</span>
-            <span className="text-gray-800">{prettify(subcategory)}</span>
+            <ChevronRightIcon style={{ fontSize: 14, color: "var(--subtitle)" }} className="mx-0.5" />
+            <span className="px-1.5 py-0.5 capitalize" style={{ color: "var(--subtitle)" }}>{prettify(subcategory)}</span>
           </>
         )}
       </nav>
@@ -245,4 +245,17 @@ export default function CategoryPage() {
       <QuickAddModal slug={quickSlug} onClose={() => setQuickSlug(null)} />
     </div>
   );
+  function Crumb({ to, children, className = "" }) {
+  return (
+    <Link
+      to={to}
+      className={`no-underline px-1.5 py-0.5 rounded transition-colors ${className}`}
+      style={{ color: "var(--title)" }}
+      onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = "var(--button)"; e.currentTarget.style.color = "var(--button-text)"; }}
+      onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = "transparent"; e.currentTarget.style.color = "var(--title)"; }}
+    >
+      {children}
+    </Link>
+  );
+}
 }

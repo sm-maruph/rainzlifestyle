@@ -1,8 +1,7 @@
 // src/components/AuthLayout.jsx
 import { Link } from "react-router-dom";
 
-const BRAND = "#E11D48";
-
+const BRAND = "var(--brand)";
 const Sparkle = ({ size, style }) => (
   <svg viewBox="0 0 24 24" width={size} height={size} fill="rgba(255,255,255,0.5)" style={style} aria-hidden="true">
     <path d="M12 0c.6 6.2 1.2 6.8 7.4 7.4C13.2 8 12.6 8.6 12 24c-.6-15.4-1.2-16-7.4-16.6C10.8 6.8 11.4 6.2 12 0z" />

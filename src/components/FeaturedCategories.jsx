@@ -8,8 +8,10 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import { getProducts, getCategories } from "../api";
 import { useWishlist } from "../context/WishlistContext";
 import QuickAddModal from "./QuickAddModal";
+import StarRoundedIcon from "@mui/icons-material/StarRounded";
+import StarBorderRoundedIcon from "@mui/icons-material/StarBorderRounded";
 
-const BRAND = "#E11D48";
+const BRAND = "var(--brand)";
 const taka = (n) => `\u09F3${Number(n || 0).toLocaleString("en-BD")}`;
 const slugify = (s) => String(s).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 const imgFallback = (e, label = "RAINZ") => { e.target.onerror = null; e.target.src = `https://placehold.co/600x600/f3f4f6/9ca3af?text=${encodeURIComponent(label)}`; };
@@ -17,6 +19,18 @@ const CATEGORY_PLACEHOLDER = (label) => `https://placehold.co/800x1000/f3f4f6/9c
 
 function ProductMini({ product, isViewMore, accent, onOpen, onViewMore, onAdd, onBuyNow }) {
   const { has, toggle } = useWishlist();
+  function Stars({ rating = 0, size = 13 }) {
+    const full = Math.round(rating);
+    return (
+      <span className="inline-flex text-amber-400">
+        {Array.from({ length: 5 }).map((_, i) =>
+          i < full
+            ? <StarRoundedIcon key={i} style={{ fontSize: size }} />
+            : <StarBorderRoundedIcon key={i} style={{ fontSize: size }} />
+        )}
+      </span>
+    );
+  }
 
   if (isViewMore) {
     return (
@@ -48,12 +62,27 @@ function ProductMini({ product, isViewMore, accent, onOpen, onViewMore, onAdd, o
         {/* Fixed-height image keeps all cards uniform */}
         <div className="h-44 sm:h-48 bg-gradient-to-b from-gray-50 to-gray-100 flex items-center justify-center p-3">
           <img src={product.image} alt={product.name} loading="lazy" className="max-h-full max-w-full object-contain transition-transform duration-300 group-hover:scale-105" onError={(e) => imgFallback(e, product.name)} />
+
         </div>
+
       </div>
 
-      <div className="px-3 pt-2 pb-3 flex flex-col">
+      <div className="px-3 pt-2 pb-1 flex flex-col">
         <p className="text-sm text-gray-800 truncate cursor-pointer hover:underline" onClick={() => onOpen(product)}>{product.name}</p>
+        {/* Rating + review count */}
+        <div className="flex items-center gap-1 mb-0.8 h-4">
+          {product.reviews > 0 ? (
+            <>
+              <Stars rating={product.rating} />
+              <span className="text-[11px] text-gray-500">{Number(product.rating).toFixed(1)}</span>
+              <span className="text-[11px] text-gray-400">({product.reviews})</span>
+            </>
+          ) : (
+            <span className="text-[11px] text-gray-300">No reviews yet</span>
+          )}
+        </div>
         <div className="flex items-center gap-2 mt-0.5 h-5">
+
           <span className="text-sm font-bold text-gray-900">{taka(product.price)}</span>
           {product.oldPrice && <span className="text-xs text-gray-400 line-through">{taka(product.oldPrice)}</span>}
         </div>
@@ -90,7 +119,11 @@ function Spotlight({ spotlight, products, loading, onOpen, onGo, onAdd, onBuyNow
   return (
     <div>
       <div className="flex items-center justify-between mb-3">
-        <button onClick={() => onGo(spotlight.link)} className="flex items-center gap-1 text-lg md:text-xl font-bold text-gray-800 hover:opacity-80">
+        <button
+          onClick={() => onGo(spotlight.link)}
+          className="flex items-center gap-1 text-lg md:text-xl font-bold hover:opacity-80"
+          style={{ color: "var(--title)" }}
+        >
           {spotlight.label}
           {activeSub && <span className="font-medium text-gray-400"> / {chips.find((c) => c.slug === activeSub)?.name}</span>}
           <ChevronRightIcon style={{ color: accent, fontSize: 22 }} />
@@ -166,15 +199,15 @@ export default function FeaturedCategories({
     const resolveSpots = spotlightsProp
       ? Promise.resolve(spotlightsProp)
       : getCategories().then((cats) =>
-          cats
-            .filter((c) => c.slug !== "sale")
-            .map((c) => ({
-              id: c.slug, label: c.name, accent: c.accent,
-              featureImage: c.image || null, // real category image from backend
-              category: c.slug, link: `/${c.slug}`, count: perCategory,
-              subcategories: Array.from(new Map((c.groups || []).flatMap((g) => g.items).map((it) => [slugify(it), { name: it, slug: slugify(it) }])).values()),
-            }))
-        );
+        cats
+          .filter((c) => c.slug !== "sale")
+          .map((c) => ({
+            id: c.slug, label: c.name, accent: c.accent,
+            featureImage: c.image || null, // real category image from backend
+            category: c.slug, link: `/${c.slug}`, count: perCategory,
+            subcategories: Array.from(new Map((c.groups || []).flatMap((g) => g.items).map((it) => [slugify(it), { name: it, slug: slugify(it) }])).values()),
+          }))
+      );
 
     resolveSpots
       .then((spots) => {
@@ -182,7 +215,7 @@ export default function FeaturedCategories({
         setSpotlights(spots);
         return Promise.all(spots.map((s) => getProducts({ category: s.category, pageSize: 24 }).then((res) => [s.id, res.items]))).then((entries) => alive && setProductsBySpot(Object.fromEntries(entries)));
       })
-      .catch(() => {})
+      .catch(() => { })
       .finally(() => alive && setLoading(false));
 
     return () => { alive = false; };
@@ -195,17 +228,17 @@ export default function FeaturedCategories({
   const handleBuyNow = (p) => navigate(`/product/${p.slug}`);
 
   return (
-    <section className="w-full bg-white">
+    <section className="w-full" style={{ backgroundColor: "var(--primary)" }}>
       <div className="w-[94%] max-w-[1500px] mx-auto py-10">
         <div className="relative">
           <div className="max-w-3xl">
-            <button onClick={() => go(brandLink)} className="flex items-center gap-1 text-2xl md:text-3xl font-semibold text-gray-800 hover:opacity-80">
+            <button onClick={() => go(brandLink)} className="flex items-center gap-1 text-2xl md:text-3xl font-semibold text-gray-800 hover:opacity-80" style={{ color: BRAND }}>
               {brandName}<ChevronRightIcon style={{ color: BRAND }} />
             </button>
-            <p className="mt-2 text-lg md:text-xl font-medium" style={{ color: "#9a6a3a" }}>{tagline}</p>
-            <p className="mt-3 text-sm leading-relaxed text-gray-500">{description}</p>
+            <p className="mt-2 text-lg md:text-xl font-medium" style={{ color: "var(--subtitle)" }}>{tagline}</p>
+            <p className="mt-3 text-sm leading-relaxed text-gray-500 ">{description}</p>
           </div>
-          <img src={sideImage} alt="" aria-hidden="true" loading="lazy" className="hidden lg:block absolute top-0 right-0 w-[38%] max-w-[560px] h-auto object-contain pointer-events-none" onError={(e) => (e.target.style.display = "none")} />
+          <img src={sideImage} alt="" aria-hidden="true" loading="lazy" className="hidden lg:block absolute top-0 right-0 w-[100%] max-w-[360px] h-[80%] max-h-[260px] object-contain pointer-events-none" onError={(e) => (e.target.style.display = "none")} />
         </div>
 
         <div className="mt-8 space-y-10">

@@ -1,3 +1,35 @@
+:root {
+  /* ---- Brand / accents ---- */
+  --primary:     #fff3f3;
+  --secondary:   #ffbdb2;
+  --tertiary:    #0D9488;
+
+  /* ---- Text ---- */
+  --title:       #520404;
+  --subtitle:    #4B5563;
+  --details:     #6B7280;
+
+  /* ---- Surfaces ---- */
+  --background:  #ec0303;
+  --foreground:  #F9FAFB;
+
+  /* ---- Button ---- */
+  --button:      #E11D48;
+  --button-text: #FFFFFF;
+
+  /* ---- Category accents ---- */
+  --accent-men:         #E11D48;
+  --accent-women:       #DB2777;
+  --accent-kids:        #F59E0B;
+  --accent-accessories: #0D9488;
+  --accent-sale:        #7C3AED;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+body {
+  background-color: var(--background);
+  color: var(--details);
+}

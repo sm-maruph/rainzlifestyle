@@ -8,7 +8,7 @@ import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
 import { getProductBySlug } from "../api";
 import { useCart } from "../context/CartContext";
 
-const BRAND = "#E11D48";
+const BRAND = "var(--brand)";
 const taka = (n) => `\u09F3${Number(n || 0).toLocaleString("en-BD")}`;
 const imgFallback = (e, label = "RAINZ") => { e.target.onerror = null; e.target.src = `https://placehold.co/300x400/f3f4f6/9ca3af?text=${encodeURIComponent(label)}`; };
 

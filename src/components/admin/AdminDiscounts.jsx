@@ -1,5 +1,5 @@
-// src/components/admin/AdminDiscounts.jsx
-import { useMemo, useState } from "react";
+// src/components/admin/AdminDiscounts.jsx — wired to the real coupon API
+import { useEffect, useMemo, useState } from "react";
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 import SearchIcon from "@mui/icons-material/Search";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
@@ -7,9 +7,11 @@ import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import CloseIcon from "@mui/icons-material/Close";
 import ContentCopyOutlinedIcon from "@mui/icons-material/ContentCopyOutlined";
 import CheckIcon from "@mui/icons-material/Check";
+import RefreshIcon from "@mui/icons-material/Refresh";
+import { getCoupons, createCoupon, updateCoupon, deleteCoupon } from "../../api";
 
 const BRAND = "#E11D48";
-const taka = (n) => `\u09F3${Number(n).toLocaleString("en-BD")}`;
+const taka = (n) => `\u09F3${Number(n || 0).toLocaleString("en-BD")}`;
 const today = () => new Date().toISOString().slice(0, 10);
 
 const TYPE_LABEL = { percent: "Percentage", fixed: "Fixed amount", shipping: "Free shipping" };
@@ -20,14 +22,6 @@ const STATUS_STYLE = {
   Expired: "bg-gray-100 text-gray-500",
   Disabled: "bg-red-50 text-red-600",
 };
-
-const SEED = [
-  { id: 1, code: "RAINZ10", type: "percent", value: 10, minOrder: 0, maxDiscount: 500, usageLimit: 0, used: 124, start: "2026-01-01", expiry: "2026-12-31", enabled: true, description: "10% off sitewide" },
-  { id: 2, code: "FLAT100", type: "fixed", value: 100, minOrder: 1000, maxDiscount: 0, usageLimit: 1000, used: 312, start: "2026-01-01", expiry: "2026-12-31", enabled: true, description: "৳100 off on orders over ৳1000" },
-  { id: 3, code: "FREESHIP", type: "shipping", value: 0, minOrder: 1500, maxDiscount: 0, usageLimit: 0, used: 540, start: "2026-01-01", expiry: "2026-12-31", enabled: true, description: "Free delivery over ৳1500" },
-  { id: 4, code: "WELCOME15", type: "percent", value: 15, minOrder: 0, maxDiscount: 400, usageLimit: 0, used: 0, start: "2026-08-01", expiry: "2026-09-30", enabled: true, description: "New customer offer" },
-  { id: 5, code: "EID2026", type: "percent", value: 25, minOrder: 2000, maxDiscount: 1000, usageLimit: 0, used: 890, start: "2026-03-01", expiry: "2026-04-15", enabled: true, description: "Eid mega sale" },
-];
 
 const computeStatus = (c) => {
   if (!c.enabled) return "Disabled";
@@ -42,12 +36,22 @@ const valueText = (c) => (c.type === "percent" ? `${c.value}%` : c.type === "fix
 const EMPTY = { id: null, code: "", type: "percent", value: "", minOrder: "", maxDiscount: "", usageLimit: "", start: today(), expiry: "", enabled: true, description: "" };
 
 export default function AdminDiscounts() {
-  const [coupons, setCoupons] = useState(SEED);
+  const [coupons, setCoupons] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [apiError, setApiError] = useState("");
+  const [saving, setSaving] = useState(false);
+
   const [search, setSearch] = useState("");
   const [tab, setTab] = useState("All");
   const [modal, setModal] = useState(null);
   const [errors, setErrors] = useState({});
   const [copied, setCopied] = useState(null);
+
+  const load = () => {
+    setLoading(true);
+    getCoupons().then(setCoupons).catch((e) => setApiError(e.message)).finally(() => setLoading(false));
+  };
+  useEffect(() => { load(); }, []);
 
   const withStatus = useMemo(() => coupons.map((c) => ({ ...c, status: computeStatus(c) })), [coupons]);
 
@@ -81,46 +85,69 @@ export default function AdminDiscounts() {
     return Object.keys(er).length === 0;
   };
 
-  const save = () => {
+  const save = async () => {
     if (!validate()) return;
-    const rec = {
-      id: modal.id ?? Date.now(),
+    setSaving(true); setApiError("");
+    const body = {
       code: modal.code.trim().toUpperCase(),
       type: modal.type,
       value: modal.type === "shipping" ? 0 : Number(modal.value),
       minOrder: Number(modal.minOrder || 0),
       maxDiscount: modal.type === "percent" ? Number(modal.maxDiscount || 0) : 0,
       usageLimit: Number(modal.usageLimit || 0),
-      used: modal.used ?? 0,
-      start: modal.start || "",
-      expiry: modal.expiry || "",
+      start: modal.start || null,
+      expiry: modal.expiry || null,
       enabled: modal.enabled,
       description: modal.description.trim(),
     };
-    setCoupons((list) => {
-      const idx = list.findIndex((c) => c.id === rec.id);
-      if (idx >= 0) { const copy = [...list]; copy[idx] = rec; return copy; }
-      return [rec, ...list];
-    });
-    setModal(null);
+    try {
+      if (modal.id) await updateCoupon(modal.id, body);
+      else await createCoupon(body);
+      setModal(null);
+      load();
+    } catch (e) {
+      setApiError(e.message || "Save failed");
+    } finally {
+      setSaving(false);
+    }
   };
 
-  const remove = (c) => { if (window.confirm(`Delete coupon "${c.code}"?`)) setCoupons((list) => list.filter((x) => x.id !== c.id)); };
-  const toggle = (c) => setCoupons((list) => list.map((x) => (x.id === c.id ? { ...x, enabled: !x.enabled } : x)));
+  const remove = async (c) => {
+    if (!window.confirm(`Delete coupon "${c.code}"?`)) return;
+    setApiError("");
+    try { await deleteCoupon(c.id); setCoupons((list) => list.filter((x) => x.id !== c.id)); }
+    catch (e) { setApiError(e.message); }
+  };
+
+  const toggle = async (c) => {
+    // optimistic
+    setCoupons((list) => list.map((x) => (x.id === c.id ? { ...x, enabled: !x.enabled } : x)));
+    try {
+      await updateCoupon(c.id, { ...c, enabled: !c.enabled });
+    } catch (e) {
+      setApiError(e.message);
+      setCoupons((list) => list.map((x) => (x.id === c.id ? { ...x, enabled: c.enabled } : x))); // revert
+    }
+  };
+
   const copy = (code) => { navigator.clipboard?.writeText(code); setCopied(code); setTimeout(() => setCopied(null), 1200); };
 
   return (
     <div className="space-y-5">
-      {/* Header */}
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
           <h2 className="text-xl sm:text-2xl font-extrabold text-gray-900">Discounts</h2>
-          <p className="text-sm text-gray-500">{coupons.length} coupon codes</p>
+          <p className="text-sm text-gray-500">{loading ? "Loading…" : `${coupons.length} coupon codes`}</p>
         </div>
-        <button onClick={openAdd} className="inline-flex items-center gap-1.5 rounded-lg px-4 py-2.5 text-sm font-semibold text-white" style={{ backgroundColor: BRAND }}>
-          <AddOutlinedIcon style={{ fontSize: 18 }} /> Add Coupon
-        </button>
+        <div className="flex items-center gap-2">
+          <button onClick={load} className="p-2.5 rounded-lg border border-gray-200 text-gray-500 hover:bg-gray-50" title="Refresh"><RefreshIcon style={{ fontSize: 18 }} /></button>
+          <button onClick={openAdd} className="inline-flex items-center gap-1.5 rounded-lg px-4 py-2.5 text-sm font-semibold text-white" style={{ backgroundColor: BRAND }}>
+            <AddOutlinedIcon style={{ fontSize: 18 }} /> Add Coupon
+          </button>
+        </div>
       </div>
+
+      {apiError && <div className="rounded-lg bg-red-50 text-red-700 text-sm px-4 py-2 flex items-center justify-between"><span>{apiError}</span><button onClick={() => setApiError("")}><CloseIcon style={{ fontSize: 16 }} /></button></div>}
 
       {/* Tabs + search */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
@@ -158,7 +185,11 @@ export default function AdminDiscounts() {
               </tr>
             </thead>
             <tbody>
-              {filtered.length === 0 ? (
+              {loading ? (
+                Array.from({ length: 5 }).map((_, i) => (
+                  <tr key={i} className="border-b border-gray-50"><td colSpan={8} className="py-3 px-4"><div className="h-7 bg-gray-100 rounded animate-pulse" /></td></tr>
+                ))
+              ) : filtered.length === 0 ? (
                 <tr><td colSpan={8} className="py-12 text-center text-gray-400">No coupons found.</td></tr>
               ) : (
                 filtered.map((c) => (
@@ -194,7 +225,7 @@ export default function AdminDiscounts() {
         </div>
       </div>
 
-      {/* ===== Add / Edit modal ===== */}
+      {/* Add / Edit modal */}
       {modal && (
         <div className="fixed inset-0 z-50 flex items-start sm:items-center justify-center p-3 sm:p-6 bg-black/40 overflow-y-auto">
           <div className="bg-white rounded-2xl w-full max-w-lg my-4 shadow-xl">
@@ -234,10 +265,10 @@ export default function AdminDiscounts() {
                   <input type="number" value={modal.usageLimit} onChange={(e) => setField("usageLimit", e.target.value)} className="inp" placeholder="0 = unlimited" />
                 </Field>
                 <Field label="Start date">
-                  <input type="date" value={modal.start} onChange={(e) => setField("start", e.target.value)} className="inp" />
+                  <input type="date" value={modal.start || ""} onChange={(e) => setField("start", e.target.value)} className="inp" />
                 </Field>
                 <Field label="Expiry date" error={errors.expiry}>
-                  <input type="date" value={modal.expiry} onChange={(e) => setField("expiry", e.target.value)} className="inp" />
+                  <input type="date" value={modal.expiry || ""} onChange={(e) => setField("expiry", e.target.value)} className="inp" />
                 </Field>
               </div>
 
@@ -253,7 +284,7 @@ export default function AdminDiscounts() {
 
             <div className="flex items-center justify-end gap-3 px-5 py-4 border-t border-gray-100">
               <button onClick={() => setModal(null)} className="rounded-lg px-4 py-2.5 text-sm font-semibold text-gray-600 hover:bg-gray-100">Cancel</button>
-              <button onClick={save} className="rounded-lg px-5 py-2.5 text-sm font-semibold text-white" style={{ backgroundColor: BRAND }}>{modal.id ? "Save Changes" : "Add Coupon"}</button>
+              <button onClick={save} disabled={saving} className="rounded-lg px-5 py-2.5 text-sm font-semibold text-white disabled:opacity-60" style={{ backgroundColor: BRAND }}>{saving ? "Saving…" : modal.id ? "Save Changes" : "Add Coupon"}</button>
             </div>
           </div>
         </div>

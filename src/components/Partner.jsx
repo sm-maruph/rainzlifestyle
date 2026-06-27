@@ -15,90 +15,105 @@ const PARTNERS = [
 
   {
     name: "Bangladesh Navy",
-    logo: "https://upload.wikimedia.org/wikipedia/en/thumb/0/0d/Bangladesh_Navy_Seal.svg/512px-Bangladesh_Navy_Seal.svg.png",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/6/6c/Emblem_of_the_Bangladesh_Navy.svg",
   },
   {
     name: "Bangladesh Army",
-    logo: "https://upload.wikimedia.org/wikipedia/en/thumb/7/7c/Seal_of_the_Bangladesh_Army.svg/512px-Seal_of_the_Bangladesh_Army.svg.png",
+    logo: "https://pbs.twimg.com/profile_images/1879504293189009409/NriEIeyh_400x400.jpg",
   },
   {
     name: "U.S. Army",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/Seal_of_the_United_States_Army.svg/512px-Seal_of_the_United_States_Army.svg.png",
+    logo: "https://img.magnific.com/premium-vector/united-states-army-logo-with-eagle-center_850624-230.jpg?semt=ais_hybrid&w=740&q=80",
   },
   {
     name: "Prothom Alo",
-    logo: "https://upload.wikimedia.org/wikipedia/en/6/65/Prothom_Alo_logo.svg",
+    logo: "https://media.prothomalo.com/prothomalo/import/default/2016/03/15/4d3620a7127d4a031a05a962fcc4b253-palo-logo.jpg",
   },
   {
     name: "Nutrition International",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/8/8e/Nutrition_International_logo.png",
+    logo: "https://nutritionintl.org/wp-content/uploads/2020/12/nutrition-international-logo-300x129-1.png",
   },
   {
     name: "HP",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/a/ad/HP_logo_2012.svg",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/HP_logo_2012.svg/1280px-HP_logo_2012.svg.png",
   },
   {
     name: "British High Commission",
+    logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTmaISX3HwzQTrL5o8sHLQagcBI8E8FbjQxwg&s",
   },
   {
     name: "DBC News",
+    logo: "https://mir-s3-cdn-cf.behance.net/project_modules/max_1200_webp/feb2b938467901.57629b6275218.jpg",
   },
   {
     name: "Bangladesh Coast Guard",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d9/%E0%A6%AC%E0%A6%BE%E0%A6%82%E0%A6%B2%E0%A6%BE%E0%A6%A6%E0%A7%87%E0%A6%B6_%E0%A6%95%E0%A7%8B%E0%A6%B8%E0%A7%8D%E0%A6%9F_%E0%A6%97%E0%A6%BE%E0%A6%B0%E0%A7%8D%E0%A6%A1%E0%A7%87%E0%A6%B0_%E0%A6%AA%E0%A7%8D%E0%A6%B0%E0%A6%A4%E0%A7%80%E0%A6%95.svg/1280px-%E0%A6%AC%E0%A6%BE%E0%A6%82%E0%A6%B2%E0%A6%BE%E0%A6%A6%E0%A7%87%E0%A6%B6_%E0%A6%95%E0%A7%8B%E0%A6%B8%E0%A7%8D%E0%A6%9F_%E0%A6%97%E0%A6%BE%E0%A6%B0%E0%A7%8D%E0%A6%A1%E0%A7%87%E0%A6%B0_%E0%A6%AA%E0%A7%8D%E0%A6%B0%E0%A6%A4%E0%A7%80%E0%A6%95.svg.png",
   },
   {
     name: "Bangladesh Air Force",
+    logo: "https://www.bssnews.net/assets/news_photos/2025/09/07/image-309373-1757243195.jpg",
   },
   {
     name: "Walton",
+    logo: "https://static.vecteezy.com/system/resources/previews/068/705/998/non_2x/walton-logo-mobile-brand-electronics-company-official-icon-free-png.png",
   },
   {
     name: "Runner",
+    logo: "https://www.tbsnews.net/sites/default/files/styles/big_2/public/images/2022/04/27/runner_logo.jpg",
   },
   {
     name: "GAIN",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/5/55/GAIN_logo.png",
+    logo: "https://www.gainhealth.org/sites/default/files/brand-identity/GAIN_logo_RVB.png",
   },
   {
     name: "PHP Family",
+    logo: "https://i.ytimg.com/vi/tnnVmCA78Fk/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLDF5wswi6Ko0Qd-TP_YGbAjvg_FJA",
   },
   {
     name: "Ericsson",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/0/02/Ericsson-Logo.svg",
+    logo: "https://e7.pngegg.com/pngimages/22/865/png-clipart-ericsson-japan-k-k-telecommunication-logo-business-business-blue-text-thumbnail.png",
   },
   {
     name: "Digital World 2020",
+    logo: "https://static.vecteezy.com/system/resources/thumbnails/022/902/445/small/globe-logo-design-symbol-icon-premium-vector.jpg",
+
   },
   {
     name: "Special Security Force",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Insignia_of_the_Special_Security_Force.svg/500px-Insignia_of_the_Special_Security_Force.svg.png",
+
   },
   {
     name: "UNDP",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/8/8b/UNDP_logo.svg",
+    logo: "https://www.atachcommunity.com/fileadmin/_processed_/a/e/csm_undp_logo_landscape_854813103b.png",
   },
   {
     name: "SK+F",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/SKF_logo.svg/2560px-SKF_logo.svg.pnghttps://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT_Law75EcoCP0XTINilS9398GOnkv-QnHXlA&s",
   },
   {
     name: "United Nations",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/e/ee/UN_emblem_blue.svg",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ee/UN_emblem_blue.svg/3840px-UN_emblem_blue.svg.png",
   },
   {
     name: "Qatar Airways",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/7/70/Qatar_Airways_Logo.svg",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/7/70/Qatar_Airways_Logo.svghttps://www.britishcouncil.or.th/sites/default/files/qatar_logo.jpg",
   },
   {
     name: "Confidence Group",
+    logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQKRVqBQkT5yoXIHlakofDhiHr3MAW58EVKYg&s",
   },
   {
     name: "NICCA",
+    logo: "https://marketplace.chemsec.org/api/file/logotype/209",
   },
   {
     name: "MIST",
+    logo: "https://upload.wikimedia.org/wikipedia/en/thumb/a/a7/Military_Institute_of_Science_and_Technology_Monogram.svg/1280px-Military_Institute_of_Science_and_Technology_Monogram.svg.png",
   },
 ];
 
-const GP_LOGO = null; // pass a URL string to show the partner's brand mark inline
+const GP_LOGO = "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/HP_logo_2012.svg/1280px-HP_logo_2012.svg.png"; // pass a URL string to show the partner's brand mark inline
 
 function chunk(arr, size) {
   const out = [];
@@ -112,7 +127,7 @@ const LogoCell = ({ partner }) => (
       <img
         src={partner.logo}
         alt={partner.name}
-        className="max-h-12 max-w-full object-contain opacity-70 grayscale transition duration-300 hover:opacity-100 hover:grayscale-0"
+        className="max-h-14 max-w-full object-contain opacity-100 grayscale-90 transition duration-300 hover:opacity-100 hover:grayscale-0"
       />
     ) : (
       <span className="text-center text-sm font-semibold text-gray-500 transition-colors hover:text-gray-800">

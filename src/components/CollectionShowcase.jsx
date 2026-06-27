@@ -97,7 +97,7 @@ export default function CollectionShowcase({
   const go = (link) => (onSelect ? onSelect(link) : navigate(link || "/"));
 
   return (
-    <section className="w-full bg-white">
+    <section className="w-full" style={{ backgroundColor: "var(--primary)" }}>
       <div className="w-[94%] max-w-[1500px] mx-auto py-8">
         {/* Promo banners */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

@@ -1,14 +1,16 @@
-// src/components/Checkout.jsx — wired to real placeOrder()
+// src/components/Checkout.jsx — real placeOrder() + coupon (admin discounts)
 import { useMemo, useState } from "react";
 import { useLocation, Link } from "react-router-dom";
 import LocalShippingOutlinedIcon from "@mui/icons-material/LocalShippingOutlined";
 import PaymentsOutlinedIcon from "@mui/icons-material/PaymentsOutlined";
 import CreditCardOutlinedIcon from "@mui/icons-material/CreditCardOutlined";
 import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
-import { placeOrder } from "../api";
+import LocalOfferOutlinedIcon from "@mui/icons-material/LocalOfferOutlined";
+import CloseIcon from "@mui/icons-material/Close";
+import { placeOrder, validateCoupon } from "../api";
 import { useCart } from "../context/CartContext";
 
-const BRAND = "#E11D48";
+const BRAND = "var(--brand)";
 const taka = (n) => `\u09F3${Number(n || 0).toLocaleString("en-BD")}`;
 const DELIVERY = { inside: 80, outside: 120 };
 const imgFallback = (e) => { e.target.onerror = null; e.target.src = "https://placehold.co/120x150/f3f4f6/9ca3af?text=RAINZ"; };
@@ -17,25 +19,55 @@ export default function Checkout() {
   const location = useLocation();
   const cart = useCart();
 
-  // Items: "Buy Now" (router state) wins; otherwise the cart.
   const buyNow = location.state?.items;
   const fromCart = !(buyNow && buyNow.length);
   const items = fromCart ? cart.items || [] : buyNow;
 
   const [form, setForm] = useState({ name: "", phone: "", address: "", city: "", note: "" });
-  const [deliveryArea, setDeliveryArea] = useState("inside"); // 'inside' | 'outside'
-  const [payment, setPayment] = useState("cod");              // 'cod' | 'online'
+  const [deliveryArea, setDeliveryArea] = useState("inside");
+  const [payment, setPayment] = useState("cod");
   const [errors, setErrors] = useState({});
   const [apiError, setApiError] = useState("");
   const [placing, setPlacing] = useState(false);
   const [placed, setPlaced] = useState(null);
 
-  // Totals (display only — server recomputes authoritative totals)
-  const { subtotal, delivery, total } = useMemo(() => {
-    const sub = items.reduce((s, it) => s + Number(it.price) * (it.qty || 1), 0);
-    const del = DELIVERY[deliveryArea];
-    return { subtotal: sub, delivery: del, total: sub + del };
-  }, [items, deliveryArea]);
+  // ----- Coupon state -----
+  const [couponInput, setCouponInput] = useState("");
+  const [coupon, setCoupon] = useState(null);   // { code, discount }
+  const [couponError, setCouponError] = useState("");
+  const [checkingCoupon, setCheckingCoupon] = useState(false);
+
+  const subtotal = useMemo(() => items.reduce((s, it) => s + Number(it.price) * (it.qty || 1), 0), [items]);
+  const delivery = coupon?.freeShipping ? 0 : DELIVERY[deliveryArea];
+  const discount = coupon?.discount || 0;
+  const total = Math.max(0, subtotal + delivery - discount);
+
+  const applyCoupon = async () => {
+    const code = couponInput.trim();
+    if (!code) return;
+    setCheckingCoupon(true); setCouponError("");
+    try {
+      const res = await validateCoupon(code, subtotal); // { valid, code, type, discount, freeShipping }
+      if (res && res.valid) {
+        setCoupon({
+          code: res.code || code.toUpperCase(),
+          discount: Number(res.discount) || 0,
+          freeShipping: !!res.freeShipping,
+        });
+        setCouponError("");
+      } else {
+        setCoupon(null);
+        setCouponError(res?.error || res?.message || "Invalid or expired coupon.");
+      }
+    } catch (e) {
+      setCoupon(null);
+      setCouponError(e.message || "Could not validate the coupon.");
+    } finally {
+      setCheckingCoupon(false);
+    }
+  };
+
+  const removeCoupon = () => { setCoupon(null); setCouponInput(""); setCouponError(""); };
 
   const validate = () => {
     const e = {};
@@ -59,7 +91,7 @@ export default function Checkout() {
       city: form.city.trim() || undefined,
       delivery_zone: deliveryArea === "inside" ? "inside_dhaka" : "outside_dhaka",
       payment_method: payment === "cod" ? "cod" : "sslcommerz",
-      coupon_code: null,
+      coupon_code: coupon?.code || null,
       note: form.note.trim() || null,
       items: items.map((it) => ({
         product_id: it.productId || it.id || null,
@@ -73,8 +105,8 @@ export default function Checkout() {
     };
 
     try {
-      const res = await placeOrder(payload); // { order_code, subtotal, delivery, discount, total }
-      if (fromCart && cart.clear) cart.clear(); // empty the cart after a cart checkout
+      const res = await placeOrder(payload);
+      if (fromCart && cart.clear) cart.clear();
       setPlaced({ orderId: res.order_code, total: res.total ?? total, payment, deliveryArea });
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (e) {
@@ -84,7 +116,6 @@ export default function Checkout() {
     }
   };
 
-  // ---- Empty state ----
   if (items.length === 0 && !placed) {
     return (
       <div className="w-[94%] max-w-[900px] mx-auto py-24 text-center">
@@ -96,20 +127,13 @@ export default function Checkout() {
     );
   }
 
-  // ---- Success state ----
   if (placed) {
     return (
       <div className="w-[94%] max-w-[640px] mx-auto py-20 text-center">
         <CheckCircleRoundedIcon style={{ fontSize: 64, color: "#16a34a" }} />
-        <h1 className="mt-3 text-2xl font-bold text-gray-900">
-          {placed.payment === "online" ? "Payment Successful" : "Order Placed!"}
-        </h1>
-        <p className="mt-2 text-gray-600">
-          Your order <span className="font-semibold">#{placed.orderId}</span> has been confirmed.
-        </p>
-        <p className="mt-1 text-gray-600">
-          {placed.payment === "online" ? `You paid ${taka(placed.total)}.` : `Please keep ${taka(placed.total)} ready for cash on delivery.`}
-        </p>
+        <h1 className="mt-3 text-2xl font-bold text-gray-900">{placed.payment === "online" ? "Payment Successful" : "Order Placed!"}</h1>
+        <p className="mt-2 text-gray-600">Your order <span className="font-semibold">#{placed.orderId}</span> has been confirmed.</p>
+        <p className="mt-1 text-gray-600">{placed.payment === "online" ? `You paid ${taka(placed.total)}.` : `Please keep ${taka(placed.total)} ready for cash on delivery.`}</p>
         <div className="mt-6 flex justify-center gap-3">
           <Link to="/" className="rounded-full border-2 px-6 py-2 text-sm font-semibold" style={{ borderColor: BRAND, color: BRAND }}>Back to Home</Link>
           <Link to={`/track-order?code=${placed.orderId}`} className="rounded-full px-6 py-2 text-sm font-semibold text-white" style={{ backgroundColor: BRAND }}>Track Order</Link>
@@ -127,7 +151,6 @@ export default function Checkout() {
       {apiError && <div className="mb-5 rounded-lg bg-red-50 text-red-700 text-sm px-4 py-3">{apiError}</div>}
 
       <div className="grid lg:grid-cols-3 gap-8">
-        {/* LEFT: forms */}
         <div className="lg:col-span-2 space-y-8">
           <section>
             <h2 className="text-lg font-bold text-gray-900 mb-3 flex items-center gap-2">
@@ -204,7 +227,6 @@ export default function Checkout() {
           </section>
         </div>
 
-        {/* RIGHT: order summary */}
         <aside className="lg:col-span-1">
           <div className="rounded-xl border border-gray-200 p-5 lg:sticky lg:top-24">
             <h2 className="text-lg font-bold text-gray-900 mb-4">Order Summary</h2>
@@ -222,12 +244,43 @@ export default function Checkout() {
               ))}
             </div>
 
+            {/* Coupon */}
+            <div className="mt-4 pt-4 border-t border-gray-100">
+              {coupon ? (
+                <div className="flex items-center justify-between rounded-lg bg-green-50 px-3 py-2">
+                  <span className="flex items-center gap-2 text-sm font-semibold text-green-700">
+                    <LocalOfferOutlinedIcon style={{ fontSize: 16 }} /> {coupon.code} applied
+                  </span>
+                  <button onClick={removeCoupon} className="text-green-700 hover:text-green-900"><CloseIcon style={{ fontSize: 16 }} /></button>
+                </div>
+              ) : (
+                <>
+                  <div className="flex gap-2">
+                    <input
+                      value={couponInput}
+                      onChange={(e) => setCouponInput(e.target.value.toUpperCase())}
+                      onKeyDown={(e) => e.key === "Enter" && applyCoupon()}
+                      placeholder="Coupon code"
+                      className="flex-1 min-w-0 rounded-md border border-gray-200 px-3 py-2 text-sm outline-none focus:border-gray-400"
+                    />
+                    <button onClick={applyCoupon} disabled={checkingCoupon || !couponInput.trim()} className="rounded-md px-4 py-2 text-sm font-semibold text-white disabled:opacity-50" style={{ backgroundColor: BRAND }}>
+                      {checkingCoupon ? "…" : "Apply"}
+                    </button>
+                  </div>
+                  {couponError && <p className="mt-1 text-xs text-red-500">{couponError}</p>}
+                </>
+              )}
+            </div>
+
             <div className="mt-4 pt-4 border-t border-gray-100 space-y-2 text-sm">
               <div className="flex justify-between text-gray-600"><span>Subtotal</span><span>{taka(subtotal)}</span></div>
               <div className="flex justify-between text-gray-600">
                 <span>Delivery ({deliveryArea === "inside" ? "Inside Dhaka" : "Outside Dhaka"})</span>
                 <span>{taka(delivery)}</span>
               </div>
+              {discount > 0 && (
+                <div className="flex justify-between text-green-600"><span>Discount ({coupon.code})</span><span>− {taka(discount)}</span></div>
+              )}
               <div className="flex justify-between text-base font-bold text-gray-900 pt-2 border-t border-gray-100"><span>Total</span><span>{taka(total)}</span></div>
             </div>
 

@@ -1,12 +1,37 @@
 // Thin fetch wrapper around your Express API.
 //   REACT_APP_API_BASE_URL=http://localhost:5000/api
+
 import { supabase } from "./supabaseClient";
 
 const BASE = process.env.REACT_APP_API_BASE_URL || "http://localhost:5000/api";
+console.log("🟢 NEW apiClient LOADED");
+
+// Read the access token directly from localStorage (the key supabase-js writes).
+// This avoids getSession() returning stale/empty during fast navigations.
+function tokenFromStorage() {
+  try {
+    const k = Object.keys(localStorage).find((k) => /sb-.*-auth-token/.test(k) || k === "rainz.auth" || k.includes("auth-token"));
+    if (!k) return null;
+    const raw = JSON.parse(localStorage.getItem(k));
+    return raw?.access_token || raw?.currentSession?.access_token || raw?.session?.access_token || null;
+  } catch {
+    return null;
+  }
+}
 
 async function authHeader() {
-  const { data } = await supabase.auth.getSession();
-  const token = data?.session?.access_token;
+  let token = tokenFromStorage();
+  // TEMP DEBUG:
+  const keys = Object.keys(localStorage);
+  console.log("[authHeader] keys:", keys, "| tokenFromStorage?", !!token);
+  if (!token) {
+    try {
+      const { data } = await supabase.auth.getSession();
+      token = data?.session?.access_token || null;
+      console.log("[authHeader] getSession token?", !!token);
+    } catch (e) { console.log("[authHeader] getSession error", e); }
+  }
+  console.log("[authHeader] FINAL sending token?", !!token);
   return token ? { Authorization: `Bearer ${token}` } : {};
 }
 
@@ -53,7 +78,6 @@ export const api = {
   async del(path) {
     return handle(await fetch(BASE + path, { method: "DELETE", headers: { ...(await authHeader()) } }));
   },
-  // For multipart (image uploads) — do NOT set Content-Type; browser sets the boundary.
   async upload(path, formData, method = "POST") {
     return handle(await fetch(BASE + path, { method, headers: { ...(await authHeader()) }, body: formData }));
   },
