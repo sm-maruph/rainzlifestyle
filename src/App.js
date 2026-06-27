@@ -46,7 +46,6 @@ import Footer from "./components/Footer";
 import "./index.css";
 import AutoScrollUp from "./components/subcomponent/AutoScrollUp";
 import ScrollToTop from "./components/subcomponent/ScrollToTop";
-import LoadingWrapper from "./components/ReusableComponent/LoadingWrapper";
 
 function App() {
   const location = useLocation();
@@ -102,7 +101,6 @@ function App() {
         className="w-full mx-auto min-h-screen bg-gray-100 overflow-x-hidden "
         style={{ paddingTop: isAdminPage ? 0 : navHeight, backgroundColor: "var(--primary)" }}
       >
-        <LoadingWrapper>
           <Routes>
             {/* ===== Admin dashboard — guarded: only logged-in admins ===== */}
             <Route
@@ -156,7 +154,6 @@ function App() {
               }
             />
           </Routes>
-        </LoadingWrapper>
         <ScrollToTop />
       </main>
 
