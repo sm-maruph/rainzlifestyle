@@ -132,7 +132,7 @@ const Navbar = forwardRef(
                   {(settings.storeName || "R")[0]}
                 </span>
               )}
-              <span className="text-xl font-extrabold tracking-tight text-gray-900">
+              <span className="text-xl font-extrabold tracking-tight text-BRAND">
                 {(() => {
                   const name = settings.storeName || "RAINZLIFESTYLE";
                   const i = name.toUpperCase().indexOf("LIFESTYLE");

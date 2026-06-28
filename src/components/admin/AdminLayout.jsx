@@ -1,6 +1,6 @@
 // src/components/admin/AdminLayout.jsx
 import { useState } from "react";
-import { NavLink, Outlet, useNavigate } from "react-router-dom";
+import { NavLink, Outlet, useNavigate, Link } from "react-router-dom";
 import DashboardOutlinedIcon from "@mui/icons-material/DashboardOutlined";
 import Inventory2OutlinedIcon from "@mui/icons-material/Inventory2Outlined";
 import WarehouseOutlinedIcon from "@mui/icons-material/WarehouseOutlined";
@@ -17,6 +17,8 @@ import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
 import NotificationsNoneOutlinedIcon from "@mui/icons-material/NotificationsNoneOutlined";
 import OpenInNewOutlinedIcon from "@mui/icons-material/OpenInNewOutlined";
+import { useSettings } from "../../context/SettingsContext";
+
 
 const BRAND = "#E11D48";
 
@@ -63,14 +65,27 @@ function SidebarLinks({ onNavigate }) {
 }
 
 function Brand() {
+  const { settings } = useSettings();
   return (
     <div className="flex items-center gap-2 px-5 h-16 border-b border-gray-100 shrink-0">
-      <span className="inline-flex h-9 w-9 items-center justify-center rounded-md text-white font-black" style={{ backgroundColor: BRAND }}>
-        R
-      </span>
-      <span className="text-lg font-extrabold tracking-tight text-gray-900">
-        RAINZ<span className="font-light text-gray-400">ADMIN</span>
-      </span>
+      <Link to="/admin" className="no-underline shrink-0 flex items-center gap-2">
+        {settings.logo ? (
+          <img src={settings.logo} alt={settings.storeName} className="h-9 w-9 rounded-md object-cover" />
+        ) : (
+          <span className="inline-flex h-9 w-9 items-center justify-center rounded-md text-white font-black" style={{ backgroundColor: BRAND }}>
+            {(settings.storeName || "R")[0]}
+          </span>
+        )}
+        <span className="text-xl font-extrabold tracking-tight text-gray-900">
+          {(() => {
+            const name = settings.storeName || "RAINZLIFESTYLE";
+            const i = name.toUpperCase().indexOf("LIFESTYLE");
+            return i > 0
+              ? <>{name.slice(0, i)}<span className="font-light text-gray-500">{name.slice(i)}</span></>
+              : name;
+          })()}
+        </span>
+      </Link>
     </div>
   );
 }
