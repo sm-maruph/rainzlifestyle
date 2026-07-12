@@ -1,11 +1,12 @@
 :root {
   /* ---- Brand / accents ---- */
-  --primary:     #fff3f3;
-  --secondary:   #ffbdb2;
-  --tertiary:    #0D9488;
+  --primary:     #ffffff;
+  --secondary:   #ffffff;
+  --tertiary:    #e4e4e4;
+  
 
   /* ---- Text ---- */
-  --title:       #520404;
+  --title:       #000000;
   --subtitle:    #4B5563;
   --details:     #6B7280;
 

@@ -125,7 +125,7 @@ function Spotlight({ spotlight, products, loading, onOpen, onGo, onAdd, onBuyNow
           style={{ color: "var(--title)" }}
         >
           {spotlight.label}
-          {activeSub && <span className="font-medium text-gray-400"> / {chips.find((c) => c.slug === activeSub)?.name}</span>}
+          {activeSub && <span className="font-medium  text-gray-400"> / {chips.find((c) => c.slug === activeSub)?.name}</span>}
           <ChevronRightIcon style={{ color: accent, fontSize: 22 }} />
         </button>
         <button onClick={() => onGo(activeSub ? `${spotlight.link}/${activeSub}` : spotlight.link)} className="text-sm font-semibold hover:underline" style={{ color: accent }}>View All &rarr;</button>

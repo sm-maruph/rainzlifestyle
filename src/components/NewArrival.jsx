@@ -117,7 +117,7 @@ function SkeletonTile() {
 }
 
 export default function NewArrival({
-  title = "New Arrival",
+  title = "our latest collection",
   products: productsProp,
   limit = 12,
   wishlistIds = [],
@@ -157,11 +157,13 @@ export default function NewArrival({
 
   return (
     <section
-      className="w-full"
+      className="w-full mt-4 md:mt-12 lg:mt-16 overflow-hidden"
       style={{ backgroundColor: "var(--primary)" }}
     >
-      <div className="w-full py-1" style={{ backgroundColor: "var(--primary)" }}>
-        <h2 className="text-center text-xl md:text-xl font-regular uppercase tracking-[0.15em]" style={{ color: BRAND }}>{title}</h2>
+      <div className="w-full pt-2" style={{ backgroundColor: "var(--primary)" }}>
+        <h2 className="text-center text-sm md:text-xl font-serif italic font-semibold uppercase tracking-[0.25em]" style={{ color: BRAND }}>
+          {title}
+        </h2>
       </div>
 
       <div className="w-[94%] max-w-[1500px] mx-auto px-1 py-8">
