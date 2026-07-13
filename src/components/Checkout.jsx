@@ -145,13 +145,13 @@ export default function Checkout() {
   const field = (key) => ({ value: form[key], onChange: (e) => setForm((f) => ({ ...f, [key]: e.target.value })) });
 
   return (
-    <div className="w-[94%] max-w-[1100px] mx-auto py-8">
-      <h1 className="text-2xl md:text-3xl font-extrabold text-gray-900 mb-6">Checkout</h1>
+    <div className="w-[94%] max-w-[1100px] mx-auto py-5 sm:py-8 pb-28 lg:pb-8">
+      <h1 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-gray-900 mb-4 sm:mb-6">Checkout</h1>
 
       {apiError && <div className="mb-5 rounded-lg bg-red-50 text-red-700 text-sm px-4 py-3">{apiError}</div>}
 
-      <div className="grid lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2 space-y-8">
+      <div className="grid lg:grid-cols-3 gap-5 lg:gap-8">
+        <div className="lg:col-span-2 space-y-6 sm:space-y-8">
           <section>
             <h2 className="text-lg font-bold text-gray-900 mb-3 flex items-center gap-2">
               <LocalShippingOutlinedIcon style={{ fontSize: 20, color: BRAND }} /> Delivery Information
@@ -228,7 +228,7 @@ export default function Checkout() {
         </div>
 
         <aside className="lg:col-span-1">
-          <div className="rounded-xl border border-gray-200 p-5 lg:sticky lg:top-24">
+          <div className="rounded-xl border border-gray-200 p-4 sm:p-5 lg:sticky lg:top-24">
             <h2 className="text-lg font-bold text-gray-900 mb-4">Order Summary</h2>
 
             <div className="space-y-3 max-h-64 overflow-y-auto pr-1">
@@ -284,7 +284,7 @@ export default function Checkout() {
               <div className="flex justify-between text-base font-bold text-gray-900 pt-2 border-t border-gray-100"><span>Total</span><span>{taka(total)}</span></div>
             </div>
 
-            <button onClick={submitOrder} disabled={placing} className="mt-5 w-full rounded-md py-3 text-sm font-bold text-white transition-opacity hover:opacity-90 disabled:opacity-60" style={{ backgroundColor: BRAND }}>
+            <button onClick={submitOrder} disabled={placing} className="hidden lg:block mt-5 w-full rounded-md py-3 text-sm font-bold text-white transition-opacity hover:opacity-90 disabled:opacity-60" style={{ backgroundColor: BRAND }}>
               {placing ? "Placing order…" : payment === "online" ? `Pay Now · ${taka(total)}` : `Place Order (COD) · ${taka(total)}`}
             </button>
             <p className="mt-2 text-[11px] text-center text-gray-400">
@@ -292,6 +292,16 @@ export default function Checkout() {
             </p>
           </div>
         </aside>
+      </div>
+      {/* Mobile sticky place-order bar */}
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-gray-200 px-4 py-3 flex items-center gap-3" style={{ paddingBottom: "calc(0.75rem + env(safe-area-inset-bottom))" }}>
+        <div className="shrink-0">
+          <p className="text-[11px] text-gray-500 leading-none">Total</p>
+          <p className="text-lg font-extrabold text-gray-900 leading-tight">{taka(total)}</p>
+        </div>
+        <button onClick={submitOrder} disabled={placing} className="flex-1 rounded-md py-3 text-sm font-bold text-white transition-opacity hover:opacity-90 disabled:opacity-60" style={{ backgroundColor: BRAND }}>
+          {placing ? "Placing…" : payment === "online" ? "Pay Now" : "Place Order (COD)"}
+        </button>
       </div>
     </div>
   );

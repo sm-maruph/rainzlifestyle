@@ -129,7 +129,12 @@ const Navbar = forwardRef(
                   const name = settings.storeName || "RAINZLIFESTYLE";
                   const i = name.toUpperCase().indexOf("LIFESTYLE");
                   return i > 0
-                    ? <>{name.slice(0, i)}<span className="font-light" style={{ color: "var(--subtitle)" }}>{name.slice(i)}</span></>
+                    ? <>
+                      <span style={{ fontFamily: "'Bodoni Moda', cursive", textTransform: "none", fontWeight: 400 }}>
+                        {name.slice(0, i)}
+                      </span>
+                      <span className="font-light" style={{ color: "var(--subtitle)" }}>{name.slice(i)}</span>
+                    </>
                     : name;
                 })()}
               </span>
