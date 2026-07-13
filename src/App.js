@@ -20,6 +20,7 @@ import Cart from "./components/Cart";
 import TrackOrder from "./components/TrackOrder";
 import Stores from "./components/Stores";
 import SalePage from "./components/SalePage";
+import MobileBottomNav from "./components/MobileBottomNav";
 
 import AboutUs from "./components/AboutUs";
 import ContactUs from "./components/ContactUs";
@@ -94,66 +95,66 @@ function App() {
           onLogout={logout}
         />
       )}
-      <ScrollToTopOnRefresh/>
+      <ScrollToTopOnRefresh />
       <AutoScrollUp />
 
       <main
-        className="w-full mx-auto min-h-screen bg-gray-100 overflow-x-hidden "
+        className="w-full mx-auto min-h-screen bg-gray-100 overflow-x-hidden pb-16 md:pb-0"
         style={{ paddingTop: isAdminPage ? 0 : navHeight, backgroundColor: "var(--primary)" }}
       >
-          <Routes>
-            {/* ===== Admin dashboard — guarded: only logged-in admins ===== */}
-            <Route
-              path="/admin"
-              element={
-                <RequireAdmin>
-                  <AdminLayout />
-                </RequireAdmin>
-              }
-            >
-              <Route index element={<AdminDashboard />} />
-              <Route path="products" element={<AdminProducts />} />
-              <Route path="inventory" element={<AdminInventory />} />   {/* <-- ADD THIS */}
+        <Routes>
+          {/* ===== Admin dashboard — guarded: only logged-in admins ===== */}
+          <Route
+            path="/admin"
+            element={
+              <RequireAdmin>
+                <AdminLayout />
+              </RequireAdmin>
+            }
+          >
+            <Route index element={<AdminDashboard />} />
+            <Route path="products" element={<AdminProducts />} />
+            <Route path="inventory" element={<AdminInventory />} />   {/* <-- ADD THIS */}
 
-              <Route path="categories" element={<AdminCategories />} />
-              <Route path="orders" element={<AdminOrders />} />
-              <Route path="discounts" element={<AdminDiscounts />} />
-              <Route path="collections" element={<AdminCollections />} />
-              <Route path="sale" element={<AdminSale />} />
-              <Route path="customers" element={<AdminCustomers />} />
-              <Route path="hero" element={<AdminHero />} />
-              <Route path="settings" element={<AdminSettings />} />
-            </Route>
+            <Route path="categories" element={<AdminCategories />} />
+            <Route path="orders" element={<AdminOrders />} />
+            <Route path="discounts" element={<AdminDiscounts />} />
+            <Route path="collections" element={<AdminCollections />} />
+            <Route path="sale" element={<AdminSale />} />
+            <Route path="customers" element={<AdminCustomers />} />
+            <Route path="hero" element={<AdminHero />} />
+            <Route path="settings" element={<AdminSettings />} />
+          </Route>
 
-            {/* Static routes (rank above the dynamic /:category in React Router v6) */}
-            <Route path="/" element={<LandingComponent />} />
-            <Route path="/about-us" element={<AboutUs />} />
-            <Route path="/contact-us" element={<ContactUs />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/new-arrivals" element={<CategoryPage />} />
-            <Route path="/product/:slug" element={<ProductDetail />} />
-            <Route path="/checkout" element={<Checkout />} />
-            <Route path="/wishlist" element={<Wishlist />} />
-            <Route path="/cart" element={<Cart />} />
-            <Route path="/track-order" element={<TrackOrder />} />
-            <Route path="/account/orders" element={<TrackOrder />} />
-            <Route path="/stores" element={<Stores />} />
-            <Route path="/sale" element={<SalePage />} />
+          {/* Static routes (rank above the dynamic /:category in React Router v6) */}
+          <Route path="/" element={<LandingComponent />} />
+          <Route path="/about-us" element={<AboutUs />} />
+          <Route path="/contact-us" element={<ContactUs />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/new-arrivals" element={<CategoryPage />} />
+          <Route path="/product/:slug" element={<ProductDetail />} />
+          <Route path="/checkout" element={<Checkout />} />
+          <Route path="/wishlist" element={<Wishlist />} />
+          <Route path="/cart" element={<Cart />} />
+          <Route path="/track-order" element={<TrackOrder />} />
+          <Route path="/account/orders" element={<TrackOrder />} />
+          <Route path="/stores" element={<Stores />} />
+          <Route path="/sale" element={<SalePage />} />
 
-            {/* Dynamic category / subcategory listing */}
-            <Route path="/:category" element={<CategoryPage />} />
-            <Route path="/:category/:subcategory" element={<CategoryPage />} />
+          {/* Dynamic category / subcategory listing */}
+          <Route path="/:category" element={<CategoryPage />} />
+          <Route path="/:category/:subcategory" element={<CategoryPage />} />
 
-            <Route
-              path="*"
-              element={
-                <div className="p-10 text-center text-red-500 text-xl">
-                  404 - Page Not Found
-                </div>
-              }
-            />
-          </Routes>
+          <Route
+            path="*"
+            element={
+              <div className="p-10 text-center text-red-500 text-xl">
+                404 - Page Not Found
+              </div>
+            }
+          />
+        </Routes>
         <ScrollToTop />
       </main>
 
@@ -162,6 +163,8 @@ function App() {
           <Partners />
           {/* <BottomHeader /> */}
           <Footer />
+          <MobileBottomNav />
+
         </>
       )}
     </>

@@ -268,7 +268,7 @@ const Navbar = forwardRef(
 
             {/* Mobile: bag + hamburger */}
             <div className="flex items-center gap-2 ml-auto xl:hidden">
-              <button onClick={() => go("/cart")} className="relative p-2" style={{ color: "var(--title)" }}><ShoppingBagOutlinedIcon /><Badge count={cartCount} /></button>
+              {/* <button onClick={() => go("/cart")} className="relative p-2" style={{ color: "var(--title)" }}><ShoppingBagOutlinedIcon /><Badge count={cartCount} /></button> */}
               <button className="text-white p-2 rounded-md" style={{ backgroundColor: BRAND }} onClick={() => { setMenuOpen(!menuOpen); setOpenDropdown(null); }}>
                 {menuOpen ? <CloseIcon /> : <MenuIcon />}
               </button>
