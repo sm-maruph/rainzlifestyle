@@ -21,6 +21,7 @@ import TrackOrder from "./components/TrackOrder";
 import Stores from "./components/Stores";
 import SalePage from "./components/SalePage";
 import MobileBottomNav from "./components/MobileBottomNav";
+import SearchResults from "./components/SearchResults";
 
 import AboutUs from "./components/AboutUs";
 import ContactUs from "./components/ContactUs";
@@ -142,6 +143,7 @@ function App() {
           <Route path="/stores" element={<Stores />} />
           <Route path="/sale" element={<SalePage />} />
 
+          <Route path="/search" element={<SearchResults />} />
           {/* Dynamic category / subcategory listing */}
           <Route path="/:category" element={<CategoryPage />} />
           <Route path="/:category/:subcategory" element={<CategoryPage />} />

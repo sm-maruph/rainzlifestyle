@@ -41,12 +41,12 @@ export default function MobileBottomNav() {
             <li key={label} className="flex-1">
               <button
                 onClick={() => navigate(to)}
-                className="w-full flex flex-col items-center gap-0.5 py-1.5 transition-colors"
+                className="w-full flex flex-col items-center gap-0.5 py-1 transition-colors"
                 style={{ color: active ? BRAND : "#374151" }}
                 aria-label={label}
               >
                 <span className="relative">
-                  <Icon style={{ fontSize: 21 }} />
+                  <Icon style={{ fontSize: 19 }} />
                   {badge > 0 && (
                     <span
                       className="absolute -top-1 -right-2 min-w-[15px] h-[15px] px-1 rounded-full text-[9px] font-bold text-white flex items-center justify-center"
@@ -56,7 +56,7 @@ export default function MobileBottomNav() {
                     </span>
                   )}
                 </span>
-                <span className="text-[10px] font-medium leading-none">{label}</span>
+                <span className="text-[9px] font-medium leading-none">{label}</span>
               </button>
             </li>
           );

@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef, forwardRef } from "react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
-import SearchIcon from "@mui/icons-material/Search";
 import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
 import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
 import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
@@ -13,6 +12,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
 import { getCategories, getProducts } from "../api";
 import { useSettings } from "../context/SettingsContext";
+import SearchBar from "./SearchBar";
 
 const BRAND = "var(--brand)";
 const taka = (n) => `\u09F3${Number(n || 0).toLocaleString("en-BD")}`;
@@ -35,7 +35,6 @@ const Navbar = forwardRef(
     const { settings } = useSettings();
     const [menuOpen, setMenuOpen] = useState(false);
     const [openDropdown, setOpenDropdown] = useState(null);
-    const [search, setSearch] = useState("");
     const [activeMenu, setActiveMenu] = useState(null);
     const [fetchedCats, setFetchedCats] = useState(null);
     const [featuredByCat, setFeaturedByCat] = useState({});
@@ -89,12 +88,6 @@ const Navbar = forwardRef(
     const goCategory = (cat) => go(`/${catSlug(cat)}`);
     const goSub = (cat, item) => go(`/${catSlug(cat)}/${slugify(item)}`);
 
-    const handleSearch = (e) => {
-      e.preventDefault();
-      const q = search.trim();
-      if (!q) return;
-      go(`/search?q=${encodeURIComponent(q)}`);
-    };
 
     useEffect(() => {
       document.body.style.overflow = menuOpen ? "hidden" : "";
@@ -113,28 +106,23 @@ const Navbar = forwardRef(
     return (
       <>
         <nav ref={ref} className="w-full fixed top-0 left-0 z-50 shadow-sm border-b border-gray-100" style={{ backgroundColor: "var(--secondary)" }}>
-          <div className="w-[94%] max-w-[1500px] mx-auto relative flex items-center gap-3 lg:gap-6 py-3">
+          <div className="w-[94%] max-w-[1500px] mx-auto relative flex items-center gap-2 sm:gap-3 lg:gap-6 py-2 sm:py-3">
 
             {/* Logo (bigger) */}
             <Link to="/" className="no-underline shrink-0 flex items-center gap-2.5">
               {settings.logo ? (
-                <img src={settings.logo} alt={settings.storeName} className="h-11 w-11 rounded-md object-cover" />
+                <img src={settings.logo} alt={settings.storeName} className="h-9 w-9 sm:h-11 sm:w-11 rounded-md object-cover" />
               ) : (
-                <span className="inline-flex h-11 w-11 items-center justify-center rounded-md text-white font-black text-xl" style={{ backgroundColor: BRAND }}>
+                <span className="inline-flex h-9 w-9 sm:h-11 sm:w-11 items-center justify-center rounded-md text-white font-black text-lg sm:text-xl" style={{ backgroundColor: BRAND }}>
                   {(settings.storeName || "R")[0]}
                 </span>
               )}
-              <span className="text-2xl md:text-3xl font-black tracking-tight uppercase" style={{ color: "var(--title)", letterSpacing: "-0.02em" }}>
+              <span className="text-lg sm:text-2xl md:text-3xl font-black tracking-tight uppercase" style={{ color: "var(--title)", letterSpacing: "-0.02em" }}>
                 {(() => {
                   const name = settings.storeName || "RAINZLIFESTYLE";
                   const i = name.toUpperCase().indexOf("LIFESTYLE");
                   return i > 0
-                    ? <>
-                      <span style={{ fontFamily: "'Bodoni Moda', cursive", textTransform: "none", fontWeight: 400 }}>
-                        {name.slice(0, i)}
-                      </span>
-                      <span className="font-light" style={{ color: "var(--subtitle)" }}>{name.slice(i)}</span>
-                    </>
+                    ? <>{name.slice(0, i)}<span className="font-light" style={{ color: "var(--subtitle)" }}>{name.slice(i)}</span></>
                     : name;
                 })()}
               </span>
@@ -211,11 +199,8 @@ const Navbar = forwardRef(
               })}
             </ul>
 
-            {/* Search */}
-            <form onSubmit={handleSearch} className="hidden md:flex flex-1 min-w-[200px] items-center bg-gray-100 rounded-md px-4 py-2.5 focus-within:ring-2" style={{ "--tw-ring-color": BRAND }}>
-              <input type="text" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search" className="flex-1 min-w-0 bg-transparent text-sm text-gray-700 placeholder-gray-400 outline-none" />
-              <button type="submit" aria-label="Search" className="text-gray-400"><SearchIcon fontSize="small" /></button>
-            </form>
+            {/* Search with live suggestions */}
+            <SearchBar className="hidden md:block flex-1 min-w-[200px]" />
 
             {/* Actions */}
             <div className="hidden md:flex items-center gap-4 lg:gap-5 shrink-0">
@@ -268,23 +253,26 @@ const Navbar = forwardRef(
 
             {/* Mobile: bag + hamburger */}
             <div className="flex items-center gap-2 ml-auto xl:hidden">
-              {/* <button onClick={() => go("/cart")} className="relative p-2" style={{ color: "var(--title)" }}><ShoppingBagOutlinedIcon /><Badge count={cartCount} /></button> */}
-              <button className="text-white p-2 rounded-md" style={{ backgroundColor: BRAND }} onClick={() => { setMenuOpen(!menuOpen); setOpenDropdown(null); }}>
+              {/* <button onClick={() => go("/cart")} className="relative p-1.5" style={{ color: "var(--title)" }}><ShoppingBagOutlinedIcon /><Badge count={cartCount} /></button> */}
+              <button className="text-white p-1.5 rounded-md" style={{ backgroundColor: BRAND }} onClick={() => { setMenuOpen(!menuOpen); setOpenDropdown(null); }}>
                 {menuOpen ? <CloseIcon /> : <MenuIcon />}
               </button>
             </div>
           </div>
         </nav>
 
-        {/* Mobile drawer */}
+        {/* Mobile drawer — slides from right, ~2/3 width, with dimmed overlay */}
         {menuOpen && (
-          <div className="fixed inset-0 bg-white flex flex-col px-4 pt-16 pb-10 xl:hidden z-[100] overflow-y-auto">
-            <button className="absolute top-4 right-4 text-gray-700" onClick={() => setMenuOpen(false)}><CloseIcon /></button>
+          <>
+            {/* dark overlay (tap to close) */}
+            <div className="fixed inset-0 bg-black/40 xl:hidden z-[99]" onClick={() => setMenuOpen(false)} />
+            {/* drawer panel */}
+            <div className="fixed top-0 right-0 h-full w-[75%] max-w-[360px] bg-white flex flex-col px-4 pt-16 pb-10 xl:hidden z-[100] overflow-y-auto shadow-2xl animate-[slideIn_.25s_ease-out]">
+              <button className="absolute top-4 right-4 text-gray-700" onClick={() => setMenuOpen(false)}><CloseIcon /></button>
 
-            <form onSubmit={handleSearch} className="flex items-center bg-gray-100 rounded-full px-4 py-3 mb-4">
-              <input type="text" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search" className="flex-1 bg-transparent text-sm text-gray-700 placeholder-gray-400 outline-none" />
-              <button type="submit" aria-label="Search" className="text-gray-400"><SearchIcon fontSize="small" /></button>
-            </form>
+            <div className="mb-4">
+              <SearchBar onNavigate={() => setMenuOpen(false)} />
+            </div>
 
             <div className="flex justify-around mb-4 border-b border-gray-200 pb-4">
               <MobileAction icon={LocationOnOutlinedIcon} label="Stores" onClick={() => go("/stores")} />
@@ -330,7 +318,9 @@ const Navbar = forwardRef(
               <button onClick={() => go("/track-order")} className="block py-2 text-sm text-gray-700">Track Order</button>
               {user && <button onClick={onLogout} className="block py-2 text-sm text-gray-700">Logout</button>}
             </div>
-          </div>
+            </div>
+            <style>{`@keyframes slideIn{from{transform:translateX(100%)}to{transform:translateX(0)}}`}</style>
+          </>
         )}
       </>
     );

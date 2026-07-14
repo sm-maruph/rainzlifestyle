@@ -77,7 +77,7 @@ export default function Cart() {
   }
 
   return (
-    <div className="w-full max-w-[1200px] mx-auto px-4 py-5 sm:py-8 pb-28 lg:pb-8 overflow-x-hidden">
+    <div className="w-full max-w-[1200px] mx-auto px-4 py-5 sm:py-8 overflow-x-hidden">
       <nav className="text-xs mb-3 flex items-center flex-wrap gap-y-1" style={{ color: "var(--title)" }}>
         <Crumb to="/">Home</Crumb>
         <ChevronRightIcon style={{ fontSize: 14, color: "var(--subtitle)" }} className="mx-0.5" />
@@ -140,7 +140,7 @@ export default function Cart() {
             </div>
 
             {/* Desktop checkout button (mobile uses sticky bar) */}
-            <button onClick={checkout} className="hidden lg:block mt-5 w-full rounded-md py-3 text-sm font-bold text-white transition-opacity hover:opacity-90" style={{ backgroundColor: BRAND }}>
+            <button onClick={checkout} className="mt-5 w-full rounded-md py-3 text-sm font-bold text-white transition-opacity hover:opacity-90" style={{ backgroundColor: BRAND }}>
               Proceed to Checkout
             </button>
 
@@ -152,16 +152,6 @@ export default function Cart() {
         </aside>
       </div>
 
-      {/* Mobile sticky checkout bar */}
-      <div className="lg:hidden fixed bottom-0 inset-x-0 z-30 bg-white border-t border-gray-200 px-4 py-3 flex items-center gap-3" style={{ paddingBottom: "calc(0.75rem + env(safe-area-inset-bottom))" }}>
-        <div className="shrink-0">
-          <p className="text-[11px] text-gray-500 leading-none">Total</p>
-          <p className="text-lg font-extrabold text-gray-900 leading-tight">{taka(subtotal)}</p>
-        </div>
-        <button onClick={checkout} className="flex-1 min-w-0 rounded-md py-3 text-sm font-bold text-white transition-opacity hover:opacity-90" style={{ backgroundColor: BRAND }}>
-          Proceed to Checkout
-        </button>
-      </div>
     </div>
   );
 }
