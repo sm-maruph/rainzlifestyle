@@ -1,6 +1,7 @@
 // src/components/ScrollToTop.jsx
 import React, { useEffect, useState } from "react";
 import { FaArrowUp } from "react-icons/fa"; // Make sure react-icons is installed
+const BRAND = "var(--brand)";
 
 const ScrollToTop = () => {
   const [visible, setVisible] = useState(false);
@@ -21,8 +22,8 @@ const ScrollToTop = () => {
     visible && (
       <button
         onClick={scrollToTop}
-        className="fixed bottom-16 right-6 z-10 p-2 bg-orange-500 text-white rounded-full shadow-lg hover:bg-orange-600 transition-all"
-        aria-label="Scroll to top"
+        className="fixed bottom-20 right-4 sm:right-6 z-40 p-3 text-white rounded-full shadow-lg transition-all hover:opacity-90"
+        style={{ backgroundColor: BRAND }} aria-label="Scroll to top"
       >
         <FaArrowUp />
       </button>
