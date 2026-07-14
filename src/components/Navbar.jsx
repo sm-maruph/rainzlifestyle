@@ -13,6 +13,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import { getCategories, getProducts } from "../api";
 import { useSettings } from "../context/SettingsContext";
 import SearchBar from "./SearchBar";
+import rainzWordmark from "../assets/global/wordmark.jpg";
 
 const BRAND = "var(--brand)";
 const taka = (n) => `\u09F3${Number(n || 0).toLocaleString("en-BD")}`;
@@ -109,7 +110,9 @@ const Navbar = forwardRef(
           <div className="w-[94%] max-w-[1500px] mx-auto relative flex items-center gap-2 sm:gap-3 lg:gap-6 py-2 sm:py-3">
 
             {/* Logo (bigger) */}
+            {/* Logo (bigger) */}
             <Link to="/" className="no-underline shrink-0 flex items-center gap-2.5">
+              {/* 1. Square icon logo (as-is) */}
               {settings.logo ? (
                 <img src={settings.logo} alt={settings.storeName} className="h-9 w-9 sm:h-11 sm:w-11 rounded-md object-cover" />
               ) : (
@@ -117,20 +120,34 @@ const Navbar = forwardRef(
                   {(settings.storeName || "R")[0]}
                 </span>
               )}
-              <span className="text-lg sm:text-2xl md:text-3xl tracking-tight" style={{ color: "var(--title)" }}>
+
+              {/* 2. Wordmark: local "RAINZ" image + "LIFESTYLE" text */}
+              <span className="text-lg sm:text-2xl md:text-3xl tracking-tight inline-flex items-baseline" style={{ color: "var(--title)" }}>
                 {(() => {
                   const name = settings.storeName || "RAINZLIFESTYLE";
                   const i = name.toUpperCase().indexOf("LIFESTYLE");
-                  return i > 0
-                    ? <>
-                      <span style={{ fontFamily: "'Satisfy'", fontWeight: 600, fontStyle: "italic", fontSize: "0.9em", letterSpacing: "0.01em" }}>
-                        {name.slice(0, i)}
-                      </span>
-                      <span style={{ fontFamily: "'Satisfy'", fontWeight: 500, color: "var(--subtitle)", marginLeft: "2px" }}>
-                        {name.slice(i)}
-                      </span>
+                  const first = i > 0 ? name.slice(0, i) : name;
+                  const rest = i > 0 ? name.slice(i) : "";
+                  return (
+                    <>
+                      {rainzWordmark ? (
+                        <img
+                          src={rainzWordmark}
+                          alt={first}
+                          className="h-3 sm:h-4 md:h-5 w-auto object-contain self-center pr-0.5 sm:pr-1"
+                        />
+                      ) : (
+                        <span style={{ fontFamily: "'Satisfy'", fontWeight: 600, fontStyle: "italic", fontSize: "0.9em", letterSpacing: "0.01em" }}>
+                          {first}
+                        </span>
+                      )}
+                      {rest && (
+                        <span style={{ fontFamily: "'Satisfy'", fontWeight: 500, color: "var(--subtitle)", fontSize: "0.7em", paddingLeft: "4px" ,paddingTop: "7px", letterSpacing: "0.01em"}}>
+                          {rest}
+                        </span>
+                      )}
                     </>
-                    : name;
+                  );
                 })()}
               </span>
             </Link>

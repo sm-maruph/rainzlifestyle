@@ -11,6 +11,7 @@ const COLORS = {
   text: "#D6D6D6",
   textMuted: "#f8f7f7",
   divider: "#ffffff",
+  cartisy: "#ff4d4d",
 };
 
 const NAV_LINKS = [
@@ -252,7 +253,7 @@ const Footer = () => {
           </p>
           <p style={{ color: COLORS.textMuted }}>
             Developed by{" "}
-            <a href="https://theatives.com/" target="_blank" rel="noopener noreferrer" className="font-semibold no-underline transition-colors hover:underline" style={{ color: COLORS.accent }}>
+            <a href="https://theatives.com/" target="_blank" rel="noopener noreferrer" className="font-semibold no-underline transition-colors hover:underline" style={{ color: COLORS.cartisy }}>
               Theatives
             </a>
           </p>

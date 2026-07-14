@@ -162,7 +162,7 @@ function App() {
 
       {!isAdminPage && (
         <>
-          <Partners />
+          {/* <Partners /> */}
           {/* <BottomHeader /> */}
           <Footer />
           <MobileBottomNav />

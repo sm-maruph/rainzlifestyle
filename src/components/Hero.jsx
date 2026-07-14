@@ -1,4 +1,6 @@
-// src/components/Hero.jsx — carousel; whole image always shown, container hugs image height (no gaps)
+// src/components/Hero.jsx — carousel with optional separate mobile image per slide.
+// Desktop shows s.image (wide). Mobile shows s.mobileImage if provided (taller, no crop),
+// otherwise falls back to s.image. Whole image always shown (no crop), height follows the image.
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { getHeroSlides } from "../api";
@@ -29,13 +31,12 @@ const Hero = () => {
   const go = (s) => s?.link && navigate(s.link);
 
   if (loading) {
-    // placeholder uses a wide ratio just while loading; replaced once the real image arrives
-    return <div className="w-full bg-gray-100 overflow-hidden" style={{ aspectRatio: "16 / 7" }}><div className="h-full w-full bg-gray-200 animate-pulse" /></div>;
+    return <div className="w-full bg-gray-100 overflow-hidden" style={{ aspectRatio: "16 / 9" }}><div className="h-full w-full bg-gray-200 animate-pulse" /></div>;
   }
 
   if (slides.length === 0) {
     return (
-      <div className="w-full flex items-center justify-center bg-gradient-to-r from-gray-100 to-gray-200 overflow-hidden" style={{ aspectRatio: "16 / 7" }}>
+      <div className="w-full flex items-center justify-center bg-gradient-to-r from-gray-100 to-gray-200 overflow-hidden" style={{ aspectRatio: "16 / 9" }}>
         <div className="text-center text-gray-400">
           <p className="text-lg font-semibold">RAINZLIFESTYLE</p>
           <p className="text-sm">Add hero slides in the admin panel to feature them here.</p>
@@ -46,19 +47,28 @@ const Hero = () => {
 
   return (
     <div className="relative w-full overflow-hidden leading-[0]">
-      {/* Active image sets the height (full width, natural height). Others overlay it, faded out. */}
-      {slides.map((s, idx) => (
-        <img
-          key={s.id}
-          src={s.image}
-          alt={s.title}
-          onClick={() => go(s)}
-          className={`w-full h-auto block select-none transition-opacity duration-1000 ease-in-out ${s.link ? "cursor-pointer" : ""} ${
-            idx === current ? "opacity-100 relative z-10" : "opacity-0 absolute inset-0 z-0"
-          }`}
-          onError={(e) => { e.target.onerror = null; e.target.src = `https://placehold.co/1600x700/CCCCCC/000000?text=${encodeURIComponent(s.title || "Slide")}`; }}
-        />
-      ))}
+      {slides.map((s, idx) => {
+        const active = idx === current;
+        const hasMobile = !!s.mobileImage;
+        return (
+          <picture
+            key={s.id}
+            onClick={() => go(s)}
+            className={`block w-full transition-opacity duration-1000 ease-in-out ${s.link ? "cursor-pointer" : ""} ${
+              active ? "opacity-100 relative z-10" : "opacity-0 absolute inset-0 z-0"
+            }`}
+          >
+            {/* Mobile source (taller image) if provided */}
+            {hasMobile && <source media="(max-width: 640px)" srcSet={s.mobileImage} />}
+            <img
+              src={s.image}
+              alt={s.title}
+              className="w-full h-[220px] sm:h-[380px] md:h-auto object-cover md:object-contain block select-none"
+              onError={(e) => { e.target.onerror = null; e.target.src = `https://placehold.co/1600x900/CCCCCC/000000?text=${encodeURIComponent(s.title || "Slide")}`; }}
+            />
+          </picture>
+        );
+      })}
 
       {/* Text overlay */}
       {(slides[current]?.title || slides[current]?.subtitle || slides[current]?.buttonText) && (
