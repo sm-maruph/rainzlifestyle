@@ -1,5 +1,6 @@
-// src/components/MobileBottomNav.jsx — compact fixed bottom nav for mobile (Stores, Wishlist, Track, Bag)
+// src/components/MobileBottomNav.jsx — compact bottom nav; hides on scroll down, shows on scroll up
 import { useNavigate, useLocation } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
 import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
 import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
 import LocalShippingOutlinedIcon from "@mui/icons-material/LocalShippingOutlined";
@@ -14,6 +15,34 @@ export default function MobileBottomNav() {
   const location = useLocation();
   const { items: cartItems = [] } = useCart() || {};
   const { items: wishItems = [] } = useWishlist() || {};
+
+  const [hidden, setHidden] = useState(false);
+  const lastY = useRef(0);
+
+  useEffect(() => {
+    lastY.current = window.scrollY;
+    let ticking = false;
+
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        const y = window.scrollY;
+        const diff = y - lastY.current;
+        // ignore tiny moves; near the very top always show
+        if (y < 40) {
+          setHidden(false);
+        } else if (Math.abs(diff) > 6) {
+          setHidden(diff > 0); // scrolling down -> hide, up -> show
+        }
+        lastY.current = y;
+        ticking = false;
+      });
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   // Hide on checkout (and anywhere else you don't want it)
   const HIDE_ON = ["/checkout"];
@@ -30,7 +59,7 @@ export default function MobileBottomNav() {
 
   return (
     <nav
-      className="md:hidden fixed bottom-0 inset-x-0 z-40 border-t border-gray-200 bg-white"
+      className={`md:hidden fixed bottom-0 inset-x-0 z-40 border-t border-gray-200 bg-white transition-transform duration-300 ${hidden ? "translate-y-full" : "translate-y-0"}`}
       style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
       aria-label="Bottom navigation"
     >
