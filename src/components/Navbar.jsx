@@ -117,12 +117,19 @@ const Navbar = forwardRef(
                   {(settings.storeName || "R")[0]}
                 </span>
               )}
-              <span className="text-lg sm:text-2xl md:text-3xl font-black tracking-tight uppercase" style={{ color: "var(--title)", letterSpacing: "-0.02em" }}>
+              <span className="text-lg sm:text-2xl md:text-3xl tracking-tight" style={{ color: "var(--title)" }}>
                 {(() => {
                   const name = settings.storeName || "RAINZLIFESTYLE";
                   const i = name.toUpperCase().indexOf("LIFESTYLE");
                   return i > 0
-                    ? <>{name.slice(0, i)}<span className="font-light" style={{ color: "var(--subtitle)" }}>{name.slice(i)}</span></>
+                    ? <>
+                      <span style={{ fontFamily: "'Satisfy'", fontWeight: 600, fontStyle: "italic", fontSize: "0.9em", letterSpacing: "0.01em" }}>
+                        {name.slice(0, i)}
+                      </span>
+                      <span style={{ fontFamily: "'Satisfy'", fontWeight: 500, color: "var(--subtitle)", marginLeft: "2px" }}>
+                        {name.slice(i)}
+                      </span>
+                    </>
                     : name;
                 })()}
               </span>
@@ -270,54 +277,54 @@ const Navbar = forwardRef(
             <div className="fixed top-0 right-0 h-full w-[75%] max-w-[360px] bg-white flex flex-col px-4 pt-16 pb-10 xl:hidden z-[100] overflow-y-auto shadow-2xl animate-[slideIn_.25s_ease-out]">
               <button className="absolute top-4 right-4 text-gray-700" onClick={() => setMenuOpen(false)}><CloseIcon /></button>
 
-            <div className="mb-4">
-              <SearchBar onNavigate={() => setMenuOpen(false)} />
-            </div>
+              <div className="mb-4">
+                <SearchBar onNavigate={() => setMenuOpen(false)} />
+              </div>
 
-            <div className="flex justify-around mb-4 border-b border-gray-200 pb-4">
-              <MobileAction icon={LocationOnOutlinedIcon} label="Stores" onClick={() => go("/stores")} />
-              <MobileAction icon={PersonOutlineOutlinedIcon} label="Profile" onClick={() => go(user ? "/account" : "/login")} />
-              <MobileAction icon={FavoriteBorderOutlinedIcon} label="Wishlist" badge={wishlistCount} onClick={() => go("/wishlist")} BadgeCmp={Badge} />
-              <MobileAction icon={ShoppingBagOutlinedIcon} label="Bag" badge={cartCount} onClick={() => go("/cart")} BadgeCmp={Badge} />
-            </div>
+              <div className="flex justify-around mb-4 border-b border-gray-200 pb-4">
+                <MobileAction icon={LocationOnOutlinedIcon} label="Stores" onClick={() => go("/stores")} />
+                <MobileAction icon={PersonOutlineOutlinedIcon} label="Profile" onClick={() => go(user ? "/account" : "/login")} />
+                <MobileAction icon={FavoriteBorderOutlinedIcon} label="Wishlist" badge={wishlistCount} onClick={() => go("/wishlist")} BadgeCmp={Badge} />
+                <MobileAction icon={ShoppingBagOutlinedIcon} label="Bag" badge={cartCount} onClick={() => go("/cart")} BadgeCmp={Badge} />
+              </div>
 
-            {categories.map((cat) => {
-              const hasMenu = cat.groups && cat.groups.length > 0;
-              return (
-                <div key={cat.name} className="w-full">
-                  <button className="text-gray-800 text-base font-semibold py-3 w-full text-left border-b border-gray-100 flex justify-between items-center" onClick={() => (hasMenu ? setOpenDropdown(openDropdown === cat.name ? null : cat.name) : goCategory(cat))} style={openDropdown === cat.name ? { color: cat.accent } : undefined}>
-                    {cat.name}
-                    {hasMenu && <span className="ml-4 text-gray-400">{openDropdown === cat.name ? "-" : "+"}</span>}
-                  </button>
-                  {hasMenu && openDropdown === cat.name && (
-                    <div className="bg-gray-50 py-2">
-                      {cat.groups.map((group) => (
-                        <div key={group.title} className="px-4 py-1">
-                          <p className="text-[11px] font-bold uppercase tracking-widest mb-1" style={{ color: cat.accent }}>{group.title}</p>
-                          {group.items.map((item) => (
-                            <button key={item} className="text-gray-600 text-sm py-1.5 block w-full text-left" onClick={() => goSub(cat, item)}>{item}</button>
-                          ))}
-                        </div>
-                      ))}
-                      <button className="text-sm font-semibold px-4 py-2 block w-full text-left" style={{ color: cat.accent }} onClick={() => goCategory(cat)}>View All {cat.name} &rarr;</button>
-                    </div>
-                  )}
-                </div>
-              );
-            })}
+              {categories.map((cat) => {
+                const hasMenu = cat.groups && cat.groups.length > 0;
+                return (
+                  <div key={cat.name} className="w-full">
+                    <button className="text-gray-800 text-base font-semibold py-3 w-full text-left border-b border-gray-100 flex justify-between items-center" onClick={() => (hasMenu ? setOpenDropdown(openDropdown === cat.name ? null : cat.name) : goCategory(cat))} style={openDropdown === cat.name ? { color: cat.accent } : undefined}>
+                      {cat.name}
+                      {hasMenu && <span className="ml-4 text-gray-400">{openDropdown === cat.name ? "-" : "+"}</span>}
+                    </button>
+                    {hasMenu && openDropdown === cat.name && (
+                      <div className="bg-gray-50 py-2">
+                        {cat.groups.map((group) => (
+                          <div key={group.title} className="px-4 py-1">
+                            <p className="text-[11px] font-bold uppercase tracking-widest mb-1" style={{ color: cat.accent }}>{group.title}</p>
+                            {group.items.map((item) => (
+                              <button key={item} className="text-gray-600 text-sm py-1.5 block w-full text-left" onClick={() => goSub(cat, item)}>{item}</button>
+                            ))}
+                          </div>
+                        ))}
+                        <button className="text-sm font-semibold px-4 py-2 block w-full text-left" style={{ color: cat.accent }} onClick={() => goCategory(cat)}>View All {cat.name} &rarr;</button>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
 
-            <div className="mt-6 border-t border-gray-200 pt-4 space-y-1">
-              {!user && (
-                <div className="flex items-center gap-3 text-sm font-bold mb-2">
-                  <button onClick={() => go("/login")} style={{ color: BRAND }}>Sign in</button>
-                  <span className="text-gray-300">/</span>
-                  <button onClick={() => go("/register")} style={{ color: BRAND }}>Sign up</button>
-                </div>
-              )}
-              <button onClick={() => go("/account/orders")} className="block py-2 text-sm text-gray-700">My Orders</button>
-              <button onClick={() => go("/track-order")} className="block py-2 text-sm text-gray-700">Track Order</button>
-              {user && <button onClick={onLogout} className="block py-2 text-sm text-gray-700">Logout</button>}
-            </div>
+              <div className="mt-6 border-t border-gray-200 pt-4 space-y-1">
+                {!user && (
+                  <div className="flex items-center gap-3 text-sm font-bold mb-2">
+                    <button onClick={() => go("/login")} style={{ color: BRAND }}>Sign in</button>
+                    <span className="text-gray-300">/</span>
+                    <button onClick={() => go("/register")} style={{ color: BRAND }}>Sign up</button>
+                  </div>
+                )}
+                <button onClick={() => go("/account/orders")} className="block py-2 text-sm text-gray-700">My Orders</button>
+                <button onClick={() => go("/track-order")} className="block py-2 text-sm text-gray-700">Track Order</button>
+                {user && <button onClick={onLogout} className="block py-2 text-sm text-gray-700">Logout</button>}
+              </div>
             </div>
             <style>{`@keyframes slideIn{from{transform:translateX(100%)}to{transform:translateX(0)}}`}</style>
           </>

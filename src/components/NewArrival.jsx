@@ -157,16 +157,16 @@ export default function NewArrival({
 
   return (
     <section
-      className="w-full mt-4 md:mt-12 lg:mt-16 overflow-hidden"
+      className="w-full mt-1 md:mt-12 lg:mt-16 overflow-hidden"
       style={{ backgroundColor: "var(--primary)" }}
     >
-      <div className="w-full pt-2" style={{ backgroundColor: "var(--primary)" }}>
-        <h2 className="text-center text-sm md:text-xl font-serif italic font-semibold uppercase tracking-[0.25em]" style={{ color: BRAND }}>
+      <div className="w-full pt-2 pb-1 px-4" style={{ backgroundColor: "var(--primary)" }}>
+        <h2 className="text-center text-base sm:text-lg md:text-xl font-serif italic font-semibold uppercase tracking-[0.12em] sm:tracking-[0.25em] leading-snug" style={{ color: BRAND }}>
           {title}
         </h2>
       </div>
 
-      <div className="w-[94%] max-w-[1500px] mx-auto px-1 py-8">
+      <div className="w-[94%] max-w-[1500px] mx-auto px-1 pt-1 pb-2">
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 md:gap-4">
           {loading
             ? Array.from({ length: limit }).map((_, i) => <SkeletonTile key={i} />)
@@ -189,21 +189,14 @@ export default function NewArrival({
           <div className="mt-8 flex justify-center">
             <button onClick={() => navigate(viewAllPath)} className="rounded-full border-2 px-8 py-2.5 text-sm font-semibold transition-colors hover:text-white"
               style={{ borderColor: BRAND, color: BRAND, backgroundColor: "transparent" }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = BRAND;
-                e.currentTarget.style.color = "#fff";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = "transparent";
-                e.currentTarget.style.color = BRAND;
-              }}>
+              onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = BRAND; e.currentTarget.style.color = "#fff"; }}
+              onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = "transparent"; e.currentTarget.style.color = BRAND; }}>
               View All New Arrivals &rarr;
             </button>
           </div>
         )}
       </div>
 
-      {/* Quick-add popup (choose size/color/qty before adding) */}
       <QuickAddModal slug={quickSlug} onClose={() => setQuickSlug(null)} />
     </section>
   );
