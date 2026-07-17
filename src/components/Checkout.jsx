@@ -7,7 +7,7 @@ import CreditCardOutlinedIcon from "@mui/icons-material/CreditCardOutlined";
 import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
 import LocalOfferOutlinedIcon from "@mui/icons-material/LocalOfferOutlined";
 import CloseIcon from "@mui/icons-material/Close";
-import { placeOrder, validateCoupon } from "../api";
+import { placeOrder, validateCoupon, rememberGuestOrder } from "../api";
 import { useCart } from "../context/CartContext";
 
 const BRAND = "var(--brand)";
@@ -106,6 +106,8 @@ export default function Checkout() {
 
     try {
       const res = await placeOrder(payload);
+      // Remember this order on the device so guests can find it under "My Orders"
+      rememberGuestOrder(res.order_code);
       if (fromCart && cart.clear) cart.clear();
       setPlaced({ orderId: res.order_code, total: res.total ?? total, payment, deliveryArea });
       window.scrollTo({ top: 0, behavior: "smooth" });

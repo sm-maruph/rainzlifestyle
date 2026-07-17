@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
 import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
-import LocalShippingOutlinedIcon from "@mui/icons-material/LocalShippingOutlined";
+import Inventory2OutlinedIcon from "@mui/icons-material/Inventory2Outlined";
 import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
 import { useCart } from "../context/CartContext";
 import { useWishlist } from "../context/WishlistContext";
@@ -51,7 +51,7 @@ export default function MobileBottomNav() {
   const items = [
     { label: "Stores", icon: LocationOnOutlinedIcon, to: "/stores" },
     { label: "Wishlist", icon: FavoriteBorderOutlinedIcon, to: "/wishlist", badge: wishItems.length },
-    { label: "Track", icon: LocalShippingOutlinedIcon, to: "/track-order" },
+    { label: "Orders", icon: Inventory2OutlinedIcon, to: "/account/orders" },
     { label: "Bag", icon: ShoppingBagOutlinedIcon, to: "/cart", badge: cartItems.length },
   ];
 

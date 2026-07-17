@@ -50,3 +50,45 @@ export async function getOrders() {
 export async function updateOrderStatus(id, status) {
   return api.patch(`/orders/${id}/status`, { status });
 }
+
+// ---- My Orders ----------------------------------------------------------
+
+// Logged-in customer's own orders
+export async function getMyOrders() {
+  const data = await api.get("/orders/mine");
+  return (data.items || []).map(mapOrderRow);
+}
+
+// Guests have no account, so we remember the order codes they placed on this
+// device and look each one up via the public track endpoint.
+const GUEST_KEY = "rainz_guest_orders";
+
+export function rememberGuestOrder(code) {
+  if (!code) return;
+  try {
+    const list = JSON.parse(localStorage.getItem(GUEST_KEY) || "[]");
+    if (!list.includes(code)) {
+      list.unshift(code);
+      localStorage.setItem(GUEST_KEY, JSON.stringify(list.slice(0, 30)));
+    }
+  } catch { /* ignore */ }
+}
+
+export function getGuestOrderCodes() {
+  try { return JSON.parse(localStorage.getItem(GUEST_KEY) || "[]"); }
+  catch { return []; }
+}
+
+export function clearGuestOrders() {
+  try { localStorage.removeItem(GUEST_KEY); } catch { /* ignore */ }
+}
+
+// Fetch full details for every remembered guest order code
+export async function getGuestOrders() {
+  const codes = getGuestOrderCodes();
+  if (!codes.length) return [];
+  const results = await Promise.all(
+    codes.map((c) => trackOrder(c).catch(() => null))
+  );
+  return results.filter(Boolean);
+}

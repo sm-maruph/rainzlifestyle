@@ -16,6 +16,7 @@ import Checkout from "./components/Checkout";
 import Login from "./components/Login";
 import Register from "./components/Register";
 import Wishlist from "./components/Wishlist";
+import MyOrders from "./components/MyOrders";
 import Cart from "./components/Cart";
 import TrackOrder from "./components/TrackOrder";
 import Stores from "./components/Stores";
@@ -139,10 +140,10 @@ function App() {
           <Route path="/wishlist" element={<Wishlist />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/track-order" element={<TrackOrder />} />
-          <Route path="/account/orders" element={<TrackOrder />} />
+          <Route path="/account/orders" element={<MyOrders />} />
+          <Route path="/my-orders" element={<MyOrders />} />
           <Route path="/stores" element={<Stores />} />
           <Route path="/sale" element={<SalePage />} />
-
           <Route path="/search" element={<SearchResults />} />
           {/* Dynamic category / subcategory listing */}
           <Route path="/:category" element={<CategoryPage />} />

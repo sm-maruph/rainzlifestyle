@@ -142,7 +142,7 @@ const Navbar = forwardRef(
                         </span>
                       )}
                       {rest && (
-                        <span style={{ fontFamily: "'Satisfy'", fontWeight: 500, color: "var(--subtitle)", fontSize: "0.7em", paddingLeft: "4px" ,paddingTop: "7px", letterSpacing: "0.01em"}}>
+                        <span style={{ fontFamily: "'Satisfy'", fontWeight: 500, color: "var(--subtitle)", fontSize: "0.7em", paddingLeft: "4px", paddingTop: "7px", letterSpacing: "0.01em" }}>
                           {rest}
                         </span>
                       )}
@@ -232,7 +232,10 @@ const Navbar = forwardRef(
                 <LocationOnOutlinedIcon fontSize="medium" />
                 <span className="text-[11px] font-medium">Stores</span>
               </button>
-
+              <button onClick={() => go("/account/orders")} className="flex flex-col items-center gap-0.5 transition-colors" style={{ color: "var(--title)" }}>
+                <Inventory2OutlinedIcon fontSize="medium" />
+                <span className="text-[11px] font-medium">Orders</span>
+              </button>
               <div className="relative group">
                 <button className="flex flex-col items-center gap-0.5 transition-colors" style={{ color: "var(--title)" }}>
                   <PersonOutlineOutlinedIcon fontSize="medium" />
@@ -255,7 +258,6 @@ const Navbar = forwardRef(
                       )}
                     </div>
                     <div className="border-t border-gray-100 py-1">
-                      <ProfileItem icon={Inventory2OutlinedIcon} label="My Orders" onClick={() => go("/account/orders")} />
                       <ProfileItem icon={LocalShippingOutlinedIcon} label="Track Order" onClick={() => go("/track-order")} />
                       <ProfileItem icon={PersonOutlineOutlinedIcon} label="My Account" onClick={() => go("/account")} />
                       {user && <ProfileItem icon={LogoutOutlinedIcon} label="Logout" onClick={() => { onLogout(); }} />}
@@ -300,6 +302,7 @@ const Navbar = forwardRef(
 
               <div className="flex justify-around mb-4 border-b border-gray-200 pb-4">
                 <MobileAction icon={LocationOnOutlinedIcon} label="Stores" onClick={() => go("/stores")} />
+                <MobileAction icon={Inventory2OutlinedIcon} label="Orders" onClick={() => go("/account/orders")} />
                 <MobileAction icon={PersonOutlineOutlinedIcon} label="Profile" onClick={() => go(user ? "/account" : "/login")} />
                 <MobileAction icon={FavoriteBorderOutlinedIcon} label="Wishlist" badge={wishlistCount} onClick={() => go("/wishlist")} BadgeCmp={Badge} />
                 <MobileAction icon={ShoppingBagOutlinedIcon} label="Bag" badge={cartCount} onClick={() => go("/cart")} BadgeCmp={Badge} />
