@@ -161,7 +161,7 @@ export default function NewArrival({
       style={{ backgroundColor: "var(--primary)" }}
     >
       <div className="w-full pt-2 pb-1 px-4" style={{ backgroundColor: "var(--primary)" }}>
-        <h2 className="text-center text-base sm:text-lg md:text-xl font-serif italic font-semibold uppercase tracking-[0.12em] sm:tracking-[0.25em] leading-snug" style={{ color: BRAND }}>
+        <h2 className="text-center text-xs sm:text-base md:text-lg lg:text-xl font-serif italic font-semibold uppercase tracking-[0.08em] sm:tracking-[0.15em] md:tracking-[0.25em] leading-snug px-3" style={{ color: BRAND }}>
           {title}
         </h2>
       </div>
