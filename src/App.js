@@ -7,7 +7,8 @@ import { useCart } from "./context/CartContext";
 import { useWishlist } from "./context/WishlistContext";
 
 import ScrollToTopOnRefresh from "./components/ScrollToTop";
-
+import MaintenancePage from "./components/MaintenancePage";
+import { useSettings } from "./context/SettingsContext";
 import Navbar from "./components/Navbar";
 import LandingComponent from "./components/LandingPage";
 import CategoryPage from "./components/CategoryPage";
@@ -52,7 +53,8 @@ import ScrollToTop from "./components/subcomponent/ScrollToTop";
 
 function App() {
   const location = useLocation();
-  const { user, logout } = useAuth();
+  const { user, logout, isAdmin, loading: authLoading } = useAuth();
+  const { settings, loading: settingsLoading } = useSettings();
   const { count: cartCount } = useCart();
   const { count: wishlistCount } = useWishlist();
 
@@ -85,6 +87,17 @@ function App() {
       ro && ro.disconnect();
     };
   }, [isAdminPage]);
+
+
+  // ---- Maintenance mode ----------------------------------------------
+  // Admins and the login page must stay reachable, otherwise turning
+  // maintenance OFF again would require a database edit.
+  const isLoginPage = ["/login", "/register"].includes(location.pathname);
+  const stillLoading = authLoading || settingsLoading;
+
+  if (settings.maintenance && !stillLoading && !isAdmin && !isAdminPage && !isLoginPage) {
+    return <MaintenancePage />;
+  }
 
   return (
     <>
@@ -161,13 +174,10 @@ function App() {
         <ScrollToTop />
       </main>
 
-      {!isAdminPage && (
+      {!isAdminPage && !isLoginPage && (
         <>
-          {/* <Partners /> */}
-          {/* <BottomHeader /> */}
           <Footer />
           <MobileBottomNav />
-
         </>
       )}
     </>
