@@ -50,7 +50,7 @@ function ProductTile({ product, onOpen, onAddToCart, onBuyNow, onToggleWishlist,
       </button>
 
       {/* Image — FIXED height so every card is identical (independent of Tailwind aspect support) */}
-      <div className="h-56 sm:h-60 w-full bg-gradient-to-b from-gray-50 to-gray-100 flex items-center justify-center p-3">
+      <div className="h-56 sm:h-60 w-full bg-gradient-to-b from-gray-50 to-gray-100 flex items-center justify-center">
         <img src={product.image} alt={product.name} loading="lazy" className="max-h-full max-w-full object-contain transition-transform duration-300 group-hover:scale-105" onError={imgFallback} />
       </div>
 

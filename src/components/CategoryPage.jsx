@@ -40,7 +40,7 @@ function ProductCard({ product, accent, onOpen, onAdd }) {
         </button>
 
         {/* Fixed-height image keeps every card identical */}
-        <div className="h-56 sm:h-60 flex items-center justify-center p-3 bg-gradient-to-b from-gray-50 to-gray-100">
+        <div className="h-56 sm:h-60 flex items-center justify-center bg-gradient-to-b from-gray-50 to-gray-100">
           <img src={product.image} alt={product.name} loading="lazy" className="max-h-full max-w-full object-contain transition-transform duration-300 group-hover:scale-105" onError={(e) => imgFallback(e, product.name)} />
         </div>
       </div>
