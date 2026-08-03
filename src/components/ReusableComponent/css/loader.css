@@ -7,7 +7,7 @@
 .box1,
 .box2,
 .box3 {
-  border: 16px solid #05b088;
+  border: 16px solid var(--brand);
   box-sizing: border-box;
   position: absolute;
   display: block;

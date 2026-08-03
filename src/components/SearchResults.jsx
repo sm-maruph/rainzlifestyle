@@ -73,15 +73,15 @@ export default function SearchResults() {
   };
 
   return (
-    <div className="w-full max-w-[1500px] mx-auto px-4 py-5 sm:py-8 pb-24 lg:pb-8 overflow-x-hidden">
-      <nav className="text-xs mb-3 flex items-center flex-wrap gap-y-1" style={{ color: "var(--title)" }}>
-        <Link to="/" className="no-underline px-1.5 py-0.5 rounded" style={{ color: "var(--title)" }}>Home</Link>
-        <ChevronRightIcon style={{ fontSize: 14, color: "var(--subtitle)" }} className="mx-0.5" />
-        <span className="px-1.5 py-0.5" style={{ color: "var(--subtitle)" }}>Search</span>
+    <div className="w-full max-w-[1500px] mx-auto px-5 sm:px-6 lg:px-8 py-3 sm:py-6 pb-24 lg:pb-8 overflow-x-hidden">
+      <nav className="mb-4 flex min-h-5 items-center text-xs leading-none" style={{ color: "var(--title)" }} aria-label="Breadcrumb">
+        <Link to="/" className="no-underline" style={{ color: "var(--title)" }}>Home</Link>
+        <ChevronRightIcon style={{ fontSize: 14, color: "var(--subtitle)" }} className="mx-2 shrink-0" />
+        <span style={{ color: "var(--subtitle)" }}>Search</span>
       </nav>
 
       {/* Search box */}
-      <form onSubmit={submit} className="flex items-center bg-gray-100 rounded-full px-4 py-2.5 mb-5 max-w-2xl">
+      <form onSubmit={submit} className="mb-8 flex w-full max-w-2xl items-center rounded-full bg-gray-100 px-5 py-3 sm:mb-10">
         <input
           autoFocus
           value={input}
@@ -94,14 +94,14 @@ export default function SearchResults() {
 
       {/* Heading */}
       {q && (
-        <h1 className="text-lg sm:text-xl font-bold text-gray-900 mb-4">
+        <h1 className="mb-5 text-base font-bold text-gray-900 sm:text-xl">
           {loading ? "Searching…" : `${total} result${total !== 1 ? "s" : ""} for "${q}"`}
         </h1>
       )}
 
       {/* Results */}
       {loading ? (
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-4">
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 md:gap-4">
           {Array.from({ length: 10 }).map((_, i) => <div key={i} className="h-72 rounded-xl bg-gray-100 animate-pulse" />)}
         </div>
       ) : !q ? (
@@ -116,7 +116,7 @@ export default function SearchResults() {
           <Link to="/new-arrivals" className="inline-block mt-4 rounded-full px-6 py-2 text-sm font-semibold text-white" style={{ backgroundColor: BRAND }}>Browse New Arrivals</Link>
         </div>
       ) : (
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-4">
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 md:gap-4">
           {items.map((p) => (
             <ProductTile
               key={p.id ?? p.slug}

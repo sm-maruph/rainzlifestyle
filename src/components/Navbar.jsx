@@ -10,6 +10,8 @@ import Inventory2OutlinedIcon from "@mui/icons-material/Inventory2Outlined";
 import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
+import SearchIcon from "@mui/icons-material/Search";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { getCategories, getProducts } from "../api";
 import { useSettings } from "../context/SettingsContext";
 import { useCart } from "../context/CartContext";
@@ -37,6 +39,7 @@ const Navbar = forwardRef(
     const { settings } = useSettings();
     const { add: addToBag } = useCart();
     const [menuOpen, setMenuOpen] = useState(false);
+    const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
     const [openDropdown, setOpenDropdown] = useState(null);
     const [activeMenu, setActiveMenu] = useState(null);
     const [fetchedCats, setFetchedCats] = useState(null);
@@ -102,9 +105,9 @@ const Navbar = forwardRef(
 
 
     useEffect(() => {
-      document.body.style.overflow = menuOpen ? "hidden" : "";
+      document.body.style.overflow = menuOpen || mobileSearchOpen ? "hidden" : "";
       return () => { document.body.style.overflow = ""; };
-    }, [menuOpen]);
+    }, [menuOpen, mobileSearchOpen]);
 
     useEffect(() => {
       const closeOnDesktop = () => {
@@ -114,7 +117,10 @@ const Navbar = forwardRef(
         }
       };
       const closeOnEscape = (event) => {
-        if (event.key === "Escape") setMenuOpen(false);
+        if (event.key === "Escape") {
+          setMenuOpen(false);
+          setMobileSearchOpen(false);
+        }
       };
       window.addEventListener("resize", closeOnDesktop);
       window.addEventListener("keydown", closeOnEscape);
@@ -136,11 +142,11 @@ const Navbar = forwardRef(
     return (
       <>
         <nav ref={ref} className="w-full fixed top-0 left-0 z-50 shadow-sm border-b border-gray-100" style={{ backgroundColor: "var(--secondary)" }}>
-          <div className="w-full max-w-[1500px] mx-auto relative flex items-center gap-2 sm:gap-3 lg:gap-4 2xl:gap-6 px-3 sm:px-5 lg:px-6 py-2 sm:py-3">
+          <div className="w-full max-w-[1500px] mx-auto relative flex min-h-[52px] items-center gap-2 sm:gap-3 lg:gap-4 2xl:gap-6 px-4 lg:px-6 py-1.5 xl:py-3">
 
-            <Link to="/" className="no-underline shrink-0 flex items-center gap-1.5 sm:gap-2.5">
+            <Link to="/" className="no-underline shrink-0 flex items-center gap-1.5 sm:gap-2.5 absolute left-1/2 -translate-x-1/2 xl:static xl:translate-x-0">
               {settings.logo ? (
-                <img src={settings.logo} alt={settings.storeName} className="h-10 w-10 sm:h-12 sm:w-12 2xl:h-14 2xl:w-14 rounded-md object-cover" />
+                <img src={settings.logo} alt={settings.storeName} className="h-7 w-7 sm:h-8 sm:w-8 xl:h-12 xl:w-12 2xl:h-14 2xl:w-14 rounded-sm object-cover" />
               ) : (
                 <span className="inline-flex h-10 w-10 sm:h-12 sm:w-12 2xl:h-14 2xl:w-14 items-center justify-center rounded-md text-white font-black text-xl sm:text-2xl" style={{ backgroundColor: BRAND }}>
                   {(settings.storeName || "R")[0]}
@@ -148,7 +154,7 @@ const Navbar = forwardRef(
               )}
 
               {/* RAINZ wordmark */}
-              <span className="hidden sm:inline-flex text-lg sm:text-2xl md:text-3xl tracking-tight items-baseline" style={{ color: "var(--title)" }}>
+              <span className="inline-flex text-lg sm:text-2xl md:text-3xl tracking-tight items-baseline" style={{ color: "var(--title)" }}>
                 {(() => {
                   const name = settings.storeName || "RAINZLIFESTYLE";
                   const i = name.toUpperCase().indexOf("LIFESTYLE");
@@ -158,7 +164,7 @@ const Navbar = forwardRef(
                       <img
                         src={rainzWordmark}
                         alt={first}
-                        className="h-[17.1px] sm:h-[23.94px] md:h-[27.36px] w-auto object-contain self-center pr-0.5 sm:pr-1"
+                        className="h-[17px] sm:h-[21px] xl:h-[27.36px] w-auto max-w-[112px] sm:max-w-[150px] object-contain self-center pr-0.5 sm:pr-1"
                       />
                     ) : (
                       <span style={{ fontFamily: "'Satisfy'", fontWeight: 600, fontStyle: "italic", fontSize: "0.9em", letterSpacing: "0.01em" }}>
@@ -258,7 +264,7 @@ const Navbar = forwardRef(
             </ul>
 
             {/* Search with live suggestions */}
-            <SearchBar compact className="block min-w-0 flex-1 max-w-[210px] sm:flex-none sm:w-36 md:w-40 lg:w-52 xl:w-44 2xl:w-56 ml-auto" />
+            <SearchBar compact className="hidden xl:block min-w-0 flex-1 xl:w-44 2xl:w-56 ml-auto" />
 
             {/* Actions */}
             <div className="hidden xl:flex items-center gap-3 2xl:gap-5 shrink-0">
@@ -311,15 +317,42 @@ const Navbar = forwardRef(
               </button>
             </div>
 
-            {/* Mobile: bag + hamburger */}
-            <div className="flex items-center gap-2 ml-auto md:ml-0 shrink-0 xl:hidden">
-              {/* <button onClick={() => go("/cart")} className="relative p-1.5" style={{ color: "var(--title)" }}><ShoppingBagOutlinedIcon /><Badge count={cartCount} /></button> */}
-              <button className="text-white p-1.5 rounded-md" style={{ backgroundColor: BRAND }} onClick={() => { setMenuOpen(!menuOpen); setOpenDropdown(null); }}>
+            {/* Mobile/tablet controls */}
+            <div className="flex w-full items-center justify-between xl:hidden">
+              <button className="-ml-1 p-1 text-gray-900" aria-label="Open menu" onClick={() => { setMenuOpen(!menuOpen); setOpenDropdown(null); }}>
                 {menuOpen ? <CloseIcon /> : <MenuIcon />}
               </button>
+              <div className="flex items-center gap-3 sm:gap-4">
+                <button className="p-1 text-gray-900" aria-label="Search" onClick={() => setMobileSearchOpen((open) => !open)}><SearchIcon /></button>
+                <button onClick={() => go("/wishlist")} className="relative p-1 text-gray-900" aria-label="Wishlist">
+                  <FavoriteBorderOutlinedIcon /><Badge count={wishlistCount} />
+                </button>
+              </div>
             </div>
           </div>
         </nav>
+
+        {mobileSearchOpen && (
+          <div className="fixed inset-0 z-[110] bg-white xl:hidden animate-[searchSlideIn_.38s_cubic-bezier(.22,1,.36,1)]">
+            <div className="flex items-center gap-2 border-b border-gray-100 p-2 shadow-sm sm:px-4 sm:py-3">
+              <button className="flex h-10 w-8 shrink-0 items-center justify-center text-gray-700" aria-label="Close search" onClick={() => setMobileSearchOpen(false)}>
+                <ArrowBackIcon />
+              </button>
+              <SearchBar mobilePanel autoFocus className="min-w-0 flex-1" placeholder="Search products..." onNavigate={() => setMobileSearchOpen(false)} />
+            </div>
+            <div className="border-b border-gray-100 px-3 py-4 sm:px-6">
+              <p className="mb-3 text-xs font-semibold text-gray-600">Popular Searches</p>
+              <div className="flex flex-wrap gap-2">
+                {["T-Shirt", "Polo", "Hoodie", "Joggers", "Kurti", "Kids"].map((term) => (
+                  <button key={term} onClick={() => { setMobileSearchOpen(false); navigate(`/search?q=${encodeURIComponent(term)}`); }} className="rounded-full bg-gray-100 px-4 py-2 text-xs text-gray-700 transition-colors hover:bg-gray-200">
+                    {term}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <style>{`@keyframes searchSlideIn{from{transform:translateX(100%);opacity:.65}to{transform:translateX(0);opacity:1}}`}</style>
+          </div>
+        )}
 
         {/* Mobile drawer — slides from right, ~2/3 width, with dimmed overlay */}
         {menuOpen && (
@@ -327,8 +360,8 @@ const Navbar = forwardRef(
             {/* dark overlay (tap to close) */}
             <div className="fixed inset-0 bg-black/40 xl:hidden z-[99]" onClick={() => setMenuOpen(false)} />
             {/* drawer panel */}
-            <div className="fixed top-0 right-0 h-full w-[82vw] max-w-[360px] bg-white flex flex-col px-4 sm:px-5 pt-16 pb-10 xl:hidden z-[100] overflow-y-auto shadow-2xl animate-[slideIn_.25s_ease-out]">
-              <button className="absolute top-4 right-4 text-gray-700" onClick={() => setMenuOpen(false)}><CloseIcon /></button>
+            <div className="fixed top-0 left-0 h-full w-[78vw] max-w-[340px] bg-white flex flex-col px-4 sm:px-5 pt-16 pb-10 xl:hidden z-[100] overflow-y-auto shadow-2xl animate-[slideInLeft_.3s_ease-out]">
+              <button className="absolute top-4 left-4 text-gray-700" onClick={() => setMenuOpen(false)}><CloseIcon /></button>
 
               <div className="grid grid-cols-5 gap-1 mb-4 border-b border-gray-200 pb-4">
                 <MobileAction icon={LocationOnOutlinedIcon} label="Stores" onClick={() => go("/stores")} />
@@ -376,7 +409,7 @@ const Navbar = forwardRef(
                 {user && <button onClick={onLogout} className="block py-2 text-sm text-gray-700">Logout</button>}
               </div>
             </div>
-            <style>{`@keyframes slideIn{from{transform:translateX(100%)}to{transform:translateX(0)}}`}</style>
+            <style>{`@keyframes slideInLeft{from{transform:translateX(-100%)}to{transform:translateX(0)}}`}</style>
           </>
         )}
       </>

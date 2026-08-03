@@ -9,7 +9,7 @@ const BRAND = "var(--brand)";
 const taka = (n) => `\u09F3${Number(n || 0).toLocaleString("en-BD")}`;
 const imgFallback = (e) => { e.target.onerror = null; e.target.src = "https://placehold.co/80x100/f3f4f6/9ca3af?text=RAINZ"; };
 
-export default function SearchBar({ className = "", placeholder = "Search products", onNavigate, compact = false }) {
+export default function SearchBar({ className = "", placeholder = "Search products", onNavigate, compact = false, autoFocus = false, mobilePanel = false }) {
   const navigate = useNavigate();
   const [term, setTerm] = useState("");
   const [suggestions, setSuggestions] = useState([]);
@@ -75,6 +75,7 @@ export default function SearchBar({ className = "", placeholder = "Search produc
     <div ref={boxRef} className={`relative ${className}`}>
       <form onSubmit={onSubmit} className={`flex items-center rounded-lg border border-gray-200 bg-gray-50 transition focus-within:border-gray-300 focus-within:bg-white focus-within:shadow-sm ${compact ? "px-2.5 py-1.5" : "px-4 py-2.5"}`}>
         <input
+          autoFocus={autoFocus}
           value={term}
           onChange={(e) => { setTerm(e.target.value); setOpen(true); setActive(-1); }}
           onFocus={() => term.trim() && setOpen(true)}
@@ -90,7 +91,7 @@ export default function SearchBar({ className = "", placeholder = "Search produc
 
       {/* Suggestions dropdown */}
       {open && term.trim().length >= 2 && (
-        <div className={`absolute top-full mt-2 z-[60] bg-white rounded-lg shadow-2xl border border-gray-100 overflow-hidden ${compact ? "left-0 w-[340px] max-w-[calc(100vw-24px)]" : "left-0 right-0"}`}>
+        <div className={`${mobilePanel ? "fixed left-0 right-0 top-[61px] bottom-0 z-[120] rounded-none border-x-0 border-b-0 shadow-none" : `absolute top-full mt-2 z-[60] rounded-lg shadow-2xl ${compact ? "left-0 w-[340px] max-w-[calc(100vw-24px)]" : "left-0 right-0"}`} bg-white border border-gray-100 overflow-hidden`}>
           {loading ? (
             <div className="p-3 space-y-2">
               {Array.from({ length: 3 }).map((_, i) => (
@@ -104,7 +105,7 @@ export default function SearchBar({ className = "", placeholder = "Search produc
             <div className="p-4 text-sm text-gray-500">No matches. Press Enter to search all products.</div>
           ) : (
             <>
-              <ul className="max-h-[360px] overflow-y-auto">
+              <ul className={`${mobilePanel ? "max-h-[calc(100vh-112px)]" : "max-h-[360px]"} overflow-y-auto`}>
                 {suggestions.map((p, i) => (
                   <li key={p.id ?? p.slug}>
                     <button

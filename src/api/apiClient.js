@@ -4,7 +4,7 @@
 import { supabase } from "./supabaseClient";
 
 const BASE = process.env.REACT_APP_API_BASE_URL || "http://localhost:5000/api";
-console.log("🟢 NEW apiClient LOADED");
+// console.log("🟢 NEW apiClient LOADED");
 
 // Read the access token directly from localStorage (the key supabase-js writes).
 // This avoids getSession() returning stale/empty during fast navigations.

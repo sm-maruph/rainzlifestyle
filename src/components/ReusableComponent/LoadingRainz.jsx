@@ -1,6 +1,6 @@
 import React from "react";
 
-const BRAND = "#E11D48"; // RAINZLIFESTYLE rose
+const BRAND = "var(--brand)";
 
 // 4-point sparkle from the logo's crown
 const Sparkle = ({ size = 22, color = "#fff", style, className }) => (
@@ -22,13 +22,13 @@ const LoadingRainz = () => {
   const particles = Array.from({ length: 40 });
 
   return (
-    <div className="fixed inset-0 z-[999] flex flex-col items-center justify-center overflow-hidden bg-[#0a0a0a]">
+    <div className="fixed inset-0 z-[999] flex flex-col items-center justify-center overflow-hidden bg-white">
       {/* Soft radial glow */}
       <div
         className="absolute inset-0 z-0 pointer-events-none"
         style={{
           background:
-            "radial-gradient(circle at 50% 45%, rgba(225,29,72,0.18), transparent 55%)",
+            "radial-gradient(circle at 50% 45%, color-mix(in srgb, var(--brand) 14%, transparent), transparent 55%)",
         }}
       />
 
@@ -49,7 +49,7 @@ const LoadingRainz = () => {
                 height: `${size}px`,
                 left: "50%",
                 top: "55%",
-                backgroundColor: Math.random() > 0.5 ? BRAND : "#ffffff",
+                backgroundColor: Math.random() > 0.5 ? BRAND : "#111827",
                 opacity: 0.0,
                 animationDuration: `${Math.random() * 1.5 + 1.5}s`,
                 animationDelay: `${Math.random() * 1}s`,
@@ -63,10 +63,10 @@ const LoadingRainz = () => {
 
       {/* Sparkle crown */}
       <div className="relative z-10 flex items-end gap-2 mb-3">
-        <Sparkle size={16} className="rz-twinkle" style={{ animationDelay: "0s", filter: `drop-shadow(0 0 6px ${BRAND})` }} />
-        <Sparkle size={26} className="rz-twinkle" style={{ animationDelay: ".2s", filter: "drop-shadow(0 0 8px rgba(255,255,255,.6))" }} />
-        <Sparkle size={20} className="rz-twinkle" style={{ animationDelay: ".1s", filter: `drop-shadow(0 0 6px ${BRAND})` }} />
-        <Sparkle size={30} className="rz-twinkle" style={{ animationDelay: ".3s", filter: "drop-shadow(0 0 10px rgba(255,255,255,.7))" }} />
+        <Sparkle size={16} color={BRAND} className="rz-twinkle" style={{ animationDelay: "0s", filter: `drop-shadow(0 0 6px ${BRAND})` }} />
+        <Sparkle size={26} color="#111827" className="rz-twinkle" style={{ animationDelay: ".2s" }} />
+        <Sparkle size={20} color={BRAND} className="rz-twinkle" style={{ animationDelay: ".1s", filter: `drop-shadow(0 0 6px ${BRAND})` }} />
+        <Sparkle size={30} color="#111827" className="rz-twinkle" style={{ animationDelay: ".3s" }} />
       </div>
 
       {/* RAINZ wordmark */}
@@ -74,11 +74,12 @@ const LoadingRainz = () => {
         {letters.map((ch, i) => (
           <span
             key={i}
-            className="rz-letter text-white text-6xl md:text-8xl font-light"
+            className="rz-letter text-6xl md:text-8xl font-light"
             style={{
+              color: BRAND,
               letterSpacing: "0.12em",
               animationDelay: `${i * 0.06}s`,
-              textShadow: "0 0 18px rgba(255,255,255,0.25)",
+              textShadow: "0 0 18px color-mix(in srgb, var(--brand) 20%, transparent)",
             }}
           >
             {ch}
@@ -88,14 +89,14 @@ const LoadingRainz = () => {
 
       {/* Subtitle */}
       <p
-        className="z-10 mt-2 text-xs md:text-sm font-light text-gray-400 rz-fade"
+        className="z-10 mt-2 text-xs md:text-sm font-medium text-gray-500 rz-fade"
         style={{ letterSpacing: "0.5em", paddingLeft: "0.5em", animationDelay: "0.45s" }}
       >
         LIFESTYLE
       </p>
 
       {/* Shimmer progress bar */}
-      <div className="z-10 mt-8 h-[3px] w-44 rounded-full bg-white/10 overflow-hidden">
+      <div className="z-10 mt-8 h-[3px] w-44 rounded-full bg-gray-200 overflow-hidden">
         <div
           className="h-full w-1/3 rounded-full rz-shimmer"
           style={{ background: `linear-gradient(90deg, transparent, ${BRAND}, transparent)` }}

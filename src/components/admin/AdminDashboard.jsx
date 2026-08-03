@@ -145,6 +145,7 @@ function StatCard({ icon: Icon, label, value, loading, curr, prev, prevLabel, ac
 
 // ---------- smooth SVG line chart ----------
 function CurveChart({ points }) {
+  const [hovered, setHovered] = useState(null);
   const W = 640, H = 200, pad = 28;
   const max = Math.max(1, ...points.map((p) => p.v));
   const stepX = points.length > 1 ? (W - pad * 2) / (points.length - 1) : 0;
@@ -160,8 +161,11 @@ function CurveChart({ points }) {
   }).join(" ");
   const area = `${path} L ${xy[xy.length - 1][0]},${H - pad} L ${xy[0][0]},${H - pad} Z`;
 
+  const activePoint = hovered == null ? null : xy[hovered];
+
   return (
-    <svg viewBox={`0 0 ${W} ${H}`} className="h-32 w-full" preserveAspectRatio="none">
+    <div className="relative w-full" onMouseLeave={() => setHovered(null)}>
+    <svg viewBox={`0 0 ${W} ${H}`} className="h-32 w-full overflow-visible" preserveAspectRatio="none">
       <defs>
         <linearGradient id="rz-fill" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor={BRAND} stopOpacity="0.25" />
@@ -174,12 +178,23 @@ function CurveChart({ points }) {
       <motion.path d={area} fill="url(#rz-fill)" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8 }} />
       <motion.path d={path} fill="none" stroke={BRAND} strokeWidth="2.5" strokeLinecap="round" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 1.1, ease: "easeOut" }} />
       {xy.map((pt, i) => (
-        <g key={i}>
-          <circle cx={pt[0]} cy={pt[1]} r="3" fill="#fff" stroke={BRAND} strokeWidth="2" />
-          <title>{`${points[i].label}: ${taka(points[i].v)}`}</title>
+        <g key={i} onMouseEnter={() => setHovered(i)} onFocus={() => setHovered(i)} tabIndex="0" role="img" aria-label={`${points[i].label}, sales ${taka(points[i].v)}`} className="cursor-pointer outline-none">
+          <circle cx={pt[0]} cy={pt[1]} r="10" fill="transparent" />
+          <circle cx={pt[0]} cy={pt[1]} r={hovered === i ? "5" : "3"} fill="#fff" stroke={BRAND} strokeWidth={hovered === i ? "3" : "2"} className="transition-all" />
         </g>
       ))}
     </svg>
+    {activePoint && (
+      <div
+        className="pointer-events-none absolute z-20 min-w-max -translate-x-1/2 -translate-y-full rounded-lg bg-gray-950 px-3 py-2 text-center text-white shadow-xl"
+        style={{ left: `${(activePoint[0] / W) * 100}%`, top: `${(activePoint[1] / H) * 100}%`, marginTop: "-8px" }}
+      >
+        <p className="text-[10px] font-medium text-gray-300">{points[hovered].label}</p>
+        <p className="text-xs font-bold">Sales: {taka(points[hovered].v)}</p>
+        <span className="absolute left-1/2 top-full h-0 w-0 -translate-x-1/2 border-x-4 border-t-4 border-x-transparent border-t-gray-950" />
+      </div>
+    )}
+    </div>
   );
 }
 

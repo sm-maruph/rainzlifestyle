@@ -34,3 +34,16 @@ body {
   background-color: var(--background);
   color: var(--details);
 }
+
+/* Interactive labels should always read as controls, never underlined links. */
+button,
+button:hover,
+button:focus,
+button:active,
+a,
+a:hover,
+a:focus,
+a:active,
+a:visited {
+  text-decoration: none !important;
+}

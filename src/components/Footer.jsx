@@ -30,8 +30,7 @@ const SocialIcon = ({ path, href = "#", viewBox = "0 0 24 24", label }) => (
     target={href !== "#" ? "_blank" : undefined}
     rel={href !== "#" ? "noopener noreferrer" : undefined}
     aria-label={label}
-    className="flex h-10 w-10 items-center justify-center rounded-full transition-colors hover:bg-white/10"
-    style={{ color: COLORS.text }}
+    className="flex h-9 w-9 items-center justify-center rounded-full border border-white/15 bg-white/10 text-white transition-all hover:bg-white hover:text-gray-950"
   >
     <svg viewBox={viewBox} className="h-5 w-5" fill="currentColor">
       {path}
@@ -85,7 +84,7 @@ const Footer = () => {
 
   const handleSubscribe = () => {
     if (!email) return;
-    console.log("Subscribe:", email);
+    // console.log("Subscribe:", email);
     setEmail("");
   };
 
@@ -108,10 +107,10 @@ const Footer = () => {
       {/* ---- Office info bar ---- */}
       <div className="border-b border-white/10 py-2 px-4">
         <div className="mx-auto max-w-7xl">
-          <div className="grid grid-cols-1 gap-2 text-xs sm:grid-cols-2 lg:grid-cols-3 sm:text-sm leading-relaxed">
-            <div className="flex items-center gap-1.5">
-              <MapPin className="h-3.5 w-3.5 shrink-0" style={{ color: BRAND }} />
-              <div>
+          <div className="grid grid-cols-1 gap-2 text-xs sm:grid-cols-2 lg:grid-cols-[minmax(0,1.65fr)_minmax(max-content,.7fr)_minmax(max-content,1fr)] lg:items-center lg:gap-8 sm:text-sm leading-relaxed">
+            <div className="flex min-w-0 items-center gap-1.5 lg:whitespace-nowrap">
+              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white/10"><MapPin className="h-3.5 w-3.5 text-white" /></span>
+              <div className="min-w-0">
                 <span className="font-semibold text-white/80">Address:</span>
                 <span className="ml-0.5 text-white/70">
                   {settings.address || "Setu Homes, 55-Box Nagar, Zoo Road, Mirpur-1, Dhaka-1216"}
@@ -120,16 +119,16 @@ const Footer = () => {
               </div>
             </div>
             {settings.hours && (
-              <div className="flex items-center gap-1.5">
-                <MapPin className="h-3.5 w-3.5 shrink-0" style={{ color: BRAND }} />
+              <div className="flex items-center gap-1.5 lg:whitespace-nowrap">
+                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white/10"><MapPin className="h-3.5 w-3.5 text-white" /></span>
                 <div>
                   <span className="font-semibold text-white/80">Hours:</span>
                   <span className="ml-0.5 text-white/70">{settings.hours}</span>
                 </div>
               </div>
             )}
-            <div className="flex items-center gap-1.5">
-              <Mail className="h-3.5 w-3.5 shrink-0" style={{ color: BRAND }} />
+            <div className="flex items-center gap-1.5 lg:justify-self-end lg:whitespace-nowrap">
+              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white/10"><Mail className="h-3.5 w-3.5 text-white" /></span>
               <div>
                 <span className="font-semibold text-white/80">Email:</span>
                 <span className="ml-0.5 text-white/70">
@@ -147,9 +146,11 @@ const Footer = () => {
         <div className="lg:col-span-3">
           <div className="mb-6 flex items-center gap-2">
             {settings.logo ? (
-              <img src={settings.logo} alt={storeName} className="h-11 w-auto object-contain sm:h-12" />
+              <span className="flex h-14 min-w-14 items-center justify-center rounded-xl bg-white p-2 shadow-sm">
+                <img src={settings.logo} alt={storeName} className="h-10 w-auto max-w-[72px] object-contain" />
+              </span>
             ) : (
-              <div className="flex h-11 w-11 items-center justify-center rounded-md text-xl font-black text-white sm:h-12 sm:w-12 sm:text-2xl" style={{ backgroundColor: COLORS.accent }}>
+              <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-white text-xl font-black sm:text-2xl" style={{ color: COLORS.accent }}>
                 {storeName[0]}
               </div>
             )}
@@ -169,7 +170,7 @@ const Footer = () => {
         <div className="lg:col-span-5">
           <div className="mb-7">
             <div className="mb-3 flex items-center gap-2">
-              <Mail className="h-4 w-4" style={{ color: COLORS.accent }} />
+              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-white/10"><Mail className="h-4 w-4 text-white" /></span>
               <h3 className="text-xs font-semibold uppercase tracking-wide text-white sm:text-sm">
                 Get special discounts in your inbox
               </h3>
@@ -193,7 +194,7 @@ const Footer = () => {
 
           <div>
             <div className="mb-3 flex items-center gap-2">
-              <Phone className="h-4 w-4" style={{ color: COLORS.accent }} />
+              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-white/10"><Phone className="h-4 w-4 text-white" /></span>
               <h3 className="text-xs font-semibold uppercase tracking-wide text-white sm:text-sm">
                 For any help you may call us at
               </h3>
@@ -209,7 +210,7 @@ const Footer = () => {
         {/* Column 3 — Follow + apps */}
         <div className="lg:col-span-4">
           <div className="mb-3 flex items-center gap-2">
-            <Check className="h-4 w-4" style={{ color: COLORS.accent }} />
+            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-white/10"><Check className="h-4 w-4 text-white" /></span>
             <h3 className="text-xs font-semibold uppercase tracking-wide text-white sm:text-sm">Follow us</h3>
           </div>
 
@@ -226,7 +227,7 @@ const Footer = () => {
           ) : (
             <p className="mb-5 text-xs text-gray-500">Social links can be added in admin settings.</p>
           )}
-
+{/* 
           <div className="flex flex-wrap gap-2 sm:gap-3">
             <StoreButton top="Get it on" bottom="Google Play" icon={
               <svg viewBox="0 0 24 24" className="h-5 w-5" fill="currentColor">
@@ -241,7 +242,7 @@ const Footer = () => {
                 <path d="M16.4 12.7c0-2.1 1.7-3.1 1.8-3.2-1-1.4-2.5-1.6-3-1.6-1.3-.1-2.5.8-3.1.8s-1.6-.7-2.7-.7c-1.4 0-2.7.8-3.4 2-1.5 2.5-.4 6.3 1 8.4.7 1 1.5 2.1 2.6 2.1s1.5-.7 2.8-.7 1.6.7 2.7.7 1.8-1 2.5-2c.8-1.1 1.1-2.2 1.1-2.3-.1 0-2.3-.9-2.3-3.5zM14.3 6.3c.6-.7 1-1.7.9-2.7-.9 0-1.9.6-2.5 1.3-.6.6-1 1.6-.9 2.6 1 .1 1.9-.5 2.5-1.2z" />
               </svg>
             } />
-          </div>
+          </div> */}
         </div>
       </div>
 
