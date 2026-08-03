@@ -10,6 +10,7 @@ import { useWishlist } from "../context/WishlistContext";
 import QuickAddModal from "./QuickAddModal";
 import StarRoundedIcon from "@mui/icons-material/StarRounded";
 import StarBorderRoundedIcon from "@mui/icons-material/StarBorderRounded";
+import Pagination from "./Pagination";
 
 const BRAND = "var(--brand)";
 const taka = (n) => `\u09F3${Number(n || 0).toLocaleString("en-BD")}`;
@@ -60,7 +61,7 @@ function ProductMini({ product, isViewMore, accent, onOpen, onViewMore, onAdd, o
           {wished ? <FavoriteIcon fontSize="small" /> : <FavoriteBorderIcon fontSize="small" />}
         </button>
         {/* Fixed-height image keeps all cards uniform */}
-        <div className="h-44 sm:h-48 bg-gradient-to-b from-gray-50 to-gray-100 flex items-center justify-center">
+        <div className="h-40 sm:h-44 bg-gradient-to-b from-gray-50 to-gray-100 flex items-center justify-center">
           <img src={product.image} alt={product.name} loading="lazy" className="max-h-full max-w-full object-contain transition-transform duration-300 group-hover:scale-105" onError={(e) => imgFallback(e, product.name)} />
 
         </div>
@@ -106,13 +107,15 @@ function Spotlight({ spotlight, products, loading, onOpen, onGo, onAdd, onBuyNow
   const count = spotlight.count || 8;
   const accent = spotlight.accent || BRAND;
   const [activeSub, setActiveSub] = useState(null);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(Math.min(count, 8));
 
   // Fixed subcategory filtering: match by subcategory slug (product.subcategory is the slug)
   const filtered = useMemo(
     () => (activeSub ? products.filter((p) => p.subcategory === activeSub) : products),
     [products, activeSub]
   );
-  const slots = filtered.slice(0, count);
+  const slots = filtered.slice((page - 1) * pageSize, page * pageSize);
   const chips = [{ name: "All", slug: null }, ...(spotlight.subcategories || [])];
   const chipStyle = (isActive) => isActive ? { backgroundColor: accent, borderColor: accent, color: "#fff" } : { backgroundColor: "#f9fafb", borderColor: "#e5e7eb", color: "#4b5563" };
 
@@ -135,7 +138,7 @@ function Spotlight({ spotlight, products, loading, onOpen, onGo, onAdd, onBuyNow
         {chips.map((sub) => {
           const isActive = activeSub === sub.slug;
           return (
-            <button key={sub.slug ?? "all"} onClick={() => setActiveSub(sub.slug)} className="rounded-full border px-3 py-1 text-xs font-medium transition-colors" style={chipStyle(isActive)}
+            <button key={sub.slug ?? "all"} onClick={() => { setActiveSub(sub.slug); setPage(1); }} className="rounded-full border px-3 py-1 text-xs font-medium transition-colors" style={chipStyle(isActive)}
               onMouseEnter={(e) => { if (!isActive) Object.assign(e.currentTarget.style, { backgroundColor: accent, borderColor: accent, color: "#fff" }); }}
               onMouseLeave={(e) => { if (!isActive) Object.assign(e.currentTarget.style, chipStyle(false)); }}>
               {sub.name}
@@ -154,7 +157,7 @@ function Spotlight({ spotlight, products, loading, onOpen, onGo, onAdd, onBuyNow
         </div>
 
         {loading ? (
-          Array.from({ length: count }).map((_, i) => <div key={i} className="h-44 sm:h-48 rounded-lg bg-gray-100 animate-pulse" />)
+          Array.from({ length: pageSize }).map((_, i) => <div key={i} className="h-40 sm:h-44 rounded-lg bg-gray-100 animate-pulse" />)
         ) : slots.length === 0 ? (
           <div className="col-span-2 lg:col-span-4 flex items-center justify-center text-gray-400 text-sm py-10">No products in this subcategory yet.</div>
         ) : (
@@ -163,7 +166,7 @@ function Spotlight({ spotlight, products, loading, onOpen, onGo, onAdd, onBuyNow
               key={p.id ?? i}
               product={p}
               accent={accent}
-              isViewMore={!activeSub && i === slots.length - 1 && products.length > count}
+              isViewMore={false}
               onOpen={onOpen}
               onViewMore={() => onGo(spotlight.link)}
               onAdd={onAdd}
@@ -172,6 +175,7 @@ function Spotlight({ spotlight, products, loading, onOpen, onGo, onAdd, onBuyNow
           ))
         )}
       </div>
+      {!loading && <Pagination page={page} total={filtered.length} pageSize={pageSize} className="mt-5" onPageSizeChange={(size) => { setPageSize(size); setPage(1); }} onChange={setPage} />}
     </div>
   );
 }
@@ -213,7 +217,7 @@ export default function FeaturedCategories({
       .then((spots) => {
         if (!alive) return;
         setSpotlights(spots);
-        return Promise.all(spots.map((s) => getProducts({ category: s.category, pageSize: 24 }).then((res) => [s.id, res.items]))).then((entries) => alive && setProductsBySpot(Object.fromEntries(entries)));
+        return Promise.all(spots.map((s) => getProducts({ category: s.category, pageSize: 100 }).then((res) => [s.id, res.items]))).then((entries) => alive && setProductsBySpot(Object.fromEntries(entries)));
       })
       .catch(() => { })
       .finally(() => alive && setLoading(false));

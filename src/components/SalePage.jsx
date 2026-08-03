@@ -9,6 +9,7 @@ import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import { getSaleProducts } from "../api";
 import { useWishlist } from "../context/WishlistContext";
 import QuickAddModal from "./QuickAddModal";
+import Pagination from "./Pagination";
 
 const BRAND = "var(--brand)";
 const SALE = "#7C3AED";
@@ -82,6 +83,8 @@ export default function SalePage() {
   const [loading, setLoading] = useState(true);
   const [minOff, setMinOff] = useState(0);
   const [sort, setSort] = useState("discount");
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(8);
   const [quickSlug, setQuickSlug] = useState(null);
 
   useEffect(() => {
@@ -104,6 +107,9 @@ export default function SalePage() {
 
   const openProduct = (p) => navigate(`/product/${p.slug}`);
   const handleAdd = (p) => setQuickSlug(p.slug);
+  const pagedProducts = visible.slice((page - 1) * pageSize, page * pageSize);
+
+  useEffect(() => { setPage(1); }, [minOff, sort]);
 
   return (
     <div className="w-[92%] sm:w-[94%] max-w-[1300px] mx-auto py-6 sm:py-8">
@@ -148,10 +154,12 @@ export default function SalePage() {
                 <div className="h-8 bg-gray-100 rounded mt-2 animate-pulse" />
               </div>
             ))
-          : visible.map((p) => <SaleCard key={p.id} product={p} onOpen={openProduct} onAdd={handleAdd} />)}
+          : pagedProducts.map((p) => <SaleCard key={p.id} product={p} onOpen={openProduct} onAdd={handleAdd} />)}
       </div>
 
       {!loading && visible.length === 0 && <p className="text-center text-gray-400 py-16">No active sales right now. Check back soon!</p>}
+
+      {!loading && <Pagination page={page} total={visible.length} pageSize={pageSize} className="mt-10" onPageSizeChange={(size) => { setPageSize(size); setPage(1); }} onChange={(next) => { setPage(next); window.scrollTo({ top: 0, behavior: "smooth" }); }} />}
 
       <QuickAddModal slug={quickSlug} onClose={() => setQuickSlug(null)} />
     </div>

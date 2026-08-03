@@ -8,6 +8,7 @@ import { getProducts, getCategories } from "../api";
 import { useWishlist } from "../context/WishlistContext";
 import QuickAddModal from "./QuickAddModal";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import Pagination from "./Pagination";
 
 const BRAND = "var(--brand)"; const taka = (n) => `\u09F3${Number(n || 0).toLocaleString("en-BD")}`;
 const prettify = (s = "") => s.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
@@ -113,7 +114,9 @@ export default function CategoryPage() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [sort, setSort] = useState("newest");
-  const [visible, setVisible] = useState(12);
+  const [page, setPage] = useState(1);
+  const [total, setTotal] = useState(0);
+  const [pageSize, setPageSize] = useState(8);
   const [quickSlug, setQuickSlug] = useState(null);
 
   const cat = useMemo(() => tree.find((c) => c.slug === category), [tree, category]);
@@ -139,16 +142,15 @@ export default function CategoryPage() {
   useEffect(() => {
     let alive = true;
     setLoading(true);
-    setVisible(12);
-    const query = isNewArrivals ? { sort } : { category, subcategory, sort };
+    const query = isNewArrivals ? { sort, page, pageSize } : { category, subcategory, sort, page, pageSize };
     getProducts(query)
-      .then((res) => alive && setProducts(res.items))
-      .catch(() => alive && setProducts([]))
+      .then((res) => { if (alive) { setProducts(res.items); setTotal(res.total || 0); } })
+      .catch(() => { if (alive) { setProducts([]); setTotal(0); } })
       .finally(() => alive && setLoading(false));
     return () => { alive = false; };
-  }, [category, subcategory, sort, isNewArrivals]);
+  }, [category, subcategory, sort, isNewArrivals, page, pageSize]);
 
-  const shown = products.slice(0, visible);
+  useEffect(() => { setPage(1); }, [category, subcategory, sort]);
   const openProduct = (p) => navigate(`/product/${p.slug}`);
   const handleAdd = (p) => setQuickSlug(p.slug); // popup enforces size/color/qty
 
@@ -177,7 +179,7 @@ export default function CategoryPage() {
           {title}
           <span className="ml-2 h-1.5 w-10 inline-block rounded-full align-middle" style={{ backgroundColor: accent }} />
         </h1>
-        <p className="text-sm text-gray-500">{loading ? "Loading…" : `${products.length} products`}</p>
+        <p className="text-sm text-gray-500">{loading ? "Loading…" : `${total} products`}</p>
       </div>
 
       {/* Toolbar */}
@@ -212,7 +214,7 @@ export default function CategoryPage() {
       <div className="mt-6 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
         {loading
           ? Array.from({ length: 10 }).map((_, i) => <CardSkeleton key={i} />)
-          : shown.map((p) => <ProductCard key={p.id} product={p} accent={accent} onOpen={openProduct} onAdd={handleAdd} />)}
+          : products.map((p) => <ProductCard key={p.id} product={p} accent={accent} onOpen={openProduct} onAdd={handleAdd} />)}
       </div>
 
       {/* Empty state */}
@@ -223,23 +225,7 @@ export default function CategoryPage() {
         </div>
       )}
 
-      {/* Load more */}
-      {!loading && visible < products.length && (
-        <div className="mt-10 flex justify-center">
-          <button onClick={() => setVisible((v) => v + 12)} className="rounded-full border-2 px-8 py-2.5 text-sm font-semibold transition-colors hover:text-white"
-            style={{ borderColor: BRAND, color: BRAND, backgroundColor: "transparent" }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = BRAND;
-              e.currentTarget.style.color = "#fff";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = "transparent";
-              e.currentTarget.style.color = BRAND;
-            }}>
-            Load More ({shown.length} of {products.length})
-          </button>
-        </div>
-      )}
+      {!loading && <Pagination page={page} total={total} pageSize={pageSize} className="mt-10" onPageSizeChange={(size) => { setPageSize(size); setPage(1); }} onChange={(next) => { setPage(next); window.scrollTo({ top: 0, behavior: "smooth" }); }} />}
 
       {/* Quick-add popup */}
       <QuickAddModal slug={quickSlug} onClose={() => setQuickSlug(null)} />

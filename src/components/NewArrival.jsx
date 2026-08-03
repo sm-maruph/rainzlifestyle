@@ -4,11 +4,12 @@ import { useNavigate } from "react-router-dom";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
-import { getNewArrivals } from "../api";
+import { getProducts } from "../api";
 import { useWishlist } from "../context/WishlistContext";
 import QuickAddModal from "./QuickAddModal";
 import StarRoundedIcon from "@mui/icons-material/StarRounded";
 import StarBorderRoundedIcon from "@mui/icons-material/StarBorderRounded";
+import Pagination from "./Pagination";
 
 const BRAND = "var(--brand)";
 const BANNER_BG = "var(--primary)";
@@ -50,7 +51,7 @@ function ProductTile({ product, onOpen, onAddToCart, onBuyNow, onToggleWishlist,
       </button>
 
       {/* Image — FIXED height so every card is identical (independent of Tailwind aspect support) */}
-      <div className="h-56 sm:h-60 w-full bg-gradient-to-b from-gray-50 to-gray-100 flex items-center justify-center">
+      <div className="h-44 sm:h-48 w-full bg-gradient-to-b from-gray-50 to-gray-100 flex items-center justify-center">
         <img src={product.image} alt={product.name} loading="lazy" className="max-h-full max-w-full object-contain transition-transform duration-300 group-hover:scale-105" onError={imgFallback} />
       </div>
 
@@ -106,7 +107,7 @@ function ProductTile({ product, onOpen, onAddToCart, onBuyNow, onToggleWishlist,
 function SkeletonTile() {
   return (
     <div className="rounded-xl bg-white shadow-sm overflow-hidden">
-      <div className="h-56 sm:h-60 bg-gray-100 animate-pulse" />
+      <div className="h-44 sm:h-48 bg-gray-100 animate-pulse" />
       <div className="p-3 space-y-2">
         <div className="h-3 bg-gray-100 rounded w-3/4 animate-pulse" />
         <div className="h-7 bg-gray-100 rounded animate-pulse" />
@@ -119,7 +120,7 @@ function SkeletonTile() {
 export default function NewArrival({
   title = "our latest collection",
   products: productsProp,
-  limit = 12,
+  limit = 8,
   wishlistIds = [],
   onAddToCart,
   onToggleWishlist,
@@ -132,20 +133,24 @@ export default function NewArrival({
 
   const [fetched, setFetched] = useState([]);
   const [loading, setLoading] = useState(!productsProp);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(limit);
+  const [total, setTotal] = useState(productsProp?.length || 0);
   const [quickSlug, setQuickSlug] = useState(null);
 
   useEffect(() => {
     if (productsProp) return;
     let alive = true;
     setLoading(true);
-    getNewArrivals(limit)
-      .then((data) => alive && setFetched(data))
-      .catch(() => alive && setFetched([]))
+    getProducts({ sort: "newest", page, pageSize })
+      .then((data) => { if (alive) { setFetched(data.items || []); setTotal(data.total || 0); } })
+      .catch(() => { if (alive) { setFetched([]); setTotal(0); } })
       .finally(() => alive && setLoading(false));
     return () => { alive = false; };
-  }, [productsProp, limit]);
+  }, [productsProp, page, pageSize]);
 
-  const products = productsProp ?? fetched;
+  const products = productsProp ? productsProp.slice((page - 1) * pageSize, page * pageSize) : fetched;
+  const productTotal = productsProp?.length || total;
 
   const handleOpen = (p) => (onProductClick ? onProductClick(p) : navigate(`/product/${p.slug}`));
   const handleAdd = (p) => (onAddToCart ? onAddToCart(p) : setQuickSlug(p.slug)); // open popup to pick size/color
@@ -167,9 +172,9 @@ export default function NewArrival({
       </div>
 
       <div className="w-[94%] max-w-[1500px] mx-auto px-1 pt-1 pb-2">
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 md:gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-3">
           {loading
-            ? Array.from({ length: limit }).map((_, i) => <SkeletonTile key={i} />)
+            ? Array.from({ length: pageSize }).map((_, i) => <SkeletonTile key={i} />)
             : products.map((product) => (
               <ProductTile
                 key={product.id ?? product.slug}
@@ -184,6 +189,8 @@ export default function NewArrival({
         </div>
 
         {!loading && products.length === 0 && <p className="text-center text-gray-400 py-10">No new arrivals yet.</p>}
+
+        {!loading && <Pagination page={page} total={productTotal} pageSize={pageSize} className="mt-7" onPageSizeChange={(size) => { setPageSize(size); setPage(1); }} onChange={setPage} />}
 
         {showViewAll && !loading && products.length > 0 && (
           <div className="mt-8 flex justify-center">

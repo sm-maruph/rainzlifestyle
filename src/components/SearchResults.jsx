@@ -9,6 +9,7 @@ import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { getProducts } from "../api";
 import { useWishlist } from "../context/WishlistContext";
 import QuickAddModal from "./QuickAddModal";
+import Pagination from "./Pagination";
 
 const BRAND = "var(--brand)";
 const taka = (n) => `\u09F3${Number(n || 0).toLocaleString("en-BD")}`;
@@ -52,16 +53,18 @@ export default function SearchResults() {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(false);
   const [total, setTotal] = useState(0);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(8);
   const [quickSlug, setQuickSlug] = useState(null);
 
   const runSearch = useCallback((term) => {
     if (!term.trim()) { setItems([]); setTotal(0); return; }
     setLoading(true);
-    getProducts({ search: term.trim(), pageSize: 48 })
+    getProducts({ search: term.trim(), page, pageSize })
       .then((res) => { setItems(res.items || []); setTotal(res.total ?? (res.items || []).length); })
       .catch(() => { setItems([]); setTotal(0); })
       .finally(() => setLoading(false));
-  }, []);
+  }, [page, pageSize]);
 
   // Re-run whenever the URL ?q= changes
   useEffect(() => { setInput(q); runSearch(q); }, [q, runSearch]);
@@ -69,7 +72,7 @@ export default function SearchResults() {
   const submit = (e) => {
     e.preventDefault();
     const term = input.trim();
-    if (term) setParams({ q: term });   // updates URL → triggers effect
+    if (term) { setPage(1); setParams({ q: term }); }   // updates URL → triggers effect
   };
 
   return (
@@ -128,6 +131,8 @@ export default function SearchResults() {
           ))}
         </div>
       )}
+
+      {!loading && items.length > 0 && <Pagination page={page} total={total} pageSize={pageSize} className="mt-10" onPageSizeChange={(size) => { setPageSize(size); setPage(1); }} onChange={(next) => { setPage(next); window.scrollTo({ top: 0, behavior: "smooth" }); }} />}
 
       <QuickAddModal slug={quickSlug} onClose={() => setQuickSlug(null)} />
     </div>
