@@ -9,6 +9,7 @@ import AddPhotoAlternateOutlinedIcon from "@mui/icons-material/AddPhotoAlternate
 import StarIcon from "@mui/icons-material/Star";
 import {
   getProducts, getProductBySlug, createProduct, updateProduct, deleteProduct, getCategoriesRaw,
+  getSizeCharts,
 } from "../../api";
 
 const BRAND = "#E11D48";
@@ -22,12 +23,28 @@ const COLOR_HEX = {
 };
 const toColorObjs = (csv) =>
   String(csv).split(",").map((s) => s.trim()).filter(Boolean)
-    .map((name) => ({ name, hex: COLOR_HEX[name.toLowerCase()] || "#9ca3af" }));
+    .map((entry) => {
+      const custom = entry.match(/^(.*?):\s*(#[0-9a-f]{6})$/i);
+      const name = (custom ? custom[1] : entry).trim();
+      const cssColor = typeof CSS !== "undefined" && CSS.supports("color", name) ? name : null;
+      return { name, hex: custom ? custom[2] : COLOR_HEX[name.toLowerCase()] || cssColor || "#9ca3af" };
+    });
 const csvToArr = (csv) => String(csv).split(",").map((s) => s.trim()).filter(Boolean);
+const initialSizeStock = (p) => {
+  if (p.sizeStock && Object.keys(p.sizeStock).length) return p.sizeStock;
+  const sizes = p.sizes || [];
+  if (!sizes.length) return {};
+  const total = Number(p.stock || 0);
+  const base = Math.floor(total / sizes.length);
+  let remainder = total % sizes.length;
+  return Object.fromEntries(sizes.map((size) => [size, base + (remainder-- > 0 ? 1 : 0)]));
+};
 
 const EMPTY_FORM = {
   id: null, slug: "", name: "", brand: "", category_id: "", subcategory_id: "",
   price: "", oldPrice: "", stock: "", sizes: "", colors: "", description: "", tags: "",
+  sizeChartId: "",
+  sizeStock: {},
 };
 
 function toForm(p) {
@@ -37,14 +54,21 @@ function toForm(p) {
     price: p.price ?? "", oldPrice: p.oldPrice ?? "",
     stock: p.stock ?? (p.inStock ? 0 : 0),
     sizes: (p.sizes || []).join(", "),
-    colors: (p.colors || []).map((c) => (typeof c === "string" ? c : c.name)).join(", "),
+    colors: (p.colors || []).map((c) => {
+      if (typeof c === "string") return c;
+      const known = COLOR_HEX[(c.name || "").toLowerCase()];
+      return known === c.hex || String(c.hex).toLowerCase() === String(c.name).toLowerCase() ? c.name : `${c.name}:${c.hex}`;
+    }).join(", "),
     description: p.description || "", tags: (p.tags || []).join(", "),
+    sizeChartId: p.sizeChartId || "",
+    sizeStock: initialSizeStock(p),
   };
 }
 
 export default function AdminProducts() {
   const [products, setProducts] = useState([]);
   const [cats, setCats] = useState([]);
+  const [sizeCharts, setSizeCharts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
@@ -72,6 +96,7 @@ export default function AdminProducts() {
   useEffect(() => {
     loadProducts();
     getCategoriesRaw().then(setCats).catch(() => {});
+    getSizeCharts().then(setSizeCharts).catch(() => {});
   }, []);
 
   const catNames = useMemo(() => cats.map((c) => c.name), [cats]);
@@ -113,6 +138,12 @@ export default function AdminProducts() {
 
   const close = () => setModalOpen(false);
   const setField = (k, v) => setForm((f) => ({ ...f, [k]: v }));
+  const sizesForStock = csvToArr(form.sizes);
+  const setSizes = (value) => setForm((current) => {
+    const sizes = csvToArr(value);
+    const sizeStock = Object.fromEntries(sizes.map((size) => [size, Number(current.sizeStock?.[size] || 0)]));
+    return { ...current, sizes: value, sizeStock };
+  });
 
   const onPickImages = (e) => {
     const picked = Array.from(e.target.files || []);
@@ -152,10 +183,12 @@ export default function AdminProducts() {
       subcategory_id: form.subcategory_id || undefined,
       price: Number(form.price),
       old_price: form.oldPrice === "" ? undefined : Number(form.oldPrice),
-      stock: Number(form.stock || 0),
+      stock: sizesForStock.length ? sizesForStock.reduce((sum, item) => sum + Number(form.sizeStock[item] || 0), 0) : Number(form.stock || 0),
       sizes: csvToArr(form.sizes),
+      size_stock: sizesForStock.length ? form.sizeStock : {},
       colors: toColorObjs(form.colors),
       tags: csvToArr(form.tags),
+      size_chart_id: form.sizeChartId,
     };
     try {
       if (form.id) {
@@ -346,11 +379,45 @@ export default function AdminProducts() {
                 </Field>
                 <Field label="Price (৳) *" error={errors.price}><input type="number" value={form.price} onChange={(e) => setField("price", e.target.value)} className="inp" placeholder="990" /></Field>
                 <Field label="Old price (৳)" error={errors.oldPrice}><input type="number" value={form.oldPrice} onChange={(e) => setField("oldPrice", e.target.value)} className="inp" placeholder="1290 (optional)" /></Field>
-                <Field label="Stock quantity"><input type="number" value={form.stock} onChange={(e) => setField("stock", e.target.value)} className="inp" placeholder="25" /></Field>
-                <Field label="Sizes (comma separated)"><input value={form.sizes} onChange={(e) => setField("sizes", e.target.value)} className="inp" placeholder="S, M, L, XL" /></Field>
-                <Field label="Colors (comma separated)"><input value={form.colors} onChange={(e) => setField("colors", e.target.value)} className="inp" placeholder="Black, White, Navy" /></Field>
+                {!sizesForStock.length && <Field label="Stock quantity"><input type="number" value={form.stock} onChange={(e) => setField("stock", e.target.value)} className="inp" placeholder="25" /></Field>}
+                <Field label="Sizes (comma separated)"><input value={form.sizes} onChange={(e) => setSizes(e.target.value)} className="inp" placeholder="S, M, L, XL" /></Field>
+                <Field label="Size chart template">
+                  <select value={form.sizeChartId} onChange={(e) => setField("sizeChartId", e.target.value)} className="inp">
+                    <option value="">— no size chart —</option>
+                    {sizeCharts.map((chart) => <option key={chart.id} value={chart.id}>{chart.name}</option>)}
+                  </select>
+                </Field>
+                <Field label="Colors (name or name:#hex)">
+                  <input value={form.colors} onChange={(e) => setField("colors", e.target.value)} className="inp" placeholder="Black, Sky Blue:#38bdf8, Wine:#7f1d1d" />
+                  {form.colors.trim() && (
+                    <div className="mt-2 flex flex-wrap gap-2">
+                      {toColorObjs(form.colors).map((color, index) => (
+                        <span key={`${color.name}-${index}`} className="inline-flex items-center gap-1.5 rounded-full border border-gray-200 bg-white px-2 py-1 text-[10px] text-gray-600">
+                          <span className="h-3 w-3 rounded-full border border-gray-200" style={{ backgroundColor: color.hex }} />{color.name}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </Field>
                 <Field label="Tags (comma separated)"><input value={form.tags} onChange={(e) => setField("tags", e.target.value)} className="inp" placeholder="new, summer" /></Field>
               </div>
+
+              {sizesForStock.length > 0 && (
+                <div>
+                  <div className="mb-2 flex items-center justify-between">
+                    <span className="text-xs font-medium text-gray-500">Stock by size</span>
+                    <span className="text-xs font-semibold text-gray-700">Total: {sizesForStock.reduce((sum, item) => sum + Number(form.sizeStock[item] || 0), 0)}</span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
+                    {sizesForStock.map((item) => (
+                      <label key={item} className="rounded-lg border border-gray-200 bg-gray-50 p-2">
+                        <span className="block text-xs font-bold text-gray-700">{item}</span>
+                        <input type="number" min="0" value={form.sizeStock[item] ?? 0} onChange={(e) => setField("sizeStock", { ...form.sizeStock, [item]: Math.max(0, Number(e.target.value || 0)) })} className="mt-1 w-full rounded border border-gray-200 bg-white px-2 py-1.5 text-sm outline-none" />
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               <Field label="Description"><textarea value={form.description} onChange={(e) => setField("description", e.target.value)} rows={3} className="inp resize-none" placeholder="Short product description…" /></Field>
             </div>

@@ -1,11 +1,14 @@
 import { api } from "./apiClient";
 
+const toBoolean = (value) => value === true || value === 1 || value === "1" || value === "true";
+const normalizeEmail = (value = "") => value.trim().replace(/@gmailcom$/i, "@gmail.com");
+
 // DB (snake) -> UI (camel)
 export const mapSettings = (s = {}) => ({
   storeName: s.store_name || "RAINZLIFESTYLE",
   tagline: s.tagline || "",
   currency: s.currency || "BDT",
-  supportEmail: s.support_email || "",
+  supportEmail: normalizeEmail(s.support_email),
   supportPhone: s.support_phone || "",
   logo: s.logo || "",
   address: s.address || "",
@@ -18,7 +21,7 @@ export const mapSettings = (s = {}) => ({
   },
   payments: Array.isArray(s.payments) ? s.payments : [],
   social: s.social || {},
-  maintenance: !!s.maintenance,
+  maintenance: toBoolean(s.maintenance),
   theme: s.theme || { brand: "#E11D48", men: "#E11D48", women: "#DB2777", kids: "#F59E0B", accessories: "#0D9488", sale: "#7C3AED" },
 });
 
@@ -27,7 +30,7 @@ const toRow = (u) => ({
   store_name: u.storeName,
   tagline: u.tagline,
   currency: u.currency,
-  support_email: u.supportEmail,
+  support_email: normalizeEmail(u.supportEmail),
   support_phone: u.supportPhone,
   address: u.address,
   city: u.city,

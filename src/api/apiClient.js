@@ -21,17 +21,14 @@ function tokenFromStorage() {
 
 async function authHeader() {
   let token = tokenFromStorage();
-  // TEMP DEBUG:
-  const keys = Object.keys(localStorage);
-  console.log("[authHeader] keys:", keys, "| tokenFromStorage?", !!token);
   if (!token) {
     try {
       const { data } = await supabase.auth.getSession();
       token = data?.session?.access_token || null;
-      console.log("[authHeader] getSession token?", !!token);
-    } catch (e) { console.log("[authHeader] getSession error", e); }
+    } catch {
+      // Continue anonymously when no valid session is available.
+    }
   }
-  console.log("[authHeader] FINAL sending token?", !!token);
   return token ? { Authorization: `Bearer ${token}` } : {};
 }
 

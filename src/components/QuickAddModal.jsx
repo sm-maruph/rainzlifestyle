@@ -38,10 +38,15 @@ export default function QuickAddModal({ slug, onClose }) {
 
   const needsSize = product?.sizes?.length > 0;
   const needsColor = product?.colors?.length > 0;
+  const tracksSizeStock = needsSize && Object.keys(product?.sizeStock || {}).length > 0;
+  const selectedStock = tracksSizeStock && size ? Number(product.sizeStock[size] || 0) : null;
+  const productAvailable = tracksSizeStock ? product.sizes.some((item) => Number(product.sizeStock[item] || 0) > 0) : product?.inStock;
 
   const confirm = () => {
     if (needsColor && !color) { setError("Please select a color."); return; }
     if (needsSize && !size) { setError("Please select a size."); return; }
+    if (tracksSizeStock && Number(product.sizeStock[size] || 0) <= 0) { setError("This size is out of stock."); return; }
+    if (selectedStock != null && qty > selectedStock) { setError(`Only ${selectedStock} available in size ${size}.`); return; }
     add(product, { size, color, qty });
     setDone(true);
     setTimeout(onClose, 900);
@@ -79,7 +84,7 @@ export default function QuickAddModal({ slug, onClose }) {
                     <span className="text-lg font-bold text-gray-900">{taka(product.price)}</span>
                     {product.oldPrice && <span className="text-sm text-gray-400 line-through">{taka(product.oldPrice)}</span>}
                   </div>
-                  <p className={`mt-1 text-xs font-medium ${product.inStock ? "text-green-600" : "text-red-500"}`}>{product.inStock ? "In stock" : "Out of stock"}</p>
+                  <p className={`mt-1 text-xs font-medium ${productAvailable ? "text-green-600" : "text-red-500"}`}>{productAvailable ? "In stock" : "Out of stock"}</p>
                 </div>
               </div>
 
@@ -99,7 +104,7 @@ export default function QuickAddModal({ slug, onClose }) {
                   <p className="text-sm font-semibold text-gray-700 mb-2">Select Size</p>
                   <div className="flex flex-wrap gap-2">
                     {product.sizes.map((s) => (
-                      <button key={s} onClick={() => { setSize(s); setError(""); }} className="min-w-[44px] rounded-md border px-3 py-2 text-sm font-medium transition-colors"
+                      <button key={s} disabled={tracksSizeStock && Number(product.sizeStock[s] || 0) <= 0} onClick={() => { setSize(s); setQty(1); setError(""); }} className="min-w-[44px] rounded-md border px-3 py-2 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-300 disabled:line-through"
                         style={size === s ? { backgroundColor: BRAND, borderColor: BRAND, color: "#fff" } : { backgroundColor: "#fff", borderColor: "#e5e7eb", color: "#374151" }}>{s}</button>
                     ))}
                   </div>
@@ -111,7 +116,7 @@ export default function QuickAddModal({ slug, onClose }) {
                 <div className="inline-flex items-center rounded-md border border-gray-200">
                   <button onClick={() => setQty((q) => Math.max(1, q - 1))} className="px-3 py-2 text-gray-600 hover:bg-gray-50"><RemoveIcon style={{ fontSize: 16 }} /></button>
                   <span className="px-4 text-sm font-semibold">{qty}</span>
-                  <button onClick={() => setQty((q) => q + 1)} className="px-3 py-2 text-gray-600 hover:bg-gray-50"><AddIcon style={{ fontSize: 16 }} /></button>
+                  <button onClick={() => setQty((q) => selectedStock == null ? q + 1 : Math.min(selectedStock, q + 1))} className="px-3 py-2 text-gray-600 hover:bg-gray-50"><AddIcon style={{ fontSize: 16 }} /></button>
                 </div>
               </div>
 
@@ -120,7 +125,7 @@ export default function QuickAddModal({ slug, onClose }) {
 
             <div className="flex items-center gap-3 px-5 py-4 border-t border-gray-100">
               <button onClick={onClose} className="rounded-lg px-4 py-2.5 text-sm font-semibold text-gray-600 hover:bg-gray-100">Cancel</button>
-              <button onClick={confirm} disabled={!product.inStock} className="flex-1 flex items-center justify-center gap-1.5 rounded-lg px-5 py-2.5 text-sm font-bold text-white disabled:opacity-50" style={{ backgroundColor: BRAND }}>
+              <button onClick={confirm} disabled={!productAvailable} className="flex-1 flex items-center justify-center gap-1.5 rounded-lg px-5 py-2.5 text-sm font-bold text-white disabled:opacity-50" style={{ backgroundColor: BRAND }}>
                 <ShoppingBagOutlinedIcon style={{ fontSize: 18 }} /> Add to Bag
               </button>
             </div>

@@ -50,6 +50,9 @@ export async function getOrders() {
 export async function updateOrderStatus(id, status) {
   return api.patch(`/orders/${id}/status`, { status });
 }
+export async function deleteOrder(id) {
+  return api.del(`/orders/${id}`);
+}
 
 // ---- My Orders ----------------------------------------------------------
 

@@ -13,6 +13,8 @@ export function mapProduct(p) {
     sizes: p.sizes || [], colors: p.colors || [], tags: p.tags || [],
     image: p.image, images: p.images && p.images.length ? p.images : p.image ? [p.image] : [],
     onSale: !!p.on_sale, saleEnds: p.sale_ends || null, saleCampaign: p.sale_campaign || null,
+    sizeChartId: p.size_chart_id || null, sizeChart: p.size_chart || null,
+    sizeStock: p.size_stock || {},
     createdAt: p.created_at,
   };
 }
@@ -38,6 +40,7 @@ export function mapCartItem(row) {
     cartId: row.id, id: p.id, slug: p.slug, name: p.name, image: p.image,
     price: num(p.price), oldPrice: p.old_price != null ? num(p.old_price) : null,
     stock: p.stock, size: row.size, color: row.color, qty: row.qty,
+    sizeStock: p.size_stock || {},
   };
 }
 

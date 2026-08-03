@@ -36,7 +36,7 @@ const BottomHeader = () => {
             <div>
               <span className="font-semibold text-white/80">Email:</span>
               <span className="ml-0.5 text-white/70">
-                ranzelifestyle.officisa@gmail.com
+                rainzlifestyle.official@gmail.com
               </span>
             </div>
           </div>

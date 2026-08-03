@@ -42,6 +42,7 @@ import RequireAdmin from "./components/admin/RequireAdmin";
 import AdminCollections from "./components/admin/AdminCollections";
 import AdminHero from "./components/admin/AdminHero";
 import AdminInventory from "./components/admin/AdminInventory";
+import AdminSizeCharts from "./components/admin/AdminSizeCharts";
 
 
 import Partners from "./components/Partner";
@@ -50,6 +51,7 @@ import Footer from "./components/Footer";
 import "./index.css";
 import AutoScrollUp from "./components/subcomponent/AutoScrollUp";
 import ScrollToTop from "./components/subcomponent/ScrollToTop";
+import { AnimatePresence, motion } from "framer-motion";
 
 function App() {
   const location = useLocation();
@@ -117,7 +119,15 @@ function App() {
         className="w-full mx-auto min-h-screen bg-gray-100 overflow-x-hidden pb-16 md:pb-0"
         style={{ paddingTop: isAdminPage ? 0 : navHeight, backgroundColor: "var(--primary)" }}
       >
-        <Routes>
+        <AnimatePresence mode="wait" initial={false}>
+        <motion.div
+          key={isAdminPage ? "admin-shell" : location.pathname}
+          initial={isAdminPage ? false : { opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={isAdminPage ? undefined : { opacity: 0, y: -6 }}
+          transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+        >
+        <Routes location={location}>
           {/* ===== Admin dashboard — guarded: only logged-in admins ===== */}
           <Route
             path="/admin"
@@ -129,6 +139,7 @@ function App() {
           >
             <Route index element={<AdminDashboard />} />
             <Route path="products" element={<AdminProducts />} />
+            <Route path="size-charts" element={<AdminSizeCharts />} />
             <Route path="inventory" element={<AdminInventory />} />   {/* <-- ADD THIS */}
 
             <Route path="categories" element={<AdminCategories />} />
@@ -171,6 +182,8 @@ function App() {
             }
           />
         </Routes>
+        </motion.div>
+        </AnimatePresence>
         <ScrollToTop />
       </main>
 

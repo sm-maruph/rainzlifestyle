@@ -78,7 +78,11 @@ export default function AdminInventory() {
   const saveEdit = async () => {
     setBusy(true); setError("");
     try {
-      await setInventory(editRow.id, { stock: Number(editRow.stock), low_stock_threshold: Number(editRow.threshold) });
+      await setInventory(editRow.id, {
+        stock: Number(editRow.stock),
+        size_stock: editRow.sizes.length ? editRow.sizeStock : undefined,
+        low_stock_threshold: Number(editRow.threshold),
+      });
       setEditRow(null); load();
     } catch (e) { setError(e.message); } finally { setBusy(false); }
   };
@@ -86,7 +90,7 @@ export default function AdminInventory() {
   const doRestock = async () => {
     setBusy(true); setError("");
     try {
-      await restockProduct(restockRow.id, Number(restockRow.amount));
+      await restockProduct(restockRow.id, Number(restockRow.amount), restockRow.size || undefined);
       setRestockRow(null); load();
     } catch (e) { setError(e.message); } finally { setBusy(false); }
   };
@@ -180,6 +184,11 @@ export default function AdminInventory() {
                   <td className="py-3 px-4">
                     <span className="font-bold text-gray-900">{r.stock}</span>
                     <span className="text-xs text-gray-400"> / thr {r.threshold}</span>
+                    {r.sizes.length > 0 && (
+                      <div className="mt-1 flex max-w-[220px] flex-wrap gap-1">
+                        {r.sizes.map((size) => <span key={size} className={`rounded px-1.5 py-0.5 text-[10px] font-semibold ${Number(r.sizeStock[size] || 0) > 0 ? "bg-gray-100 text-gray-600" : "bg-red-50 text-red-500"}`}>{size}: {Number(r.sizeStock[size] || 0)}</span>)}
+                      </div>
+                    )}
                   </td>
                   <td className="py-3 px-4"><span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${LEVEL_STYLE[r.level]}`}>{LEVEL_LABEL[r.level]}</span></td>
                   <td className="py-3 px-4 text-gray-700 font-semibold">{r.orderedQty}<span className="text-xs font-normal text-gray-400"> total</span></td>
@@ -201,8 +210,8 @@ export default function AdminInventory() {
                   </td>
                   <td className="py-3 px-4">
                     <div className="flex items-center justify-end gap-1">
-                      <button onClick={() => setRestockRow({ id: r.id, name: r.name, amount: r.suggestedRestock || 10 })} className="p-1.5 rounded hover:bg-green-50 text-gray-500 hover:text-green-700" title="Restock"><AddBoxOutlinedIcon style={{ fontSize: 18 }} /></button>
-                      <button onClick={() => setEditRow({ id: r.id, name: r.name, stock: r.stock, threshold: r.threshold })} className="p-1.5 rounded hover:bg-gray-100 text-gray-500 hover:text-gray-900" title="Edit stock/threshold"><EditOutlinedIcon style={{ fontSize: 18 }} /></button>
+                      <button onClick={() => setRestockRow({ id: r.id, name: r.name, amount: r.suggestedRestock || 10, sizes: r.sizes, size: r.sizes[0] || "" })} className="p-1.5 rounded hover:bg-green-50 text-gray-500 hover:text-green-700" title="Restock"><AddBoxOutlinedIcon style={{ fontSize: 18 }} /></button>
+                      <button onClick={() => setEditRow({ id: r.id, name: r.name, stock: r.stock, threshold: r.threshold, sizes: r.sizes, sizeStock: { ...r.sizeStock } })} className="p-1.5 rounded hover:bg-gray-100 text-gray-500 hover:text-gray-900" title="Edit stock/threshold"><EditOutlinedIcon style={{ fontSize: 18 }} /></button>
                     </div>
                   </td>
                 </tr>
@@ -215,7 +224,11 @@ export default function AdminInventory() {
       {/* Edit stock modal */}
       {editRow && (
         <Modal title={`Edit · ${editRow.name}`} onClose={() => setEditRow(null)}>
-          <Field label="Stock quantity"><input type="number" value={editRow.stock} onChange={(e) => setEditRow((m) => ({ ...m, stock: e.target.value }))} className="inp" /></Field>
+          {editRow.sizes.length ? (
+            <div className="grid grid-cols-2 gap-3">
+              {editRow.sizes.map((size) => <Field key={size} label={`${size} stock`}><input type="number" min="0" value={editRow.sizeStock[size] ?? 0} onChange={(e) => setEditRow((m) => ({ ...m, sizeStock: { ...m.sizeStock, [size]: Math.max(0, Number(e.target.value || 0)) } }))} className="inp" /></Field>)}
+            </div>
+          ) : <Field label="Stock quantity"><input type="number" value={editRow.stock} onChange={(e) => setEditRow((m) => ({ ...m, stock: e.target.value }))} className="inp" /></Field>}
           <Field label="Low-stock threshold"><input type="number" value={editRow.threshold} onChange={(e) => setEditRow((m) => ({ ...m, threshold: e.target.value }))} className="inp" /></Field>
           <p className="text-xs text-gray-400">Warnings show when stock ≤ threshold.</p>
           <ModalActions busy={busy} onCancel={() => setEditRow(null)} onSave={saveEdit} saveLabel="Save" />
@@ -225,6 +238,7 @@ export default function AdminInventory() {
       {/* Restock modal */}
       {restockRow && (
         <Modal title={`Restock · ${restockRow.name}`} onClose={() => setRestockRow(null)}>
+          {restockRow.sizes.length > 0 && <Field label="Size"><select value={restockRow.size} onChange={(e) => setRestockRow((m) => ({ ...m, size: e.target.value }))} className="inp">{restockRow.sizes.map((size) => <option key={size}>{size}</option>)}</select></Field>}
           <Field label="Add units"><input type="number" value={restockRow.amount} onChange={(e) => setRestockRow((m) => ({ ...m, amount: e.target.value }))} className="inp" /></Field>
           <p className="text-xs text-gray-400">This adds to the current stock.</p>
           <ModalActions busy={busy} onCancel={() => setRestockRow(null)} onSave={doRestock} saveLabel="Add to stock" />

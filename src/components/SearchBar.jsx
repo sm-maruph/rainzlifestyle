@@ -9,7 +9,7 @@ const BRAND = "var(--brand)";
 const taka = (n) => `\u09F3${Number(n || 0).toLocaleString("en-BD")}`;
 const imgFallback = (e) => { e.target.onerror = null; e.target.src = "https://placehold.co/80x100/f3f4f6/9ca3af?text=RAINZ"; };
 
-export default function SearchBar({ className = "", placeholder = "Search for products, brands and more", onNavigate }) {
+export default function SearchBar({ className = "", placeholder = "Search products", onNavigate, compact = false }) {
   const navigate = useNavigate();
   const [term, setTerm] = useState("");
   const [suggestions, setSuggestions] = useState([]);
@@ -73,24 +73,24 @@ export default function SearchBar({ className = "", placeholder = "Search for pr
 
   return (
     <div ref={boxRef} className={`relative ${className}`}>
-      <form onSubmit={onSubmit} className="flex items-center bg-gray-100 rounded-md px-4 py-2.5">
+      <form onSubmit={onSubmit} className={`flex items-center rounded-lg border border-gray-200 bg-gray-50 transition focus-within:border-gray-300 focus-within:bg-white focus-within:shadow-sm ${compact ? "px-2.5 py-1.5" : "px-4 py-2.5"}`}>
         <input
           value={term}
           onChange={(e) => { setTerm(e.target.value); setOpen(true); setActive(-1); }}
           onFocus={() => term.trim() && setOpen(true)}
           onKeyDown={onKeyDown}
           placeholder={placeholder}
-          className="flex-1 min-w-0 bg-transparent text-sm text-gray-700 placeholder-gray-400 outline-none"
+          className={`flex-1 min-w-0 bg-transparent text-gray-700 placeholder-gray-400 outline-none ${compact ? "text-xs" : "text-sm"}`}
         />
         {term && (
           <button type="button" onClick={clear} aria-label="Clear" className="text-gray-400 mr-1"><CloseIcon style={{ fontSize: 16 }} /></button>
         )}
-        <button type="submit" aria-label="Search" className="text-gray-500"><SearchIcon fontSize="small" /></button>
+        <button type="submit" aria-label="Search" className="flex shrink-0 items-center justify-center text-gray-500"><SearchIcon style={{ fontSize: compact ? 18 : 20 }} /></button>
       </form>
 
       {/* Suggestions dropdown */}
       {open && term.trim().length >= 2 && (
-        <div className="absolute left-0 right-0 top-full mt-2 z-[60] bg-white rounded-lg shadow-2xl border border-gray-100 overflow-hidden">
+        <div className={`absolute top-full mt-2 z-[60] bg-white rounded-lg shadow-2xl border border-gray-100 overflow-hidden ${compact ? "left-0 w-[340px] max-w-[calc(100vw-24px)]" : "left-0 right-0"}`}>
           {loading ? (
             <div className="p-3 space-y-2">
               {Array.from({ length: 3 }).map((_, i) => (

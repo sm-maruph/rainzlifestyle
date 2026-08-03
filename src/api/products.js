@@ -31,7 +31,7 @@ function toFormData(fields, files) {
   const fd = new FormData();
   Object.entries(fields).forEach(([k, v]) => {
     if (v == null) return;
-    if (k === "colors") fd.append("colors", JSON.stringify(v));       // array of {name,hex}
+    if (k === "colors" || k === "size_stock") fd.append(k, JSON.stringify(v));
     else if (Array.isArray(v)) fd.append(k, v.join(","));             // sizes, tags
     else fd.append(k, v);
   });

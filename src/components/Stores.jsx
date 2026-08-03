@@ -116,7 +116,7 @@ export default function Stores() {
       {/* Header */}
       <div className="text-center mb-8">
         <h1 className="text-2xl md:text-3xl font-extrabold text-gray-900">Our Stores</h1>
-        <p className="mt-1 text-sm text-gray-500">Visit a RAINZLIFESTYLE outlet near you.</p>
+        <p className="mt-1 text-sm text-gray-500">Visit a RAINZ LIFESTYLE outlet near you.</p>
       </div>
 
       {/* City filter */}

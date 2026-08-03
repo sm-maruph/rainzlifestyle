@@ -5,7 +5,8 @@ import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import CloseIcon from "@mui/icons-material/Close";
 import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
 import RefreshIcon from "@mui/icons-material/Refresh";
-import { getOrders, updateOrderStatus } from "../../api";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import { deleteOrder, getOrders, updateOrderStatus } from "../../api";
 
 const BRAND = "#E11D48";
 const taka = (n) => `\u09F3${Number(n || 0).toLocaleString("en-BD")}`;
@@ -30,6 +31,8 @@ export default function AdminOrders() {
   const [tab, setTab] = useState("All");
   const [openId, setOpenId] = useState(null);
   const [savingId, setSavingId] = useState(null);
+  const [deletingId, setDeletingId] = useState(null);
+  const [pendingDelete, setPendingDelete] = useState(null);
 
   const load = () => {
     setLoading(true);
@@ -67,6 +70,25 @@ export default function AdminOrders() {
       setError(e.message || "Could not update status");
     } finally {
       setSavingId(null);
+    }
+  };
+
+  const removeOrder = (order) => setPendingDelete(order);
+
+  const confirmDelete = async () => {
+    const order = pendingDelete;
+    if (!order) return;
+    setDeletingId(order.id);
+    setError("");
+    try {
+      await deleteOrder(order.id);
+      setOrders((list) => list.filter((o) => o.id !== order.id));
+      if (openId === order.id) setOpenId(null);
+      setPendingDelete(null);
+    } catch (e) {
+      setError(e.message || "Could not delete order");
+    } finally {
+      setDeletingId(null);
     }
   };
 
@@ -123,7 +145,7 @@ export default function AdminOrders() {
                 <th className="py-3 px-4 font-medium">Total</th>
                 <th className="py-3 px-4 font-medium">Payment</th>
                 <th className="py-3 px-4 font-medium">Status</th>
-                <th className="py-3 px-4 font-medium text-right">View</th>
+                <th className="py-3 px-4 font-medium text-right">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -152,7 +174,10 @@ export default function AdminOrders() {
                       </select>
                     </td>
                     <td className="py-3 px-4 text-right">
-                      <button onClick={() => setOpenId(o.id)} className="p-1.5 rounded hover:bg-gray-100 text-gray-500 hover:text-gray-900" title="View details"><VisibilityOutlinedIcon style={{ fontSize: 19 }} /></button>
+                      <div className="inline-flex items-center gap-1">
+                        <button onClick={() => setOpenId(o.id)} className="p-1.5 rounded hover:bg-gray-100 text-gray-500 hover:text-gray-900" title="View details"><VisibilityOutlinedIcon style={{ fontSize: 19 }} /></button>
+                        <button onClick={() => removeOrder(o)} disabled={deletingId === o.id} className="p-1.5 rounded text-red-500 hover:bg-red-50 hover:text-red-700 disabled:opacity-40" title="Delete order"><DeleteOutlineIcon style={{ fontSize: 19 }} /></button>
+                      </div>
                     </td>
                   </tr>
                 ))
@@ -225,12 +250,47 @@ export default function AdminOrders() {
               </div>
             </div>
 
-            <div className="flex justify-end px-5 py-4 border-t border-gray-100">
+            <div className="flex items-center justify-between px-5 py-4 border-t border-gray-100">
+              <button onClick={() => removeOrder(openOrder)} disabled={deletingId === openOrder.id} className="inline-flex items-center gap-1.5 rounded-lg px-4 py-2.5 text-sm font-semibold text-red-600 hover:bg-red-50 disabled:opacity-40">
+                <DeleteOutlineIcon style={{ fontSize: 18 }} /> {deletingId === openOrder.id ? "Deleting..." : "Delete order"}
+              </button>
               <button onClick={() => setOpenId(null)} className="rounded-lg px-5 py-2.5 text-sm font-semibold text-white" style={{ backgroundColor: BRAND }}>Close</button>
             </div>
           </div>
         </div>
       )}
+
+      {/* Delete confirmation modal */}
+      {pendingDelete && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/50 backdrop-blur-[2px] animate-[fadeIn_.18s_ease-out]">
+          <div role="dialog" aria-modal="true" aria-labelledby="delete-order-title" className="w-full max-w-md overflow-hidden rounded-2xl bg-white shadow-2xl animate-[modalIn_.22s_ease-out]">
+            <div className="p-6 text-center">
+              <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-red-50 text-red-600">
+                <DeleteOutlineIcon style={{ fontSize: 30 }} />
+              </div>
+              <h3 id="delete-order-title" className="text-lg font-bold text-gray-900">Delete order #{pendingDelete.code}?</h3>
+              <p className="mt-2 text-sm leading-6 text-gray-500">
+                This permanently removes the order and its items. This action cannot be undone.
+              </p>
+              <div className="mt-4 rounded-xl bg-gray-50 px-4 py-3 text-left text-sm">
+                <div className="flex justify-between gap-4"><span className="text-gray-500">Customer</span><span className="truncate font-semibold text-gray-800">{pendingDelete.customerName}</span></div>
+                <div className="mt-1.5 flex justify-between"><span className="text-gray-500">Total</span><span className="font-semibold text-gray-800">{taka(pendingDelete.total)}</span></div>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-3 border-t border-gray-100 bg-gray-50/70 p-4">
+              <button onClick={() => setPendingDelete(null)} disabled={deletingId === pendingDelete.id} className="rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 transition hover:bg-gray-50 disabled:opacity-50">Cancel</button>
+              <button onClick={confirmDelete} disabled={deletingId === pendingDelete.id} className="inline-flex items-center justify-center gap-2 rounded-xl bg-red-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-60">
+                {deletingId === pendingDelete.id ? <><span className="h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white" /> Deleting...</> : <><DeleteOutlineIcon style={{ fontSize: 18 }} /> Delete</>}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <style>{`
+        @keyframes fadeIn { from { opacity: 0 } to { opacity: 1 } }
+        @keyframes modalIn { from { opacity: 0; transform: translateY(12px) scale(.97) } to { opacity: 1; transform: translateY(0) scale(1) } }
+      `}</style>
     </div>
   );
 }

@@ -36,7 +36,7 @@ function StarPicker({ value, onChange }) {
   );
 }
 
-export default function ProductReviews({ productId }) {
+export default function ProductReviews({ productId, onAddToCart, onBuyNow, productAvailable = true }) {
   const { user } = useAuth();
   const [items, setItems] = useState([]);
   const [summary, setSummary] = useState({ count: 0, avg: 0, dist: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 } });
@@ -80,18 +80,18 @@ export default function ProductReviews({ productId }) {
   const pct = (n) => (summary.count ? Math.round((summary.dist[n] / summary.count) * 100) : 0);
 
   return (
-    <section className="mt-12 border-t border-gray-100 pt-8">
-      <h2 className="text-xl font-bold text-gray-900 mb-5">
+    <section id="product-reviews" className="mt-10 scroll-mt-24 rounded-2xl border border-gray-200 bg-white p-4 shadow-sm sm:p-6">
+      <h2 className="mb-6 flex items-center text-xl font-extrabold text-gray-900">
         Ratings & Reviews
-        <span className="ml-2 h-1.5 w-10 inline-block rounded-full align-middle" style={{ backgroundColor: BRAND }} />
+        <span className="ml-3 h-1 w-10 rounded-full" style={{ backgroundColor: BRAND }} />
       </h2>
 
-      <div className="grid lg:grid-cols-3 gap-8">
+      <div className="grid items-start gap-6 lg:grid-cols-[minmax(300px,420px)_1fr]">
         {/* Summary */}
-        <div className="lg:col-span-1">
-          <div className="flex items-center gap-4">
+        <div>
+          <div className="flex items-center gap-5 rounded-xl bg-gray-50 p-4">
             <div className="text-center">
-              <p className="text-4xl font-extrabold text-gray-900">{summary.avg || 0}</p>
+              <p className="text-4xl font-black text-gray-900">{summary.avg || 0}</p>
               <Stars value={summary.avg} />
               <p className="text-xs text-gray-500 mt-1">{summary.count} review{summary.count === 1 ? "" : "s"}</p>
             </div>
@@ -99,7 +99,7 @@ export default function ProductReviews({ productId }) {
               {[5, 4, 3, 2, 1].map((n) => (
                 <div key={n} className="flex items-center gap-2 text-xs text-gray-500">
                   <span className="w-3">{n}</span>
-                  <div className="flex-1 h-2 rounded-full bg-gray-100 overflow-hidden">
+                  <div className="h-2 flex-1 overflow-hidden rounded-full bg-gray-200">
                     <div className="h-full rounded-full" style={{ width: `${pct(n)}%`, backgroundColor: BRAND }} />
                   </div>
                   <span className="w-8 text-right">{summary.dist[n] || 0}</span>
@@ -109,8 +109,8 @@ export default function ProductReviews({ productId }) {
           </div>
 
           {/* Submit form */}
-          <div className="mt-6 rounded-xl border border-gray-100 p-4">
-            <p className="text-sm font-bold text-gray-800 mb-2">Write a review</p>
+          <div className="mt-4 rounded-xl border border-gray-200 p-4 shadow-[0_1px_2px_rgba(15,23,42,.03)]">
+            <p className="mb-2 text-base font-extrabold text-gray-900">Write a review</p>
             <StarPicker value={rating} onChange={(n) => { setRating(n); setError(""); }} />
             {!user && (
               <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Your name (optional — shows as Guest)" className="mt-3 w-full rounded-md border border-gray-200 px-3 py-2 text-sm outline-none focus:border-gray-400" />
@@ -119,22 +119,26 @@ export default function ProductReviews({ productId }) {
             <textarea value={comment} onChange={(e) => setComment(e.target.value)} rows={3} placeholder="Share your experience…" className="mt-3 w-full rounded-md border border-gray-200 px-3 py-2 text-sm outline-none focus:border-gray-400" />
             {error && <p className="mt-2 text-sm text-red-500">{error}</p>}
             {done && <p className="mt-2 text-sm text-green-600">Thanks! Your review was posted.</p>}
-            <button onClick={submit} disabled={submitting} className="mt-3 w-full rounded-md py-2.5 text-sm font-bold text-white disabled:opacity-60" style={{ backgroundColor: BRAND }}>
+            <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-3">
+            <button onClick={submit} disabled={submitting} className="min-w-0 rounded-lg px-2 py-2.5 text-xs font-bold text-white shadow-sm transition hover:opacity-90 disabled:opacity-60" style={{ backgroundColor: BRAND }}>
               {submitting ? "Posting…" : "Submit Review"}
             </button>
+            {onAddToCart && <button type="button" onClick={onAddToCart} disabled={!productAvailable} className="min-w-0 rounded-lg border border-gray-300 bg-white px-2 py-2.5 text-xs font-bold text-gray-900 transition hover:border-gray-900 hover:bg-gray-50 disabled:opacity-40">Add to Bag</button>}
+            {onBuyNow && <button type="button" onClick={onBuyNow} disabled={!productAvailable} className="min-w-0 rounded-lg bg-gray-900 px-2 py-2.5 text-xs font-bold text-white shadow-sm transition hover:bg-black disabled:opacity-40">Buy Now</button>}
+            </div>
           </div>
         </div>
 
         {/* List */}
-        <div className="lg:col-span-2">
+        <div className="min-w-0">
           {loading ? (
             <div className="space-y-4">{Array.from({ length: 3 }).map((_, i) => <div key={i} className="h-20 bg-gray-100 rounded-lg animate-pulse" />)}</div>
           ) : items.length === 0 ? (
             <p className="text-gray-400 text-sm py-8 text-center">No reviews yet — be the first to review this product.</p>
           ) : (
-            <div className="space-y-5">
+            <div className="grid gap-3 xl:grid-cols-2">
               {items.map((r) => (
-                <div key={r.id} className="border-b border-gray-50 pb-4 last:border-0">
+                <div key={r.id} className="rounded-xl border border-gray-100 bg-gray-50/60 p-4 transition hover:border-gray-200 hover:bg-white hover:shadow-sm">
                   <div className="flex items-center gap-3">
                     <span className="h-9 w-9 rounded-full flex items-center justify-center text-sm font-bold text-white" style={{ backgroundColor: r.isGuest ? "#9ca3af" : BRAND }}>
                       {(r.name || "?")[0].toUpperCase()}

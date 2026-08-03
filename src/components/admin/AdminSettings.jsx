@@ -14,7 +14,7 @@ import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import MusicNoteIcon from "@mui/icons-material/MusicNote";
 import PaletteOutlinedIcon from "@mui/icons-material/PaletteOutlined";
 import { getSettings, updateSettings } from "../../api";
-import { applyTheme } from "../../context/SettingsContext";
+import { applyTheme, useSettings } from "../../context/SettingsContext";
 
 const BRAND = "#E11D48";
 
@@ -44,6 +44,7 @@ const SOCIALS = [
 ];
 
 export default function AdminSettings() {
+  const { setSettings } = useSettings();
   const [s, setS] = useState(null);
   const [logoFile, setLogoFile] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -85,6 +86,7 @@ export default function AdminSettings() {
       const updated = await updateSettings(s, logoFile);
       if (!updated.payments || updated.payments.length === 0) updated.payments = s.payments;
       setS(updated);
+      setSettings(updated);
       setLogoFile(null);
       setSaved(true);
       setTimeout(() => setSaved(false), 2200);

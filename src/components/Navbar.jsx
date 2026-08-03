@@ -12,8 +12,9 @@ import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
 import { getCategories, getProducts } from "../api";
 import { useSettings } from "../context/SettingsContext";
+import { useCart } from "../context/CartContext";
 import SearchBar from "./SearchBar";
-import rainzWordmark from "../assets/global/wordmark.jpg";
+import rainzWordmark from "../assets/global/wordmark.png";
 
 const BRAND = "var(--brand)";
 const taka = (n) => `\u09F3${Number(n || 0).toLocaleString("en-BD")}`;
@@ -34,6 +35,7 @@ const Navbar = forwardRef(
     ref
   ) => {
     const { settings } = useSettings();
+    const { add: addToBag } = useCart();
     const [menuOpen, setMenuOpen] = useState(false);
     const [openDropdown, setOpenDropdown] = useState(null);
     const [activeMenu, setActiveMenu] = useState(null);
@@ -89,11 +91,38 @@ const Navbar = forwardRef(
     const goCategory = (cat) => go(`/${catSlug(cat)}`);
     const goSub = (cat, item) => go(`/${catSlug(cat)}/${slugify(item)}`);
 
+    const addFeaturedToBag = async (product) => {
+      const sizes = product.sizes || [];
+      const sizeStock = product.sizeStock || {};
+      const size = sizes.find((item) => !Object.keys(sizeStock).length || Number(sizeStock[item] || 0) > 0) || null;
+      const color = product.colors?.[0]?.name || product.colors?.[0] || null;
+      if (sizes.length && !size) return go(`/product/${product.slug}`);
+      await addToBag(product, { size, color, qty: 1 });
+    };
+
 
     useEffect(() => {
       document.body.style.overflow = menuOpen ? "hidden" : "";
       return () => { document.body.style.overflow = ""; };
     }, [menuOpen]);
+
+    useEffect(() => {
+      const closeOnDesktop = () => {
+        if (window.innerWidth >= 1280) {
+          setMenuOpen(false);
+          setOpenDropdown(null);
+        }
+      };
+      const closeOnEscape = (event) => {
+        if (event.key === "Escape") setMenuOpen(false);
+      };
+      window.addEventListener("resize", closeOnDesktop);
+      window.addEventListener("keydown", closeOnEscape);
+      return () => {
+        window.removeEventListener("resize", closeOnDesktop);
+        window.removeEventListener("keydown", closeOnEscape);
+      };
+    }, []);
 
     useEffect(() => () => closeTimer.current && clearTimeout(closeTimer.current), []);
 
@@ -107,46 +136,35 @@ const Navbar = forwardRef(
     return (
       <>
         <nav ref={ref} className="w-full fixed top-0 left-0 z-50 shadow-sm border-b border-gray-100" style={{ backgroundColor: "var(--secondary)" }}>
-          <div className="w-[94%] max-w-[1500px] mx-auto relative flex items-center gap-2 sm:gap-3 lg:gap-6 py-2 sm:py-3">
+          <div className="w-full max-w-[1500px] mx-auto relative flex items-center gap-2 sm:gap-3 lg:gap-4 2xl:gap-6 px-3 sm:px-5 lg:px-6 py-2 sm:py-3">
 
-            {/* Logo (bigger) */}
-            {/* Logo (bigger) */}
-            <Link to="/" className="no-underline shrink-0 flex items-center gap-2.5">
-              {/* 1. Square icon logo (as-is) */}
+            <Link to="/" className="no-underline shrink-0 flex items-center gap-1.5 sm:gap-2.5">
               {settings.logo ? (
-                <img src={settings.logo} alt={settings.storeName} className="h-9 w-9 sm:h-11 sm:w-11 rounded-md object-cover" />
+                <img src={settings.logo} alt={settings.storeName} className="h-10 w-10 sm:h-12 sm:w-12 2xl:h-14 2xl:w-14 rounded-md object-cover" />
               ) : (
-                <span className="inline-flex h-9 w-9 sm:h-11 sm:w-11 items-center justify-center rounded-md text-white font-black text-lg sm:text-xl" style={{ backgroundColor: BRAND }}>
+                <span className="inline-flex h-10 w-10 sm:h-12 sm:w-12 2xl:h-14 2xl:w-14 items-center justify-center rounded-md text-white font-black text-xl sm:text-2xl" style={{ backgroundColor: BRAND }}>
                   {(settings.storeName || "R")[0]}
                 </span>
               )}
 
-              {/* 2. Wordmark: local "RAINZ" image + "LIFESTYLE" text */}
-              <span className="text-lg sm:text-2xl md:text-3xl tracking-tight inline-flex items-baseline" style={{ color: "var(--title)" }}>
+              {/* RAINZ wordmark */}
+              <span className="hidden sm:inline-flex text-lg sm:text-2xl md:text-3xl tracking-tight items-baseline" style={{ color: "var(--title)" }}>
                 {(() => {
                   const name = settings.storeName || "RAINZLIFESTYLE";
                   const i = name.toUpperCase().indexOf("LIFESTYLE");
                   const first = i > 0 ? name.slice(0, i) : name;
-                  const rest = i > 0 ? name.slice(i) : "";
                   return (
-                    <>
-                      {rainzWordmark ? (
-                        <img
-                          src={rainzWordmark}
-                          alt={first}
-                          className="h-3 sm:h-4 md:h-5 w-auto object-contain self-center pr-0.5 sm:pr-1"
-                        />
-                      ) : (
-                        <span style={{ fontFamily: "'Satisfy'", fontWeight: 600, fontStyle: "italic", fontSize: "0.9em", letterSpacing: "0.01em" }}>
-                          {first}
-                        </span>
-                      )}
-                      {rest && (
-                        <span style={{ fontFamily: "'Satisfy'", fontWeight: 500, color: "var(--subtitle)", fontSize: "0.7em", paddingLeft: "4px", paddingTop: "7px", letterSpacing: "0.01em" }}>
-                          {rest}
-                        </span>
-                      )}
-                    </>
+                    rainzWordmark ? (
+                      <img
+                        src={rainzWordmark}
+                        alt={first}
+                        className="h-[17.1px] sm:h-[23.94px] md:h-[27.36px] w-auto object-contain self-center pr-0.5 sm:pr-1"
+                      />
+                    ) : (
+                      <span style={{ fontFamily: "'Satisfy'", fontWeight: 600, fontStyle: "italic", fontSize: "0.9em", letterSpacing: "0.01em" }}>
+                        {first}
+                      </span>
+                    )
                   );
                 })()}
               </span>
@@ -163,7 +181,7 @@ const Navbar = forwardRef(
                     <button className="relative flex items-center gap-0.5 px-3 py-1.5 text-[13px] font-bold uppercase tracking-wide transition-colors" onClick={() => goCategory(cat)} style={{ color: isActive || isOpen ? cat.accent : "var(--title)" }}>
                       {cat.name}
                       {hasMenu && <KeyboardArrowDownIcon style={{ fontSize: 15 }} />}
-                      <span className={`absolute left-2 right-2 -bottom-1 h-[3px] origin-left rounded-full transition-transform duration-200 ${isActive || isOpen ? "scale-x-100" : "scale-x-0"}`} style={{ backgroundColor: cat.accent }} />
+                      <span className={`absolute left-2 right-2 -bottom-1 h-[3px] origin-center rounded-full transition-transform duration-200 ${isActive || isOpen ? "scale-x-100" : "scale-x-0"}`} style={{ backgroundColor: cat.accent }} />
                     </button>
 
                     {hasMenu && isOpen && (
@@ -190,16 +208,32 @@ const Navbar = forwardRef(
                             {/* RIGHT 50% — product cards (more + smaller, 3-col grid) */}
                             <div className="border-l border-gray-100 pl-8">
                               <h4 className="text-[11px] font-bold uppercase tracking-widest mb-3 text-gray-500">New Arrivals</h4>
-                              <div className="grid grid-cols-5 gap-2">
+                              <div className="grid grid-cols-5 gap-2.5">
                                 {(featuredByCat[catSlug(cat)] && featuredByCat[catSlug(cat)].length > 0)
                                   ? featuredByCat[catSlug(cat)].slice(0, 10).map((p) => (
-                                    <button key={p.id ?? p.slug} onClick={() => go(`/product/${p.slug}`)} className="text-left group/card">
-                                      <div className="aspect-[3/4] bg-gray-100 rounded overflow-hidden">
-                                        <img src={p.image} alt={p.name} className="h-full w-full object-cover group-hover/card:scale-105 transition-transform duration-300" onError={imgFallback} />
-                                      </div>
-                                      <p className="mt-1 text-[10px] leading-tight text-gray-700 truncate">{p.name}</p>
-                                      <p className="text-[10px] font-bold" style={{ color: "var(--title)" }}>{taka(p.price)}</p>
-                                    </button>
+                                    <div key={p.id ?? p.slug} className="group/card min-w-0">
+                                      <button onClick={() => go(`/product/${p.slug}`)} className="relative block w-full overflow-hidden border border-gray-200 bg-gray-50 text-left">
+                                        {Number(p.oldPrice) > Number(p.price) && (
+                                          <span className="absolute left-1.5 top-1.5 z-10 rounded bg-black px-1.5 py-0.5 text-[9px] font-bold text-white">
+                                            -{Math.round((1 - Number(p.price) / Number(p.oldPrice)) * 100)}%
+                                          </span>
+                                        )}
+                                        <span className="block aspect-square overflow-hidden">
+                                          <img src={p.image} alt={p.name} className="h-full w-full object-contain group-hover/card:scale-105 transition-transform duration-500" onError={imgFallback} />
+                                        </span>
+                                        <span className="absolute bottom-1 left-1/2 flex max-w-[94%] -translate-x-1/2 items-center gap-1 whitespace-nowrap rounded-sm bg-white/95 px-1.5 py-0.5 text-[9px] shadow-sm">
+                                          <strong className="text-black">{taka(p.price)}</strong>
+                                          {Number(p.oldPrice) > Number(p.price) && <del className="text-gray-400">{taka(p.oldPrice)}</del>}
+                                        </span>
+                                      </button>
+                                      <button
+                                        onClick={() => addFeaturedToBag(p)}
+                                        className="mt-1 flex h-7 w-full items-center justify-center gap-1 bg-black px-1 text-[10px] font-bold text-white transition-colors hover:bg-gray-800"
+                                        aria-label={`Add ${p.name} to bag`}
+                                      >
+                                        <span className="text-sm leading-none">+</span> Add to Bag
+                                      </button>
+                                    </div>
                                   ))
                                   : Array.from({ length: 10 }).map((_, i) => (
                                     <div key={i} className="animate-pulse">
@@ -224,10 +258,10 @@ const Navbar = forwardRef(
             </ul>
 
             {/* Search with live suggestions */}
-            <SearchBar className="hidden md:block flex-1 min-w-[200px]" />
+            <SearchBar compact className="block min-w-0 flex-1 max-w-[210px] sm:flex-none sm:w-36 md:w-40 lg:w-52 xl:w-44 2xl:w-56 ml-auto" />
 
             {/* Actions */}
-            <div className="hidden md:flex items-center gap-4 lg:gap-5 shrink-0">
+            <div className="hidden xl:flex items-center gap-3 2xl:gap-5 shrink-0">
               <button onClick={() => go("/stores")} className="flex flex-col items-center gap-0.5 transition-colors" style={{ color: "var(--title)" }}>
                 <LocationOnOutlinedIcon fontSize="medium" />
                 <span className="text-[11px] font-medium">Stores</span>
@@ -278,7 +312,7 @@ const Navbar = forwardRef(
             </div>
 
             {/* Mobile: bag + hamburger */}
-            <div className="flex items-center gap-2 ml-auto xl:hidden">
+            <div className="flex items-center gap-2 ml-auto md:ml-0 shrink-0 xl:hidden">
               {/* <button onClick={() => go("/cart")} className="relative p-1.5" style={{ color: "var(--title)" }}><ShoppingBagOutlinedIcon /><Badge count={cartCount} /></button> */}
               <button className="text-white p-1.5 rounded-md" style={{ backgroundColor: BRAND }} onClick={() => { setMenuOpen(!menuOpen); setOpenDropdown(null); }}>
                 {menuOpen ? <CloseIcon /> : <MenuIcon />}
@@ -293,14 +327,10 @@ const Navbar = forwardRef(
             {/* dark overlay (tap to close) */}
             <div className="fixed inset-0 bg-black/40 xl:hidden z-[99]" onClick={() => setMenuOpen(false)} />
             {/* drawer panel */}
-            <div className="fixed top-0 right-0 h-full w-[75%] max-w-[360px] bg-white flex flex-col px-4 pt-16 pb-10 xl:hidden z-[100] overflow-y-auto shadow-2xl animate-[slideIn_.25s_ease-out]">
+            <div className="fixed top-0 right-0 h-full w-[82vw] max-w-[360px] bg-white flex flex-col px-4 sm:px-5 pt-16 pb-10 xl:hidden z-[100] overflow-y-auto shadow-2xl animate-[slideIn_.25s_ease-out]">
               <button className="absolute top-4 right-4 text-gray-700" onClick={() => setMenuOpen(false)}><CloseIcon /></button>
 
-              <div className="mb-4">
-                <SearchBar onNavigate={() => setMenuOpen(false)} />
-              </div>
-
-              <div className="flex justify-around mb-4 border-b border-gray-200 pb-4">
+              <div className="grid grid-cols-5 gap-1 mb-4 border-b border-gray-200 pb-4">
                 <MobileAction icon={LocationOnOutlinedIcon} label="Stores" onClick={() => go("/stores")} />
                 <MobileAction icon={Inventory2OutlinedIcon} label="Orders" onClick={() => go("/account/orders")} />
                 <MobileAction icon={PersonOutlineOutlinedIcon} label="Profile" onClick={() => go(user ? "/account" : "/login")} />
@@ -365,9 +395,9 @@ function ProfileItem({ icon: Icon, label, onClick }) {
 
 function MobileAction({ icon: Icon, label, onClick, badge = 0, BadgeCmp }) {
   return (
-    <button onClick={onClick} className="relative flex flex-col items-center gap-0.5 text-gray-700">
+    <button onClick={onClick} className="relative min-w-0 flex flex-col items-center gap-0.5 text-gray-700">
       <span className="relative"><Icon fontSize="medium" />{BadgeCmp && <BadgeCmp count={badge} />}</span>
-      <span className="text-[11px] font-medium">{label}</span>
+      <span className="w-full truncate text-[10px] sm:text-[11px] font-medium">{label}</span>
     </button>
   );
 }

@@ -13,8 +13,10 @@ const mapRow = (r) => ({
   cancelledQty: Number(r.cancelledQty || 0),
   byStatus: r.byStatus || {},
   suggestedRestock: Number(r.suggestedRestock || 0),
+  sizes: r.sizes || [],
+  sizeStock: r.sizeStock || {},
 });
 
 export const getInventory = () => api.get("/inventory").then((d) => (d.items || []).map(mapRow));
 export const setInventory = (id, body) => api.patch(`/inventory/${id}`, body);
-export const restockProduct = (id, amount) => api.post(`/inventory/${id}/restock`, { amount });
+export const restockProduct = (id, amount, size) => api.post(`/inventory/${id}/restock`, { amount, size });

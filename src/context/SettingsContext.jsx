@@ -1,5 +1,5 @@
 // src/context/SettingsContext.jsx — load settings once + apply theme colors as CSS variables
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useState } from "react";
 import { getSettings } from "../api";
 
 const SettingsContext = createContext(null);
@@ -33,24 +33,50 @@ export function SettingsProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   // wrap setter so updating settings also re-applies the theme immediately
-  const setSettings = (next) => {
-    setSettingsState(next);
-    if (next?.theme) applyTheme(next.theme);
-  };
+  const setSettings = useCallback((next) => {
+    setSettingsState((current) => {
+      const value = typeof next === "function" ? next(current) : next;
+      if (value?.theme) applyTheme(value.theme);
+      return value;
+    });
+  }, []);
+
+  const refreshSettings = useCallback(async () => {
+    const next = await getSettings();
+    setSettings(next);
+    return next;
+  }, [setSettings]);
 
   useEffect(() => {
     // apply defaults instantly so there's no flash before the API responds
     applyTheme(DEFAULT_THEME);
     let alive = true;
     getSettings()
-      .then((s) => { if (alive) { setSettingsState(s); applyTheme(s.theme); } })
+      .then((next) => { if (alive) setSettings(next); })
       .catch(() => alive && setSettingsState(FALLBACK))
       .finally(() => alive && setLoading(false));
-    return () => { alive = false; };
-  }, []);
+
+    // An already-open customer tab should also notice a maintenance change.
+    const refreshIfAlive = async () => {
+      try {
+        const next = await getSettings();
+        if (alive) setSettings(next);
+      } catch {
+        // Keep the last known settings during a temporary network failure.
+      }
+    };
+    const interval = window.setInterval(refreshIfAlive, 30000);
+    window.addEventListener("focus", refreshIfAlive);
+
+    return () => {
+      alive = false;
+      window.clearInterval(interval);
+      window.removeEventListener("focus", refreshIfAlive);
+    };
+  }, [setSettings]);
 
   return (
-    <SettingsContext.Provider value={{ settings, loading, setSettings }}>
+    <SettingsContext.Provider value={{ settings, loading, setSettings, refreshSettings }}>
       {children}
     </SettingsContext.Provider>
   );
@@ -58,5 +84,5 @@ export function SettingsProvider({ children }) {
 
 export function useSettings() {
   const ctx = useContext(SettingsContext);
-  return ctx || { settings: FALLBACK, loading: false, setSettings: () => {} };
+  return ctx || { settings: FALLBACK, loading: false, setSettings: () => {}, refreshSettings: async () => FALLBACK };
 }

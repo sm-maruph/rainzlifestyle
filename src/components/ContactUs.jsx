@@ -68,10 +68,10 @@ const ContactUs = () => {
               ,
               <br />
               <a
-                href="mailto:mnmenterprise777@gmail.com"
+                href="mailto:rainzlifestyle.official@gmail.com"
                 className="hover:underline text-mm-primary"
               >
-                mnmenterprise777@gmail.com
+                rainzlifestyle.official@gmail.com
               </a>
             </p>
           </div>
