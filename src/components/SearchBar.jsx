@@ -73,7 +73,7 @@ export default function SearchBar({ className = "", placeholder = "Search produc
 
   return (
     <div ref={boxRef} className={`relative ${className}`}>
-      <form onSubmit={onSubmit} className={`flex items-center rounded-lg border border-gray-200 bg-gray-50 transition focus-within:border-gray-300 focus-within:bg-white focus-within:shadow-sm ${compact ? "px-2.5 py-1.5" : "px-4 py-2.5"}`}>
+      <form onSubmit={onSubmit} className={`flex items-center border border-gray-200 bg-gray-50 transition focus-within:border-gray-300 focus-within:bg-white focus-within:shadow-sm ${compact ? "rounded-full px-3 py-1.5" : "rounded-lg px-4 py-2.5"}`}>
         <input
           autoFocus={autoFocus}
           value={term}
@@ -81,7 +81,7 @@ export default function SearchBar({ className = "", placeholder = "Search produc
           onFocus={() => term.trim() && setOpen(true)}
           onKeyDown={onKeyDown}
           placeholder={placeholder}
-          className={`flex-1 min-w-0 bg-transparent text-gray-700 placeholder-gray-400 outline-none ${compact ? "text-xs" : "text-sm"}`}
+          className={`flex-1 min-w-0 bg-transparent font-normal text-gray-700 placeholder-gray-400 outline-none ${compact ? "text-[11px]" : "text-sm"}`}
         />
         {term && (
           <button type="button" onClick={clear} aria-label="Clear" className="text-gray-400 mr-1"><CloseIcon style={{ fontSize: 16 }} /></button>

@@ -33,6 +33,10 @@
 body {
   background-color: var(--background);
   color: var(--details);
+  font-family: Inter, "Helvetica Neue", Arial, sans-serif;
+  font-optical-sizing: auto;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
 }
 
 /* Interactive labels should always read as controls, never underlined links. */

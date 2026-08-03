@@ -177,14 +177,14 @@ const Navbar = forwardRef(
             </Link>
 
             {/* Desktop categories with mega-menus */}
-            <ul className="hidden xl:flex items-stretch shrink-0 gap-1">
+            <ul className="hidden xl:flex items-stretch shrink-0 gap-0.5">
               {categories.map((cat) => {
                 const isActive = currentSlug === catSlug(cat);
                 const hasMenu = (cat.groups && cat.groups.length > 0);
                 const isOpen = activeMenu === cat.name;
                 return (
                   <li key={cat.name} className="flex" onMouseEnter={() => (hasMenu ? openMenu(cat) : scheduleClose())} onMouseLeave={scheduleClose}>
-                    <button className="relative flex items-center gap-0.5 px-3 py-1.5 text-[13px] font-bold uppercase tracking-wide transition-colors" onClick={() => goCategory(cat)} style={{ color: isActive || isOpen ? cat.accent : "var(--title)" }}>
+                    <button className="relative flex items-center gap-0.5 px-2.5 py-1.5 text-[11px] 2xl:text-xs font-semibold uppercase tracking-[0.045em] transition-colors" onClick={() => goCategory(cat)} style={{ color: isActive || isOpen ? cat.accent : "var(--title)" }}>
                       {cat.name}
                       {hasMenu && <KeyboardArrowDownIcon style={{ fontSize: 15 }} />}
                       <span className={`absolute left-2 right-2 -bottom-1 h-[3px] origin-center rounded-full transition-transform duration-200 ${isActive || isOpen ? "scale-x-100" : "scale-x-0"}`} style={{ backgroundColor: cat.accent }} />
@@ -199,11 +199,11 @@ const Navbar = forwardRef(
                             <div className="grid grid-cols-2 gap-x-6 gap-y-2 content-start">
                               {cat.groups.map((group) => (
                                 <div key={group.title}>
-                                  <h4 className="text-[11px] font-bold uppercase tracking-widest mb-2.5" style={{ color: cat.accent }}>{group.title}</h4>
+                                  <h4 className="text-[10px] font-bold uppercase tracking-[0.12em] mb-2.5" style={{ color: cat.accent }}>{group.title}</h4>
                                   <ul className="space-y-1.5">
                                     {group.items.map((item) => (
                                       <li key={item}>
-                                        <button className="text-[13px] text-gray-600 hover:text-gray-900 transition-all hover:translate-x-1" onClick={() => goSub(cat, item)}>{item}</button>
+                                        <button className="text-xs font-normal text-gray-600 hover:text-gray-900 transition-all hover:translate-x-1" onClick={() => goSub(cat, item)}>{item}</button>
                                       </li>
                                     ))}
                                   </ul>
@@ -213,7 +213,7 @@ const Navbar = forwardRef(
 
                             {/* RIGHT 50% — product cards (more + smaller, 3-col grid) */}
                             <div className="border-l border-gray-100 pl-8">
-                              <h4 className="text-[11px] font-bold uppercase tracking-widest mb-3 text-gray-500">New Arrivals</h4>
+                              <h4 className="text-[10px] font-bold uppercase tracking-[0.12em] mb-3 text-gray-500">New Arrivals</h4>
                               <div className="grid grid-cols-5 gap-2.5">
                                 {(featuredByCat[catSlug(cat)] && featuredByCat[catSlug(cat)].length > 0)
                                   ? featuredByCat[catSlug(cat)].slice(0, 10).map((p) => (
@@ -264,22 +264,22 @@ const Navbar = forwardRef(
             </ul>
 
             {/* Search with live suggestions */}
-            <SearchBar compact className="hidden xl:block min-w-0 flex-1 xl:w-44 2xl:w-56 ml-auto" />
+            <SearchBar compact className="hidden xl:block min-w-0 flex-none xl:w-36 2xl:w-44 ml-auto" />
 
             {/* Actions */}
             <div className="hidden xl:flex items-center gap-3 2xl:gap-5 shrink-0">
               <button onClick={() => go("/stores")} className="flex flex-col items-center gap-0.5 transition-colors" style={{ color: "var(--title)" }}>
                 <LocationOnOutlinedIcon fontSize="medium" />
-                <span className="text-[11px] font-medium">Stores</span>
+                <span className="text-[9px] font-medium tracking-[0.01em]">Stores</span>
               </button>
               <button onClick={() => go("/account/orders")} className="flex flex-col items-center gap-0.5 transition-colors" style={{ color: "var(--title)" }}>
                 <Inventory2OutlinedIcon fontSize="medium" />
-                <span className="text-[11px] font-medium">Orders</span>
+                <span className="text-[9px] font-medium tracking-[0.01em]">Orders</span>
               </button>
               <div className="relative group">
                 <button className="flex flex-col items-center gap-0.5 transition-colors" style={{ color: "var(--title)" }}>
                   <PersonOutlineOutlinedIcon fontSize="medium" />
-                  <span className="text-[11px] font-medium">Profile</span>
+                  <span className="text-[9px] font-medium tracking-[0.01em]">Profile</span>
                 </button>
                 <div className="absolute right-0 top-full z-50 hidden group-hover:block w-60 pt-2">
                   <div className="bg-white shadow-xl border border-gray-100 rounded-md overflow-hidden">
@@ -308,12 +308,12 @@ const Navbar = forwardRef(
 
               <button onClick={() => go("/wishlist")} className="relative flex flex-col items-center gap-0.5 transition-colors" style={{ color: "var(--title)" }}>
                 <span className="relative"><FavoriteBorderOutlinedIcon fontSize="medium" /><Badge count={wishlistCount} /></span>
-                <span className="text-[11px] font-medium">Wishlist</span>
+                <span className="text-[9px] font-medium tracking-[0.01em]">Wishlist</span>
               </button>
 
               <button onClick={() => go("/cart")} className="relative flex flex-col items-center gap-0.5 transition-colors" style={{ color: "var(--title)" }}>
                 <span className="relative"><ShoppingBagOutlinedIcon fontSize="medium" /><Badge count={cartCount} /></span>
-                <span className="text-[11px] font-medium">Bag</span>
+                <span className="text-[9px] font-medium tracking-[0.01em]">Bag</span>
               </button>
             </div>
 
