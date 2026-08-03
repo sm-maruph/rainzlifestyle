@@ -14,9 +14,9 @@ export async function getCategoriesRaw() {
       .map((g) => ({
         id: g.id,
         title: g.title,
-        subcategories: (g.subcategories || []).slice().sort(byPos).map((s) => ({ id: s.id, name: s.name, slug: s.slug })),
+        subcategories: (g.subcategories || []).slice().sort(byPos).map((s) => ({ id: s.id, name: s.name, slug: s.slug, count: Number(s.count || 0) })),
       }));
-    return { id: c.id, name: c.name, slug: c.slug, accent: c.accent, image: c.image || null, groups, category_groups: groups };
+    return { id: c.id, name: c.name, slug: c.slug, accent: c.accent, image: c.image || null, count: Number(c.count || 0), groups, category_groups: groups };
   });
 }
 
@@ -28,7 +28,8 @@ export async function getCategories() {
     slug: c.slug,
     accent: c.accent,
     image: c.image || null,
-    groups: c.groups.map((g) => ({ title: g.title, items: g.subcategories.map((s) => s.name) })),
+    count: c.count,
+    groups: c.groups.map((g) => ({ title: g.title, items: g.subcategories.map((s) => s.name), counts: Object.fromEntries(g.subcategories.map((s) => [s.name, s.count])) })),
   }));
 }
 

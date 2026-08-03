@@ -49,8 +49,8 @@ const Navbar = forwardRef(
     useEffect(() => {
       if (categoriesProp) return;
       let alive = true;
-      getCategories()
-        .then((tree) => {
+      Promise.all([getCategories(), getProducts({ page: 1, pageSize: 500 }).catch(() => ({ items: [] }))])
+        .then(([tree, productResult]) => {
           if (!alive || !tree || !tree.length) return;
           const EXCLUDE = ["sale", "offers", "offer", "best-seller", "best-sellers", "bestseller", "best seller", "new-arrivals", "new arrivals"];
           const filtered = tree.filter((c) => {
@@ -58,7 +58,27 @@ const Navbar = forwardRef(
             const name = (c.name || "").toLowerCase();
             return !EXCLUDE.includes(slug) && !EXCLUDE.includes(name);
           });
-          setFetchedCats(filtered);
+          const products = productResult?.items || [];
+          const categoryCounts = new Map();
+          const subcategoryCounts = new Map();
+          products.forEach((product) => {
+            if (product.category) categoryCounts.set(product.category, (categoryCounts.get(product.category) || 0) + 1);
+            if (product.category && product.subcategory) {
+              const key = `${product.category}:${product.subcategory}`;
+              subcategoryCounts.set(key, (subcategoryCounts.get(key) || 0) + 1);
+            }
+          });
+          setFetchedCats(filtered.map((cat) => ({
+            ...cat,
+            count: categoryCounts.get(cat.slug) ?? cat.count ?? 0,
+            groups: (cat.groups || []).map((group) => ({
+              ...group,
+              counts: Object.fromEntries((group.items || []).map((item) => [
+                item,
+                subcategoryCounts.get(`${cat.slug}:${slugify(item)}`) ?? group.counts?.[item] ?? 0,
+              ])),
+            })),
+          })));
         })
         .catch(() => { });
       return () => { alive = false; };
@@ -203,7 +223,9 @@ const Navbar = forwardRef(
                                   <ul className="space-y-1.5">
                                     {group.items.map((item) => (
                                       <li key={item}>
-                                        <button className="text-xs font-normal text-gray-600 hover:text-gray-900 transition-all hover:translate-x-1" onClick={() => goSub(cat, item)}>{item}</button>
+                                        <button className="flex w-full items-center justify-between gap-3 text-xs font-normal text-gray-600 hover:text-gray-900 transition-all hover:translate-x-1" onClick={() => goSub(cat, item)}>
+                                          <span>{item}</span><CountBadge count={group.counts?.[item]} accent={cat.accent} />
+                                        </button>
                                       </li>
                                     ))}
                                   </ul>
@@ -375,21 +397,24 @@ const Navbar = forwardRef(
                 const hasMenu = cat.groups && cat.groups.length > 0;
                 return (
                   <div key={cat.name} className="w-full">
-                    <button className="text-gray-800 text-base font-semibold py-3 w-full text-left border-b border-gray-100 flex justify-between items-center" onClick={() => (hasMenu ? setOpenDropdown(openDropdown === cat.name ? null : cat.name) : goCategory(cat))} style={openDropdown === cat.name ? { color: cat.accent } : undefined}>
-                      {cat.name}
-                      {hasMenu && <span className="ml-4 text-gray-400">{openDropdown === cat.name ? "-" : "+"}</span>}
+                    <button className="grid w-full grid-cols-[minmax(0,1fr)_auto_18px] items-center gap-2 border-b border-gray-100 px-2 py-3 text-left text-sm font-semibold text-gray-800 transition-colors" onClick={() => (hasMenu ? setOpenDropdown(openDropdown === cat.name ? null : cat.name) : goCategory(cat))} style={openDropdown === cat.name ? { color: cat.accent, backgroundColor: `${cat.accent}0A` } : undefined}>
+                      <span className="min-w-0 truncate">{cat.name}</span>
+                      <CountBadge count={cat.count} accent={cat.accent} active={openDropdown === cat.name} />
+                      {hasMenu && <span className={`text-center text-lg leading-none text-gray-400 transition-transform ${openDropdown === cat.name ? "rotate-90" : ""}`}>›</span>}
                     </button>
                     {hasMenu && openDropdown === cat.name && (
-                      <div className="bg-gray-50 py-2">
+                      <div className="bg-white py-1.5">
                         {cat.groups.map((group) => (
-                          <div key={group.title} className="px-4 py-1">
-                            <p className="text-[11px] font-bold uppercase tracking-widest mb-1" style={{ color: cat.accent }}>{group.title}</p>
+                          <div key={group.title}>
                             {group.items.map((item) => (
-                              <button key={item} className="text-gray-600 text-sm py-1.5 block w-full text-left" onClick={() => goSub(cat, item)}>{item}</button>
+                              <button key={item} className="grid w-full grid-cols-[minmax(0,1fr)_auto_18px] items-center gap-2 px-6 py-2 text-left text-xs text-gray-700 transition-colors hover:bg-gray-100" onClick={() => goSub(cat, item)}>
+                                <span>{item}</span><CountBadge count={group.counts?.[item]} accent={cat.accent} />
+                                <span />
+                              </button>
                             ))}
                           </div>
                         ))}
-                        <button className="text-sm font-semibold px-4 py-2 block w-full text-left" style={{ color: cat.accent }} onClick={() => goCategory(cat)}>View All {cat.name} &rarr;</button>
+                        <button className="block w-full px-6 py-2.5 text-left text-xs font-semibold" style={{ color: cat.accent }} onClick={() => goCategory(cat)}>View All {cat.name} →</button>
                       </div>
                     )}
                   </div>
@@ -432,6 +457,15 @@ function MobileAction({ icon: Icon, label, onClick, badge = 0, BadgeCmp }) {
       <span className="relative"><Icon fontSize="medium" />{BadgeCmp && <BadgeCmp count={badge} />}</span>
       <span className="w-full truncate text-[10px] sm:text-[11px] font-medium">{label}</span>
     </button>
+  );
+}
+
+function CountBadge({ count, accent = BRAND, active = false }) {
+  if (count === undefined || count === null) return null;
+  return (
+    <span className="inline-flex min-w-7 shrink-0 items-center justify-center rounded-full px-2 py-1 text-[10px] font-semibold tabular-nums" style={active ? { backgroundColor: accent, color: "#fff" } : { backgroundColor: "#f1f5f9", color: "#64748b" }}>
+      {Number(count).toLocaleString("en-US")}
+    </span>
   );
 }
 
