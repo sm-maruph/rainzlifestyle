@@ -109,7 +109,7 @@ const Hero = () => {
           </button>
           <div className="absolute left-1/2 bottom-3 -translate-x-1/2 flex space-x-2 z-30">
             {slides.map((_, idx) => (
-              <button key={idx} onClick={() => setCurrent(idx)} className={`w-2.5 h-2.5 md:w-3 md:h-3 rounded-full transition ${idx === current ? "bg-rose-600 scale-110" : "bg-white/80"}`} aria-label={`Go to slide ${idx + 1}`} />
+              <button key={idx} onClick={() => setCurrent(idx)} className={`w-2.5 h-2.5 md:w-3 md:h-3 rounded-full transition ${idx === current ? "scale-110" : "bg-white/80"}`} style={idx === current ? { backgroundColor: "var(--brand)" } : undefined} aria-label={`Go to slide ${idx + 1}`} />
             ))}
           </div>
         </>

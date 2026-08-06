@@ -5,7 +5,7 @@ import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import CloseIcon from "@mui/icons-material/Close";
 import { createSizeChart, deleteSizeChart, getSizeCharts, updateSizeChart } from "../../api";
 
-const BRAND = "#E11D48";
+const BRAND = "#000000";
 const blank = () => ({
   id: null,
   name: "",

@@ -12,7 +12,7 @@ import {
   getSizeCharts,
 } from "../../api";
 
-const BRAND = "#E11D48";
+const BRAND = "#000000";
 const taka = (n) => `\u09F3${Number(n || 0).toLocaleString("en-BD")}`;
 const pctOff = (p) => (p.oldPrice && p.oldPrice > p.price ? Math.round(((p.oldPrice - p.price) / p.oldPrice) * 100) : 0);
 

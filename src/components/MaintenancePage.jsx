@@ -133,9 +133,9 @@ export default function MaintenancePage() {
           opacity: .5;
           pointer-events: none;
         }
-        .mnt-orb-1 { width: 380px; height: 380px; background: #E11D48; top: -120px; left: -100px; animation: mntFloat1 14s ease-in-out infinite; }
+        .mnt-orb-1 { width: 380px; height: 380px; background: #000000; top: -120px; left: -100px; animation: mntFloat1 14s ease-in-out infinite; }
         .mnt-orb-2 { width: 320px; height: 320px; background: #7C3AED; bottom: -110px; right: -90px; animation: mntFloat2 17s ease-in-out infinite; }
-        .mnt-orb-3 { width: 260px; height: 260px; background: #DB2777; top: 45%; left: 60%; opacity: .28; animation: mntFloat3 20s ease-in-out infinite; }
+        .mnt-orb-3 { width: 260px; height: 260px; background: #000000; top: 45%; left: 60%; opacity: .28; animation: mntFloat3 20s ease-in-out infinite; }
         @keyframes mntFloat1 { 0%,100%{transform:translate(0,0) scale(1)} 50%{transform:translate(60px,50px) scale(1.15)} }
         @keyframes mntFloat2 { 0%,100%{transform:translate(0,0) scale(1)} 50%{transform:translate(-50px,-40px) scale(1.1)} }
         @keyframes mntFloat3 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(-70px,40px)} }
@@ -162,7 +162,7 @@ export default function MaintenancePage() {
         @keyframes mntRise { from { opacity:0; transform: translateY(18px); } to { opacity:1; transform:none; } }
 
         /* logo */
-        .mnt-logo-wrap { display: inline-block; position: relative; background: linear-gradient(135deg, #E11D48, #7C3AED); border-radius: 20px; padding: 4px; }
+        .mnt-logo-wrap { display: inline-block; position: relative; background: linear-gradient(135deg, #000000, #374151); border-radius: 20px; padding: 4px; }
         .mnt-logo-wrap::after {
           content: ""; position: absolute; inset: -10px; border-radius: 20px;
           border: 1px solid rgb(255, 255, 255);
@@ -175,7 +175,7 @@ export default function MaintenancePage() {
         }
         .mnt-logo-fallback {
           display: flex; align-items: center; justify-content: center;
-          background: linear-gradient(135deg, #E11D48, #7C3AED);
+          background: linear-gradient(135deg, #000000, #374151);
           color: #fff; font-weight: 900; font-size: 28px;
         }
 
@@ -186,17 +186,17 @@ export default function MaintenancePage() {
         }
         .mnt-rule {
           width: 54px; height: 2px; margin: 14px auto 0;
-          background: linear-gradient(90deg, transparent, #E11D48, transparent);
+          background: linear-gradient(90deg, transparent, #000000, transparent);
         }
 
         /* animated stitch loader */
         .mnt-loader { margin: 34px auto 0; display: flex; gap: 7px; justify-content: center; }
         .mnt-loader span {
-          width: 7px; height: 7px; border-radius: 9999px; background: #E11D48;
+          width: 7px; height: 7px; border-radius: 9999px; background: #000000;
           animation: mntBounce 1.3s ease-in-out infinite;
         }
         .mnt-loader span:nth-child(2){ animation-delay:.12s; background:#F43F5E }
-        .mnt-loader span:nth-child(3){ animation-delay:.24s; background:#DB2777 }
+        .mnt-loader span:nth-child(3){ animation-delay:.24s; background:#000000 }
         .mnt-loader span:nth-child(4){ animation-delay:.36s; background:#A855F7 }
         .mnt-loader span:nth-child(5){ animation-delay:.48s; background:#7C3AED }
         @keyframes mntBounce { 0%,60%,100%{ transform: translateY(0); opacity:.45 } 30%{ transform: translateY(-11px); opacity:1 } }
@@ -210,7 +210,7 @@ export default function MaintenancePage() {
 
         /* shimmering gradient text */
         .mnt-shimmer {
-          background: linear-gradient(90deg,#E11D48 0%,#F472B6 25%,#A855F7 50%,#F472B6 75%,#E11D48 100%);
+          background: linear-gradient(90deg,#000000 0%,#374151 25%,#6B7280 50%,#374151 75%,#000000 100%);
           background-size: 200% auto;
           -webkit-background-clip: text; background-clip: text;
           -webkit-text-fill-color: transparent; color: transparent;
@@ -231,7 +231,7 @@ export default function MaintenancePage() {
         }
         .mnt-progress-bar {
           width: 40%; height: 100%; border-radius: 9999px;
-          background: linear-gradient(90deg,#E11D48,#A855F7);
+          background: linear-gradient(90deg,#000000,#4B5563);
           animation: mntSlide 1.8s ease-in-out infinite;
         }
         @keyframes mntSlide { 0%{ transform: translateX(-100%) } 100%{ transform: translateX(350%) } }

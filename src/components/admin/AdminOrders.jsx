@@ -8,7 +8,7 @@ import RefreshIcon from "@mui/icons-material/Refresh";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import { deleteOrder, getOrders, updateOrderStatus } from "../../api";
 
-const BRAND = "#E11D48";
+const BRAND = "#000000";
 const taka = (n) => `\u09F3${Number(n || 0).toLocaleString("en-BD")}`;
 const STATUSES = ["Pending", "Processing", "Shipped", "Delivered", "Cancelled"];
 const STATUS_STYLE = {

@@ -22,7 +22,7 @@ import ChevronRightRoundedIcon from "@mui/icons-material/ChevronRightRounded";
 import { useSettings } from "../../context/SettingsContext";
 
 
-const BRAND = "#E11D48";
+const BRAND = "#000000";
 
 const NAV = [
   { to: "/admin", label: "Dashboard", icon: DashboardOutlinedIcon, end: true },

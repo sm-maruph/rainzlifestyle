@@ -9,7 +9,7 @@ import CampaignOutlinedIcon from "@mui/icons-material/CampaignOutlined";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import { getProducts, getCategoriesRaw, getSaleCampaigns, createSaleCampaign, updateSaleCampaign, deleteSaleCampaign } from "../../api";
 
-const BRAND = "#E11D48";
+const BRAND = "#000000";
 const SALE = "#7C3AED";
 const taka = (n) => `\u09F3${Number(n || 0).toLocaleString("en-BD")}`;
 const today = () => new Date().toISOString().slice(0, 10);

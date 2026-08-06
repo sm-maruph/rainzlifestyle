@@ -21,7 +21,7 @@ import CheckCircleOutlineRoundedIcon from "@mui/icons-material/CheckCircleOutlin
 import InsightsRoundedIcon from "@mui/icons-material/InsightsRounded";
 import { getProducts, getOrders, getCustomers } from "../../api";
 
-const BRAND = "#E11D48";
+const BRAND = "#000000";
 const REVEAL = { hidden: { opacity: 0, y: 18 }, show: { opacity: 1, y: 0, transition: { duration: 0.42, ease: [0.22, 1, 0.36, 1] } } };
 const STAGGER = { hidden: {}, show: { transition: { staggerChildren: 0.07 } } };
 const taka = (n) => `\u09F3${Number(n || 0).toLocaleString("en-BD")}`;

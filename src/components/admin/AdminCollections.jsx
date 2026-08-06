@@ -10,7 +10,7 @@ import {
   getCollectionsAdmin, createCollection, updateCollection, deleteCollection,
 } from "../../api";
 
-const BRAND = "#E11D48";
+const BRAND = "#000000";
 
 const EMPTY = { id: null, title: "", caption: "", link: "", position: 0, isActive: true, image: "", file: null, preview: "" };
 

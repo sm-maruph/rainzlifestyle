@@ -13,7 +13,7 @@ import FiberNewOutlinedIcon from "@mui/icons-material/FiberNewOutlined";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import { getCustomers } from "../../api";
 
-const BRAND = "#E11D48";
+const BRAND = "#000000";
 const taka = (n) => `\u09F3${Number(n || 0).toLocaleString("en-BD")}`;
 const ORDER_STATUS_STYLE = {
   Delivered: "bg-green-50 text-green-700", Shipped: "bg-blue-50 text-blue-700",

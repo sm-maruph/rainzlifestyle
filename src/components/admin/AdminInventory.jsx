@@ -9,7 +9,7 @@ import AddBoxOutlinedIcon from "@mui/icons-material/AddBoxOutlined";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import { getInventory, setInventory, restockProduct } from "../../api";
 
-const BRAND = "#E11D48";
+const BRAND = "#000000";
 const taka = (n) => `\u09F3${Number(n || 0).toLocaleString("en-BD")}`;
 
 const LEVEL_STYLE = {

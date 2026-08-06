@@ -7,7 +7,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import AddPhotoAlternateOutlinedIcon from "@mui/icons-material/AddPhotoAlternateOutlined";
 import { getHeroSlidesAdmin, createHeroSlide, updateHeroSlide, deleteHeroSlide } from "../../api";
 
-const BRAND = "#E11D48";
+const BRAND = "#000000";
 const EMPTY = { id: null, title: "", subtitle: "", buttonText: "", link: "", position: 0, isActive: true, image: "", file: null, preview: "" };
 
 export default function AdminHero() {

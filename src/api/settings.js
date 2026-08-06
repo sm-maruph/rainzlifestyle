@@ -22,7 +22,7 @@ export const mapSettings = (s = {}) => ({
   payments: Array.isArray(s.payments) ? s.payments : [],
   social: s.social || {},
   maintenance: toBoolean(s.maintenance),
-  theme: s.theme || { brand: "#E11D48", men: "#E11D48", women: "#DB2777", kids: "#F59E0B", accessories: "#0D9488", sale: "#7C3AED" },
+  theme: s.theme || { brand: "#000000", men: "#E11D48", women: "#DB2777", kids: "#F59E0B", accessories: "#0D9488", sale: "#7C3AED" },
 });
 
 // UI (camel) -> DB (snake)

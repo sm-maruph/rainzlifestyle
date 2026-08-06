@@ -226,8 +226,8 @@ export default function CategoryPage() {
               ["Free Delivery", "/search?q=free%20delivery"],
               ["Merchandise", "/search?q=merchandise"],
             ].map(([label, path]) => (
-              <button key={label} onClick={() => navigate(path)} className="group flex w-full items-center gap-1.5 px-3 py-2 text-left text-xs font-medium text-gray-800 transition-colors hover:bg-rose-50 hover:text-rose-700">
-                <BoltIcon className="text-orange-500 transition-colors group-hover:text-rose-600" style={{ fontSize: 14 }} />
+              <button key={label} onClick={() => navigate(path)} className="group flex w-full items-center gap-1.5 px-3 py-2 text-left text-xs font-medium text-gray-800 transition-colors hover:bg-gray-100 hover:text-black">
+                <BoltIcon className="text-orange-500 transition-colors group-hover:text-black" style={{ fontSize: 14 }} />
                 {label}
               </button>
             ))}

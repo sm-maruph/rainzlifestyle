@@ -441,7 +441,7 @@ const Navbar = forwardRef(
 
 function ProfileItem({ icon: Icon, label, onClick }) {
   return (
-    <button onClick={onClick} className="flex w-full items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-rose-600 transition-colors">
+    <button onClick={onClick} className="flex w-full items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-black transition-colors">
       <Icon fontSize="small" className="text-gray-400" />
       {label}
     </button>

@@ -16,9 +16,9 @@ import PaletteOutlinedIcon from "@mui/icons-material/PaletteOutlined";
 import { getSettings, updateSettings } from "../../api";
 import { applyTheme, useSettings } from "../../context/SettingsContext";
 
-const BRAND = "#E11D48";
+const BRAND = "#000000";
 
-const DEFAULT_THEME = { brand: "#E11D48", men: "#E11D48", women: "#DB2777", kids: "#F59E0B", accessories: "#0D9488", sale: "#7C3AED" };
+const DEFAULT_THEME = { brand: "#000000", men: "#E11D48", women: "#DB2777", kids: "#F59E0B", accessories: "#0D9488", sale: "#7C3AED" };
 const THEME_FIELDS = [
   { key: "brand", label: "Primary / Brand" },
   { key: "men", label: "Men" },
@@ -184,7 +184,7 @@ export default function AdminSettings() {
               <input type="color" value={(s.theme || DEFAULT_THEME)[key] || "#000000"} onChange={(e) => setTheme(key, e.target.value)} className="h-10 w-12 rounded border border-gray-200 cursor-pointer bg-white p-0.5" />
               <div className="flex-1">
                 <p className="text-xs font-medium text-gray-600">{label}</p>
-                <input value={(s.theme || DEFAULT_THEME)[key] || ""} onChange={(e) => setTheme(key, e.target.value)} className="inp font-mono text-xs" placeholder="#E11D48" />
+                <input value={(s.theme || DEFAULT_THEME)[key] || ""} onChange={(e) => setTheme(key, e.target.value)} className="inp font-mono text-xs" placeholder="#000000" />
               </div>
             </div>
           ))}

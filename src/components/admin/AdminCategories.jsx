@@ -13,7 +13,7 @@ import {
   createSubcategory, deleteSubcategory,
 } from "../../api";
 
-const BRAND = "#E11D48";
+const BRAND = "#000000";
 const slugify = (s) => String(s).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 const PRESET_ACCENTS = ["#E11D48", "#DB2777", "#F59E0B", "#0D9488", "#7C3AED", "#2563EB", "#16A34A", "#EA580C"];
 

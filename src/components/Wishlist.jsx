@@ -17,7 +17,7 @@ function WishCard({ product, onRemove, onAddToCart, onOpen }) {
   return (
     <div className="group relative rounded-xl bg-white border border-gray-100 overflow-hidden shadow-sm hover:shadow-lg transition-shadow">
       {discount > 0 && <span className="absolute top-2 left-2 z-10 text-[10px] font-bold text-white px-1.5 py-0.5 rounded" style={{ backgroundColor: BRAND }}>-{discount}%</span>}
-      <button onClick={() => onRemove(product.id)} aria-label="Remove" className="absolute top-2 right-2 z-10 h-8 w-8 rounded-full bg-white/90 shadow flex items-center justify-center text-gray-500 hover:text-rose-600"><CloseIcon style={{ fontSize: 18 }} /></button>
+      <button onClick={() => onRemove(product.id)} aria-label="Remove" className="absolute top-2 right-2 z-10 h-8 w-8 rounded-full bg-white/90 shadow flex items-center justify-center text-gray-500 hover:text-black"><CloseIcon style={{ fontSize: 18 }} /></button>
       <div className="aspect-[3/4] flex items-center justify-center p-3 bg-gradient-to-b from-gray-50 to-gray-100 cursor-pointer" onClick={() => onOpen(product)}>
         <img src={product.image} alt={product.name} loading="lazy" className="max-h-full max-w-full object-contain transition-transform duration-300 group-hover:scale-105" onError={(e) => imgFallback(e, product.name)} />
       </div>

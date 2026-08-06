@@ -5,7 +5,7 @@ import { getSettings } from "../api";
 const SettingsContext = createContext(null);
 
 const DEFAULT_THEME = {
-  brand: "#E11D48", men: "#E11D48", women: "#DB2777",
+  brand: "#000000", men: "#E11D48", women: "#DB2777",
   kids: "#F59E0B", accessories: "#0D9488", sale: "#7C3AED",
 };
 

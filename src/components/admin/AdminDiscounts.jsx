@@ -10,7 +10,7 @@ import CheckIcon from "@mui/icons-material/Check";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import { getCoupons, createCoupon, updateCoupon, deleteCoupon } from "../../api";
 
-const BRAND = "#E11D48";
+const BRAND = "#000000";
 const taka = (n) => `\u09F3${Number(n || 0).toLocaleString("en-BD")}`;
 const today = () => new Date().toISOString().slice(0, 10);
 
