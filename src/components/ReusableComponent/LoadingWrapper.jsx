@@ -1,18 +1,21 @@
 import { useEffect, useState } from "react";
-import { useNavigationType, useLocation } from "react-router-dom";
 import LoadingRainz from "./LoadingRainz";
+
+const LANDING_LOADED_KEY = "rainz_landing_loaded";
+
 function LoadingWrapper({ children }) {
-  const [loading, setLoading] = useState(false);
-  const location = useLocation();
+  const [loading, setLoading] = useState(() => sessionStorage.getItem(LANDING_LOADED_KEY) !== "true");
 
   useEffect(() => {
-    setLoading(true);
+    if (!loading) return undefined;
 
-    // Simulate loading delay or actual data fetching
-    const timer = setTimeout(() => setLoading(false), 1000);
+    const timer = setTimeout(() => {
+      sessionStorage.setItem(LANDING_LOADED_KEY, "true");
+      setLoading(false);
+    }, 1000);
 
     return () => clearTimeout(timer);
-  }, [location]);
+  }, [loading]);
 
   return loading ? <LoadingRainz /> : children;
 }

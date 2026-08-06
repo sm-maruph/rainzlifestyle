@@ -65,7 +65,7 @@ export default function QuickAddModal({ slug, onClose }) {
             <div className="h-32 w-24 bg-gray-100 rounded-lg animate-pulse" />
             <div className="flex-1 space-y-3"><div className="h-4 bg-gray-100 rounded w-2/3 animate-pulse" /><div className="h-4 bg-gray-100 rounded w-1/3 animate-pulse" /><div className="h-8 bg-gray-100 rounded animate-pulse" /></div>
           </div>
-        ) : error ? (
+        ) : error && !product ? (
           <div className="p-6 text-center text-sm text-red-500">{error}</div>
         ) : done ? (
           <div className="p-8 text-center">

@@ -115,15 +115,15 @@ export default function AdminSettings() {
 
       <Section icon={StorefrontOutlinedIcon} title="Store Profile">
         <div className="flex items-center gap-4 mb-4">
-          <div className="h-20 w-20 rounded-xl bg-gray-100 overflow-hidden flex items-center justify-center shrink-0">
-            {s.logo ? <img src={s.logo} alt="logo" className="h-full w-full object-cover" /> : <ImageOutlinedIcon style={{ color: "#9ca3af" }} />}
+          <div className="flex h-20 w-56 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-gray-100 p-3">
+            {s.logo ? <img src={s.logo} alt="Store wordmark" className="h-full w-full object-contain" /> : <ImageOutlinedIcon style={{ color: "#9ca3af" }} />}
           </div>
           <div>
             <label className="inline-block rounded-lg border border-gray-200 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 cursor-pointer">
-              Upload logo
+              Upload wordmark
               <input type="file" accept="image/*" onChange={onLogo} className="hidden" />
             </label>
-            <p className="text-xs text-gray-400 mt-1">PNG or SVG, square works best.</p>
+            <p className="text-xs text-gray-400 mt-1">Use a wide transparent PNG or WebP.</p>
           </div>
         </div>
         <div className="grid sm:grid-cols-2 gap-4">

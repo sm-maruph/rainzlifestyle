@@ -19,12 +19,12 @@ export default function SecondaryNav() {
   return (
     <div className="w-full border-b border-gray-100" style={{ backgroundColor: "var(--primary)" }}>
       <div className="w-[94%] max-w-[1500px] mx-auto">
-        <ul className="list-none p-0 m-0 flex items-center justify-center gap-4 sm:gap-8 md:gap-8 xl:gap-10 py-1 sm:py-2">
+        <ul className="list-none p-0 m-0 flex items-center justify-center gap-5 sm:gap-10 md:gap-12 xl:gap-14 py-1 sm:py-2">
           {LINKS.map(({ label, to, icon: Icon, accent }) => (
             <li key={label} className="shrink-0">
               <Link
                 to={to}
-                className="group flex items-center justify-center gap-1 sm:gap-1.5 px-2 sm:px-4 py-1 sm:py-1.5 text-[10px] sm:text-[13px] font-bold uppercase tracking-tight sm:tracking-wide transition-colors whitespace-nowrap no-underline"
+                className="group flex items-center justify-center gap-1 sm:gap-1.5 px-2.5 sm:px-4 py-1 sm:py-1.5 text-[10px] sm:text-xs font-medium uppercase tracking-[0.03em] sm:tracking-[0.06em] transition-colors whitespace-nowrap no-underline"
                 style={{
                   color: "var(--title)",
                   backgroundColor: "rgba(255, 255, 255, 0.6)",
@@ -32,7 +32,7 @@ export default function SecondaryNav() {
                   WebkitBackdropFilter: "blur(8px)",
                   boxShadow: "0 2px 8px rgba(0, 0, 0, 0.08)",
                 }} onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = accent; e.currentTarget.style.color = "#fff"; e.currentTarget.style.borderColor = accent; }}
-                onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = "transparent"; e.currentTarget.style.color = "var(--title)"; e.currentTarget.style.borderColor = "var(--title)"; }}
+                onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.6)"; e.currentTarget.style.color = "var(--title)"; e.currentTarget.style.borderColor = "var(--title)"; }}
               >
                 <Icon className="shrink-0 group-hover:!text-white transition-colors" style={{ fontSize: 13, color: accent }} />
                 <span className="truncate">{label}</span>

@@ -12,11 +12,11 @@ import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
 import SearchIcon from "@mui/icons-material/Search";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { MapPin, Package, UserRound, Heart, ShoppingBag } from "lucide-react";
 import { getCategories, getProducts } from "../api";
 import { useSettings } from "../context/SettingsContext";
 import { useCart } from "../context/CartContext";
 import SearchBar from "./SearchBar";
-import rainzWordmark from "../assets/global/wordmark.png";
 
 const BRAND = "var(--brand)";
 const taka = (n) => `\u09F3${Number(n || 0).toLocaleString("en-BD")}`;
@@ -97,13 +97,19 @@ const Navbar = forwardRef(
     };
 
     const openMenu = (cat) => {
-      if (closeTimer.current) clearTimeout(closeTimer.current);
+      if (closeTimer.current) {
+        clearTimeout(closeTimer.current);
+        closeTimer.current = null;
+      }
       setActiveMenu(cat.name);
       ensureFeatured(cat);
     };
     const scheduleClose = () => {
       if (closeTimer.current) clearTimeout(closeTimer.current);
-      closeTimer.current = setTimeout(() => setActiveMenu(null), 150);
+      closeTimer.current = setTimeout(() => {
+        setActiveMenu(null);
+        closeTimer.current = null;
+      }, 250);
     };
 
     const navigate = useNavigate();
@@ -162,56 +168,40 @@ const Navbar = forwardRef(
     return (
       <>
         <nav ref={ref} className="w-full fixed top-0 left-0 z-50 shadow-sm border-b border-gray-100" style={{ backgroundColor: "var(--secondary)" }}>
-          <div className="w-full max-w-[1500px] mx-auto relative flex min-h-[52px] items-center gap-2 sm:gap-3 lg:gap-4 2xl:gap-6 px-4 lg:px-6 py-1.5 xl:py-3">
+          <div className="w-full mx-auto relative flex min-h-[52px] items-center px-4 py-1.5 sm:px-5 lg:px-6 xl:grid xl:h-16 xl:w-[96%] xl:min-h-0 xl:grid-cols-[auto_minmax(0,1fr)_auto_auto] xl:gap-x-5 xl:px-0 xl:py-0 2xl:w-[92%] 2xl:gap-x-8 min-[1800px]:w-[80%]">
 
-            <Link to="/" className="no-underline shrink-0 flex items-center gap-1.5 sm:gap-2.5 absolute left-1/2 -translate-x-1/2 xl:static xl:translate-x-0">
+            <Link to="/" className="no-underline shrink-0 flex items-center gap-1.5 sm:gap-2.5 absolute left-1/2 -translate-x-1/2 xl:static xl:translate-x-0 xl:-translate-y-1.5">
               {settings.logo ? (
-                <img src={settings.logo} alt={settings.storeName} className="h-7 w-7 sm:h-8 sm:w-8 xl:h-12 xl:w-12 2xl:h-14 2xl:w-14 rounded-sm object-cover" />
+                <img
+                  src={settings.logo}
+                  alt={`${settings.storeName || "Store"} logo`}
+                  className="h-9 w-auto max-w-[150px] object-contain sm:h-11 sm:max-w-[190px] xl:h-12 xl:max-w-[190px]"
+                />
               ) : (
-                <span className="inline-flex h-10 w-10 sm:h-12 sm:w-12 2xl:h-14 2xl:w-14 items-center justify-center rounded-md text-white font-black text-xl sm:text-2xl" style={{ backgroundColor: BRAND }}>
-                  {(settings.storeName || "R")[0]}
+                <span className="whitespace-nowrap text-xl font-semibold tracking-[0.3em] sm:text-2xl" style={{ color: "var(--title)" }}>
+                  {settings.storeName || "RAINZ"}
                 </span>
               )}
-
-              {/* RAINZ wordmark */}
-              <span className="inline-flex text-lg sm:text-2xl md:text-3xl tracking-tight items-baseline" style={{ color: "var(--title)" }}>
-                {(() => {
-                  const name = settings.storeName || "RAINZLIFESTYLE";
-                  const i = name.toUpperCase().indexOf("LIFESTYLE");
-                  const first = i > 0 ? name.slice(0, i) : name;
-                  return (
-                    rainzWordmark ? (
-                      <img
-                        src={rainzWordmark}
-                        alt={first}
-                        className="h-[17px] sm:h-[21px] xl:h-[27.36px] w-auto max-w-[112px] sm:max-w-[150px] object-contain self-center pr-0.5 sm:pr-1"
-                      />
-                    ) : (
-                      <span style={{ fontFamily: "'Satisfy'", fontWeight: 600, fontStyle: "italic", fontSize: "0.9em", letterSpacing: "0.01em" }}>
-                        {first}
-                      </span>
-                    )
-                  );
-                })()}
-              </span>
             </Link>
 
             {/* Desktop categories with mega-menus */}
-            <ul className="hidden xl:flex items-stretch shrink-0 gap-0.5">
+            <ul className="hidden min-w-0 xl:flex h-16 items-stretch justify-evenly gap-1" onMouseLeave={scheduleClose}>
               {categories.map((cat) => {
                 const isActive = currentSlug === catSlug(cat);
                 const hasMenu = (cat.groups && cat.groups.length > 0);
                 const isOpen = activeMenu === cat.name;
                 return (
-                  <li key={cat.name} className="flex" onMouseEnter={() => (hasMenu ? openMenu(cat) : scheduleClose())} onMouseLeave={scheduleClose}>
-                    <button className="relative flex items-center gap-0.5 px-2.5 py-1.5 text-[11px] 2xl:text-xs font-semibold uppercase tracking-[0.045em] transition-colors" onClick={() => goCategory(cat)} style={{ color: isActive || isOpen ? cat.accent : "var(--title)" }}>
-                      {cat.name}
-                      {hasMenu && <KeyboardArrowDownIcon style={{ fontSize: 15 }} />}
-                      <span className={`absolute left-2 right-2 -bottom-1 h-[3px] origin-center rounded-full transition-transform duration-200 ${isActive || isOpen ? "scale-x-100" : "scale-x-0"}`} style={{ backgroundColor: cat.accent }} />
+                  <li key={cat.name} className="flex h-full items-center" onMouseEnter={() => (hasMenu ? openMenu(cat) : scheduleClose())}>
+                    <button className="relative flex h-full items-center gap-0.5 whitespace-nowrap px-2 text-xs leading-none 2xl:px-2.5 2xl:text-[13px] font-bold uppercase tracking-[0.035em] transition-colors" onClick={() => goCategory(cat)} style={{ color: isActive || isOpen ? cat.accent : "var(--title)" }}>
+                      <span className="flex items-center gap-0.5">
+                        {cat.name}
+                        {hasMenu && <KeyboardArrowDownIcon style={{ fontSize: 15 }} />}
+                      </span>
+                      <span className={`absolute bottom-[11px] left-2 right-2 h-0.5 origin-center transition-transform duration-200 ${isActive || isOpen ? "scale-x-100" : "scale-x-0"}`} style={{ backgroundColor: cat.accent }} />
                     </button>
 
                     {hasMenu && isOpen && (
-                      <div className="absolute left-0 right-0 top-full z-50 pt-3 -mt-3" onMouseEnter={() => openMenu(cat)} onMouseLeave={scheduleClose}>
+                      <div className="absolute left-0 right-0 top-full z-50 pt-3 -mt-3" onMouseEnter={() => openMenu(cat)}>
                         <div className="bg-white shadow-2xl border-t-[3px] rounded-b-lg overflow-hidden" style={{ borderTopColor: cat.accent }}>
                           {/* 50 / 50 split: left = subcategory lists, right = product grid */}
                           <div className="grid grid-cols-2 px-8 py-7 gap-8">
@@ -286,22 +276,22 @@ const Navbar = forwardRef(
             </ul>
 
             {/* Search with live suggestions */}
-            <SearchBar compact className="hidden xl:block min-w-0 flex-none xl:w-36 2xl:w-44 ml-auto" />
+            <SearchBar compact className="hidden xl:block min-w-0 w-36 -translate-y-2 2xl:w-44" />
 
             {/* Actions */}
-            <div className="hidden xl:flex items-center gap-3 2xl:gap-5 shrink-0">
-              <button onClick={() => go("/stores")} className="flex flex-col items-center gap-0.5 transition-colors" style={{ color: "var(--title)" }}>
-                <LocationOnOutlinedIcon fontSize="medium" />
-                <span className="text-[9px] font-medium tracking-[0.01em]">Stores</span>
+            <div className="hidden xl:flex -translate-y-1.5 items-center justify-between gap-3 2xl:gap-5 shrink-0">
+              <button onClick={() => go("/stores")} className="navbar-action flex flex-col items-center gap-0.5" style={{ color: "var(--title)" }}>
+                <MapPin size={21} strokeWidth={1.65} />
+                <span className="text-[10px] font-normal tracking-[0.01em]">Stores</span>
               </button>
-              <button onClick={() => go("/account/orders")} className="flex flex-col items-center gap-0.5 transition-colors" style={{ color: "var(--title)" }}>
-                <Inventory2OutlinedIcon fontSize="medium" />
-                <span className="text-[9px] font-medium tracking-[0.01em]">Orders</span>
+              <button onClick={() => go("/account/orders")} className="navbar-action flex flex-col items-center gap-0.5" style={{ color: "var(--title)" }}>
+                <Package size={21} strokeWidth={1.65} />
+                <span className="text-[10px] font-normal tracking-[0.01em]">Orders</span>
               </button>
               <div className="relative group">
-                <button className="flex flex-col items-center gap-0.5 transition-colors" style={{ color: "var(--title)" }}>
-                  <PersonOutlineOutlinedIcon fontSize="medium" />
-                  <span className="text-[9px] font-medium tracking-[0.01em]">Profile</span>
+                <button className="navbar-action flex flex-col items-center gap-0.5" style={{ color: "var(--title)" }}>
+                  <UserRound size={21} strokeWidth={1.65} />
+                  <span className="text-[10px] font-normal tracking-[0.01em]">Profile</span>
                 </button>
                 <div className="absolute right-0 top-full z-50 hidden group-hover:block w-60 pt-2">
                   <div className="bg-white shadow-xl border border-gray-100 rounded-md overflow-hidden">
@@ -328,16 +318,23 @@ const Navbar = forwardRef(
                 </div>
               </div>
 
-              <button onClick={() => go("/wishlist")} className="relative flex flex-col items-center gap-0.5 transition-colors" style={{ color: "var(--title)" }}>
-                <span className="relative"><FavoriteBorderOutlinedIcon fontSize="medium" /><Badge count={wishlistCount} /></span>
-                <span className="text-[9px] font-medium tracking-[0.01em]">Wishlist</span>
+              <button onClick={() => go("/wishlist")} className="navbar-action relative flex flex-col items-center gap-0.5" style={{ color: "var(--title)" }}>
+                <span className="relative"><Heart size={21} strokeWidth={1.65} /><Badge count={wishlistCount} /></span>
+                <span className="text-[10px] font-normal tracking-[0.01em]">Wishlist</span>
               </button>
 
-              <button onClick={() => go("/cart")} className="relative flex flex-col items-center gap-0.5 transition-colors" style={{ color: "var(--title)" }}>
-                <span className="relative"><ShoppingBagOutlinedIcon fontSize="medium" /><Badge count={cartCount} /></span>
-                <span className="text-[9px] font-medium tracking-[0.01em]">Bag</span>
+              <button onClick={() => go("/cart")} className="navbar-action relative flex flex-col items-center gap-0.5" style={{ color: "var(--title)" }}>
+                <span className="relative"><ShoppingBag size={21} strokeWidth={1.65} /><Badge count={cartCount} /></span>
+                <span className="text-[10px] font-normal tracking-[0.01em]">Bag</span>
               </button>
             </div>
+
+            <style>{`
+              .navbar-action { transition: color .2s ease, transform .2s ease; }
+              .navbar-action svg { transition: transform .2s cubic-bezier(.22,1,.36,1); }
+              .navbar-action:hover { color: var(--brand) !important; transform: translateY(-2px); }
+              .navbar-action:hover svg { transform: scale(1.1); }
+            `}</style>
 
             {/* Mobile/tablet controls */}
             <div className="flex w-full items-center justify-between xl:hidden">

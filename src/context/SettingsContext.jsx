@@ -56,22 +56,8 @@ export function SettingsProvider({ children }) {
       .catch(() => alive && setSettingsState(FALLBACK))
       .finally(() => alive && setLoading(false));
 
-    // An already-open customer tab should also notice a maintenance change.
-    const refreshIfAlive = async () => {
-      try {
-        const next = await getSettings();
-        if (alive) setSettings(next);
-      } catch {
-        // Keep the last known settings during a temporary network failure.
-      }
-    };
-    const interval = window.setInterval(refreshIfAlive, 30000);
-    window.addEventListener("focus", refreshIfAlive);
-
     return () => {
       alive = false;
-      window.clearInterval(interval);
-      window.removeEventListener("focus", refreshIfAlive);
     };
   }, [setSettings]);
 

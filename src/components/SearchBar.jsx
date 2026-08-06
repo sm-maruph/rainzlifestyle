@@ -81,7 +81,7 @@ export default function SearchBar({ className = "", placeholder = "Search produc
           onFocus={() => term.trim() && setOpen(true)}
           onKeyDown={onKeyDown}
           placeholder={placeholder}
-          className={`flex-1 min-w-0 bg-transparent font-normal text-gray-700 placeholder-gray-400 outline-none ${compact ? "text-[11px]" : "text-sm"}`}
+          className={`flex-1 min-w-0 bg-transparent font-normal text-gray-700 placeholder-gray-400 outline-none ${compact ? "text-xs" : "text-sm"}`}
         />
         {term && (
           <button type="button" onClick={clear} aria-label="Clear" className="text-gray-400 mr-1"><CloseIcon style={{ fontSize: 16 }} /></button>

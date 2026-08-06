@@ -162,16 +162,16 @@ export default function NewArrival({
 
   return (
     <section
-      className="w-full mt-1 md:mt-12 lg:mt-16 overflow-hidden"
+      className="w-full mt-6 sm:mt-8 overflow-hidden"
       style={{ backgroundColor: "var(--primary)" }}
     >
-      <div className="w-full pt-2 pb-1 px-4" style={{ backgroundColor: "var(--primary)" }}>
-        <h2 className="text-center text-xs sm:text-base md:text-lg lg:text-xl font-serif italic font-semibold uppercase tracking-[0.08em] sm:tracking-[0.15em] md:tracking-[0.25em] leading-snug px-3" style={{ color: BRAND }}>
+      <div className="w-full px-4 py-2" style={{ backgroundColor: "var(--primary)" }}>
+        <h2 className="px-3 text-center text-[11px] font-semibold uppercase leading-snug tracking-[0.12em] sm:text-xs sm:tracking-[0.16em] md:text-sm lg:text-base" style={{ color: BRAND }}>
           {title}
         </h2>
       </div>
 
-      <div className="w-[94%] max-w-[1500px] mx-auto px-1 pt-1 pb-2">
+      <div className="w-[94%] max-w-[1500px] mx-auto px-1 pt-4 sm:pt-5 pb-2">
         <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-3">
           {loading
             ? Array.from({ length: pageSize }).map((_, i) => <SkeletonTile key={i} />)

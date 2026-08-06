@@ -50,8 +50,23 @@ export function CartProvider({ children }) {
   };
 
   const remove = async (item) => {
-    if (user) { await removeCartItem(item.cartId); await load(); }
-    else saveGuest(items.filter((x) => x.cartId !== item.cartId));
+    if (user) {
+      const originalIndex = items.findIndex((x) => x.cartId === item.cartId);
+      setItems((current) => current.filter((x) => x.cartId !== item.cartId));
+      try {
+        await removeCartItem(item.cartId);
+      } catch {
+        // Restore only the failed item without undoing other cart changes.
+        setItems((current) => {
+          if (current.some((x) => x.cartId === item.cartId)) return current;
+          const restored = [...current];
+          restored.splice(Math.max(0, Math.min(originalIndex, restored.length)), 0, item);
+          return restored;
+        });
+      }
+    } else {
+      saveGuest(items.filter((x) => x.cartId !== item.cartId));
+    }
   };
 
   const clear = async () => {
