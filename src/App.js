@@ -1,5 +1,5 @@
 import React, { useLayoutEffect, useRef, useState } from "react";
-import { Routes, Route, useLocation } from "react-router-dom";
+import { Routes, Route, useLocation, Link } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 import { useAuth } from "./context/AuthContext";
@@ -51,7 +51,7 @@ import Footer from "./components/Footer";
 import "./index.css";
 import AutoScrollUp from "./components/subcomponent/AutoScrollUp";
 import ScrollToTop from "./components/subcomponent/ScrollToTop";
-import { AnimatePresence, motion } from "framer-motion";
+import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
 
 function App() {
   const location = useLocation();
@@ -119,14 +119,6 @@ function App() {
         className="w-full mx-auto min-h-screen bg-gray-100 overflow-x-hidden pb-16 md:pb-0"
         style={{ paddingTop: isAdminPage ? 0 : navHeight, backgroundColor: "var(--primary)" }}
       >
-        <AnimatePresence mode="wait" initial={false}>
-        <motion.div
-          key={isAdminPage ? "admin-shell" : location.pathname}
-          initial={isAdminPage ? false : { opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={isAdminPage ? undefined : { opacity: 0, y: -6 }}
-          transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
-        >
         <Routes location={location}>
           {/* ===== Admin dashboard — guarded: only logged-in admins ===== */}
           <Route
@@ -182,10 +174,19 @@ function App() {
             }
           />
         </Routes>
-        </motion.div>
-        </AnimatePresence>
         <ScrollToTop />
       </main>
+
+      {!isAdminPage && (
+        <Link
+          to="/contact-us"
+          className="floating-message fixed bottom-32 right-4 z-40 flex h-12 w-12 items-center justify-center rounded-full text-white no-underline transition-transform hover:-translate-y-0.5 hover:scale-105 hover:text-white md:bottom-[72px] md:right-6"
+          style={{ backgroundColor: "var(--brand)" }}
+          aria-label="Message us"
+        >
+          <ChatBubbleOutlineIcon style={{ fontSize: 22 }} />
+        </Link>
+      )}
 
       {!isAdminPage && !isLoginPage && (
         <>

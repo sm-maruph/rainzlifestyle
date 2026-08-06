@@ -39,6 +39,34 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+@keyframes floatingMessageBreath {
+  0%, 100% {
+    opacity: 0.72;
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.16);
+  }
+  50% {
+    opacity: 0.88;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.26);
+  }
+}
+
+.floating-message {
+  animation: floatingMessageBreath 2.8s ease-in-out infinite;
+}
+
+.floating-message:hover,
+.floating-message:focus-visible {
+  animation-play-state: paused;
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .floating-message {
+    animation: none;
+    opacity: 0.82;
+  }
+}
+
 /* Interactive labels should always read as controls, never underlined links. */
 button,
 button:hover,

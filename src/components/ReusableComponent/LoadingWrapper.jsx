@@ -1,23 +1,29 @@
 import { useEffect, useState } from "react";
 import LoadingRainz from "./LoadingRainz";
 
-const LANDING_LOADED_KEY = "rainz_landing_loaded";
+// Module state survives client-side navigation but resets on a full browser reload.
+let landingLoaderShown = false;
 
 function LoadingWrapper({ children }) {
-  const [loading, setLoading] = useState(() => sessionStorage.getItem(LANDING_LOADED_KEY) !== "true");
+  const [loading, setLoading] = useState(() => !landingLoaderShown);
 
   useEffect(() => {
     if (!loading) return undefined;
+    landingLoaderShown = true;
 
     const timer = setTimeout(() => {
-      sessionStorage.setItem(LANDING_LOADED_KEY, "true");
       setLoading(false);
     }, 1000);
 
     return () => clearTimeout(timer);
   }, [loading]);
 
-  return loading ? <LoadingRainz /> : children;
+  return (
+    <>
+      {children}
+      {loading && <LoadingRainz />}
+    </>
+  );
 }
 
 export default LoadingWrapper;

@@ -177,11 +177,7 @@ const Navbar = forwardRef(
                   alt={`${settings.storeName || "Store"} logo`}
                   className="h-9 w-auto max-w-[150px] object-contain sm:h-11 sm:max-w-[190px] xl:h-12 xl:max-w-[190px]"
                 />
-              ) : (
-                <span className="whitespace-nowrap text-xl font-semibold tracking-[0.3em] sm:text-2xl" style={{ color: "var(--title)" }}>
-                  {settings.storeName || "RAINZ"}
-                </span>
-              )}
+              ) : null}
             </Link>
 
             {/* Desktop categories with mega-menus */}

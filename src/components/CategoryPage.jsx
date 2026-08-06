@@ -10,7 +10,6 @@ import QuickAddModal from "./QuickAddModal";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import Pagination from "./Pagination";
 import SearchBar from "./SearchBar";
-import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
 import BoltIcon from "@mui/icons-material/Bolt";
 import SearchIcon from "@mui/icons-material/Search";
 import LocalOfferIcon from "@mui/icons-material/LocalOffer";
@@ -344,10 +343,6 @@ export default function CategoryPage() {
 
         </main>
       </div>
-
-      <button onClick={() => navigate("/contact-us")} className="fixed bottom-20 right-4 z-40 flex h-12 w-12 items-center justify-center rounded-full text-white shadow-[0_10px_30px_rgba(0,0,0,.22)] transition-transform hover:scale-105 md:bottom-6 md:right-6" style={{ backgroundColor: accent }} aria-label="Message us">
-        <ChatBubbleOutlineIcon />
-      </button>
 
       {/* Quick-add popup */}
       <QuickAddModal slug={quickSlug} onClose={() => setQuickSlug(null)} />
