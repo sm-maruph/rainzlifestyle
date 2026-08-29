@@ -1,5 +1,5 @@
 import React, { useLayoutEffect, useRef, useState } from "react";
-import { Routes, Route, useLocation, Link } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 import { useAuth } from "./context/AuthContext";
@@ -178,14 +178,16 @@ function App() {
       </main>
 
       {!isAdminPage && (
-        <Link
-          to="/contact-us"
+        <a
+          href="https://m.me/rainzlifestyle"
+          target="_blank"
+          rel="noopener noreferrer"
           className="floating-message fixed bottom-32 right-4 z-40 flex h-12 w-12 items-center justify-center rounded-full text-white no-underline transition-transform hover:-translate-y-0.5 hover:scale-105 hover:text-white md:bottom-[72px] md:right-6"
           style={{ backgroundColor: "var(--brand)" }}
-          aria-label="Message us"
+          aria-label="Message Rainz Lifestyle on Facebook Messenger"
         >
           <ChatBubbleOutlineIcon style={{ fontSize: 22 }} />
-        </Link>
+        </a>
       )}
 
       {!isAdminPage && !isLoginPage && (

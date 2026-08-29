@@ -44,11 +44,13 @@ async function getDynamicPaths() {
   const categories = await getJson(`${API_BASE}/categories`);
 
   for (const category of Array.isArray(categories) ? categories : categories.items || []) {
-    if (!category.slug) continue;
+    // Empty listing pages are commonly classified as soft 404s. Add them only
+    // after they contain at least one product.
+    if (!category.slug || Number(category.count || 0) <= 0) continue;
     paths.push(`/${segment(category.slug)}`);
     for (const group of category.groups || category.category_groups || []) {
       for (const subcategory of group.subcategories || []) {
-        if (subcategory.slug) {
+        if (subcategory.slug && Number(subcategory.count || 0) > 0) {
           paths.push(`/${segment(category.slug)}/${segment(subcategory.slug)}`);
         }
       }

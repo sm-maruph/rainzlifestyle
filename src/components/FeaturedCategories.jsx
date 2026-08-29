@@ -181,11 +181,6 @@ function Spotlight({ spotlight, products, loading, onOpen, onGo, onAdd, onBuyNow
 }
 
 export default function FeaturedCategories({
-  brandName = "RAINZLIFESTYLE",
-  brandLink = "/new-arrivals",
-  tagline = "Because comfort and confidence go hand in hand.",
-  description = "We focus on carefully selecting the best clothing that is comfortable, looks great, and makes you confident. Beyond fabric, design, and fit, every piece passes strict quality checks — because the right outfit changes how you see yourself.",
-  sideImage = "https://loremflickr.com/700/360/fabric?lock=5001",
   spotlightsProp,
   perCategory = 8,
   onProductClick,
@@ -234,18 +229,7 @@ export default function FeaturedCategories({
   return (
     <section className="w-full" style={{ backgroundColor: "var(--primary)" }}>
       <div className="w-[94%] max-w-[1500px] mx-auto py-10">
-        <div className="relative">
-          <div className="max-w-3xl">
-            <button onClick={() => go(brandLink)} className="flex items-center gap-1 text-2xl md:text-3xl font-semibold text-gray-800 hover:opacity-80" style={{ color: BRAND }}>
-              {brandName}<ChevronRightIcon style={{ color: BRAND }} />
-            </button>
-            <p className="mt-2 text-lg md:text-xl font-medium" style={{ color: "var(--subtitle)" }}>{tagline}</p>
-            <p className="mt-3 text-sm leading-relaxed text-gray-500 ">{description}</p>
-          </div>
-          <img src={sideImage} alt="" aria-hidden="true" loading="lazy" className="hidden lg:block absolute top-0 right-0 w-[100%] max-w-[360px] h-[80%] max-h-[260px] object-contain pointer-events-none" onError={(e) => (e.target.style.display = "none")} />
-        </div>
-
-        <div className="mt-8 space-y-10">
+        <div className="space-y-10">
           {(spotlights.length ? spotlights : Array.from({ length: 2 })).map((s, i) => (
             <Spotlight
               key={s?.id ?? i}
