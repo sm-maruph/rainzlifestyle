@@ -316,14 +316,14 @@ export default function AdminProducts() {
 
       {/* ===== Add / Edit modal ===== */}
       {modalOpen && (
-        <div className="fixed inset-0 z-50 flex items-start sm:items-center justify-center p-3 sm:p-6 bg-black/40 overflow-y-auto">
-          <div className="bg-white rounded-2xl w-full max-w-2xl my-4 shadow-xl">
-            <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100 sticky top-0 bg-white rounded-t-2xl z-10">
+        <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/40 p-3 sm:p-4">
+          <div className="flex h-[calc(100dvh-1.5rem)] w-full max-w-2xl flex-col overflow-hidden rounded-2xl bg-white shadow-xl sm:h-[calc(100dvh-2rem)]">
+            <div className="flex shrink-0 items-center justify-between border-b border-gray-100 bg-white px-[20px] py-[16px]">
               <h3 className="text-lg font-bold text-gray-900">{form.id ? "Edit Product" : "Add Product"}</h3>
               <button onClick={close} className="text-gray-400 hover:text-gray-700"><CloseIcon /></button>
             </div>
 
-            <div className="p-5 space-y-4">
+            <div className="min-h-0 flex-1 space-y-4 overflow-y-auto px-[20px] py-[16px]">
               {modalLoading && <div className="text-sm text-gray-400">Loading product…</div>}
 
               {/* Images */}
@@ -422,7 +422,7 @@ export default function AdminProducts() {
               <Field label="Description"><textarea value={form.description} onChange={(e) => setField("description", e.target.value)} rows={3} className="inp resize-none" placeholder="Short product description…" /></Field>
             </div>
 
-            <div className="flex items-center justify-end gap-3 px-5 py-4 border-t border-gray-100">
+            <div className="flex shrink-0 items-center justify-end gap-3 border-t border-gray-100 bg-white px-[20px] py-[16px]">
               <button onClick={close} className="rounded-lg px-4 py-2.5 text-sm font-semibold text-gray-600 hover:bg-gray-100">Cancel</button>
               <button onClick={save} disabled={saving || modalLoading} className="rounded-lg px-5 py-2.5 text-sm font-semibold text-white disabled:opacity-60" style={{ backgroundColor: BRAND }}>
                 {saving ? "Saving…" : form.id ? "Save Changes" : "Add Product"}

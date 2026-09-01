@@ -132,7 +132,7 @@ export default function AdminLayout() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="fixed inset-0 overflow-hidden bg-gray-50">
       {/* ===== Desktop sidebar (fixed) ===== */}
       <aside className="hidden lg:flex fixed inset-y-0 left-0 w-56 bg-white border-r border-gray-200 flex-col z-30 shadow-[5px_0_24px_rgba(15,23,42,.03)]">
         <Brand />
@@ -156,7 +156,7 @@ export default function AdminLayout() {
       )}
 
       {/* ===== Main column ===== */}
-      <div className="lg:ml-56 flex flex-col min-h-screen">
+      <div className="flex h-full min-h-0 flex-col lg:ml-56">
         {/* Topbar */}
         <header className="sticky top-0 z-20 bg-white/90 backdrop-blur border-b border-gray-100 h-16 flex items-center gap-3 px-4 sm:px-6">
           <button className="lg:hidden text-gray-700 p-1" onClick={() => setOpen(true)} aria-label="Open menu">
@@ -185,7 +185,7 @@ export default function AdminLayout() {
         </header>
 
         {/* Routed page content */}
-        <main className="flex-1 p-3 sm:p-4 xl:p-5">
+        <main className="min-h-0 flex-1 overflow-y-auto p-3 sm:p-4 xl:p-5">
           <Outlet />
         </main>
       </div>
