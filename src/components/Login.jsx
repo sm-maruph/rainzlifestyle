@@ -52,15 +52,13 @@ export default function Login() {
           style={{ background: `linear-gradient(145deg, ${BRAND}, #9f1239)` }}
         >
           <div className="max-w-sm mx-auto w-full">
-            {settings.logo && (
-              <div className="inline-block bg-gradient-to-br from-white to-gray-100 p-1 rounded-xl sm:rounded-2xl shadow-lg mb-4 sm:mb-6">
-                <img
-                  src={settings.logo}
-                  alt={settings.storeName}
-                  className="h-12 w-12 sm:h-14 sm:w-14 md:h-16 md:w-16 rounded-xl sm:rounded-2xl object-cover"
-                />
-              </div>
-            )}
+            <div className="inline-block bg-gradient-to-br from-white to-gray-100 p-1 rounded-xl sm:rounded-2xl shadow-lg mb-4 sm:mb-6">
+              <img
+                src="/apple-touch-icon.png"
+                alt={`${settings.storeName || "RAINZLIFESTYLE"} logo`}
+                className="h-12 w-12 sm:h-14 sm:w-14 md:h-16 md:w-16 rounded-xl sm:rounded-2xl object-cover"
+              />
+            </div>
             <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight uppercase leading-tight">
               {settings.storeName || "RAINZLIFESTYLE"}
             </h1>
