@@ -1,3 +1,4 @@
+import { productPath } from "../productPath";
 // src/components/FeaturedCategories.jsx — real API, uniform cards, wishlist + Buy Now + Quick-Add
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -222,9 +223,9 @@ export default function FeaturedCategories({
   }, [spotlightsProp, perCategory]);
 
   const go = (link) => navigate(link || "/");
-  const openProduct = (p) => (onProductClick ? onProductClick(p) : navigate(`/product/${p.slug}`));
+  const openProduct = (p) => (onProductClick ? onProductClick(p) : navigate(productPath(p)));
   const handleAdd = (p) => setQuickSlug(p.slug);
-  const handleBuyNow = (p) => navigate(`/product/${p.slug}`);
+  const handleBuyNow = (p) => navigate(productPath(p));
 
   return (
     <section className="w-full" style={{ backgroundColor: "var(--primary)" }}>

@@ -39,3 +39,9 @@ Google documentation:
 - https://developers.google.com/search/docs/crawling-indexing/ask-google-to-recrawl
 - https://developers.google.com/search/docs/crawling-indexing/consolidate-duplicate-urls
 - https://support.google.com/webmasters/answer/7440203
+
+## Product URL structure
+
+Product URLs now follow `/category/subcategory/product-slug` for every category. For example, `/men/printed/rainz-man-s-printed-crop-beach-shirt`. The category/subcategory come from the product record, not its name. Products without a subcategory use `/category/uncategorized/product-slug` to avoid conflicting with category routes.
+
+All storefront product links use the shared `src/productPath.js` helper. Old `/product/slug` visits resolve to the current path in the app; the production build also provides immediate HTML redirects for products in the sitemap. These are HTML redirects, not server HTTP 301 responses. For permanent HTTP redirects, add an exact old-to-new rule for each product in the hosting dashboard. Rebuild after changing category assignments to refresh sitemap entries and built redirects.

@@ -1,3 +1,4 @@
+import { productPath } from "../productPath";
 // src/components/Wishlist.jsx — wired to WishlistContext + CartContext
 import { useNavigate, Link } from "react-router-dom";
 import FavoriteIcon from "@mui/icons-material/Favorite";
@@ -40,13 +41,13 @@ export default function Wishlist() {
   const { items, loading, remove } = useWishlist();
   const { add: addToCart } = useCart();
 
-  const openProduct = (p) => navigate(`/product/${p.slug}`);
+  const openProduct = (p) => navigate(productPath(p));
 
   const handleAdd = (p) => {
     const needsVariant = (p.sizes && p.sizes.length) || (p.colors && p.colors.length);
     if (needsVariant) {
       // must choose a size/color first — open the product page
-      navigate(`/product/${p.slug}`);
+      navigate(productPath(p));
     } else {
       // no variants → add straight to the bag
       addToCart(p, { qty: 1 });

@@ -1,3 +1,4 @@
+import { productPath } from "../productPath";
 // src/components/NewArrival.jsx — uniform cards, always-visible heart, quick-add popup
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -152,9 +153,9 @@ export default function NewArrival({
   const products = productsProp ? productsProp.slice((page - 1) * pageSize, page * pageSize) : fetched;
   const productTotal = productsProp?.length || total;
 
-  const handleOpen = (p) => (onProductClick ? onProductClick(p) : navigate(`/product/${p.slug}`));
+  const handleOpen = (p) => (onProductClick ? onProductClick(p) : navigate(productPath(p)));
   const handleAdd = (p) => (onAddToCart ? onAddToCart(p) : setQuickSlug(p.slug)); // open popup to pick size/color
-  const handleBuyNow = (p) => navigate(`/product/${p.slug}`);
+  const handleBuyNow = (p) => navigate(productPath(p));
   const handleWish = (p) => (onToggleWishlist ? onToggleWishlist(p) : toggle(p));
   const isWished = (p) => (wishlistIds.length ? wishlistIds.includes(p.id) : has(p.id));
 

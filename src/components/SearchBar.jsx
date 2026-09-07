@@ -1,3 +1,4 @@
+import { productPath } from "../productPath";
 // src/components/SearchBar.jsx — search input with live product suggestions dropdown
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
@@ -56,7 +57,7 @@ export default function SearchBar({ className = "", placeholder = "Search produc
     setOpen(false);
     setTerm("");
     onNavigate?.();
-    navigate(`/product/${p.slug}`);
+    navigate(productPath(p));
   };
 
   const onSubmit = (e) => { e.preventDefault(); goToResults(); };

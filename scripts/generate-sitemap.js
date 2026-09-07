@@ -1,3 +1,4 @@
+const { productPath } = require("../src/productPath");
 const fs = require("fs");
 const path = require("path");
 
@@ -66,7 +67,7 @@ async function getDynamicPaths() {
     total = Number(data.total || products.length);
     for (const product of products) {
       if (product.slug && product.category_slug === "men") {
-        const url = `/product/${segment(product.slug)}`;
+        const url = productPath(product);
         paths.push(url);
         catalog[url] = { title: product.name, description: `${product.name} at Rainz Lifestyle. Price: BDT ${product.price}. Check available sizes and colours and order online.` };
       }

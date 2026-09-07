@@ -154,6 +154,7 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/new-arrivals" element={<CategoryPage />} />
           <Route path="/product/:slug" element={<ProductDetail />} />
+          <Route path="/:category/:subcategory/:slug" element={<ProductDetail />} />
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/wishlist" element={<Wishlist />} />
           <Route path="/cart" element={<Cart />} />

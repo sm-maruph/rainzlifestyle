@@ -22,7 +22,8 @@ export default function StoreSeo() {
     meta("name", "description", page?.description || "Browse Rainz Lifestyle and contact our team for shopping support.");
     // Empty/future categories, utility pages and unknown URLs stay out of Search.
     // Product slugs added after a build remain eligible until the next rebuild.
-    meta("name", "robots", page || /^\/product\/[^/]+$/.test(path) ? "index, follow, max-image-preview:large" : "noindex, follow");
+    const isProductPath = /^\/[^/]+\/[^/]+\/[^/]+$/.test(path) && !/^\/(admin|account|howdy)\//.test(path);
+    meta("name", "robots", page || isProductPath ? "index, follow, max-image-preview:large" : "noindex, follow");
     meta("property", "og:url", origin + path);
     meta("property", "og:title", title);
     meta("property", "og:description", page?.description || "Shop Rainz Lifestyle.");

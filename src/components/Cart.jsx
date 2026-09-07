@@ -1,3 +1,4 @@
+import { productPath } from "../productPath";
 // src/components/Cart.jsx — wired to CartContext (real API when logged in, localStorage for guests)
 import { useMemo } from "react";
 import { useNavigate, Link } from "react-router-dom";
@@ -96,12 +97,12 @@ export default function Cart() {
                 src={it.image}
                 alt={it.name}
                 className="h-24 w-20 sm:h-28 sm:w-24 rounded-lg object-cover bg-gray-100 cursor-pointer flex-shrink-0"
-                onClick={() => it.slug && navigate(`/product/${it.slug}`)}
+                onClick={() => it.slug && navigate(productPath(it))}
                 onError={(e) => imgFallback(e, it.name)}
               />
               <div className="flex-1 min-w-0 flex flex-col">
                 <div className="flex justify-between gap-2">
-                  <p className="text-sm font-semibold text-gray-800 truncate cursor-pointer hover:underline" onClick={() => it.slug && navigate(`/product/${it.slug}`)}>
+                  <p className="text-sm font-semibold text-gray-800 truncate cursor-pointer hover:underline" onClick={() => it.slug && navigate(productPath(it))}>
                     {it.name}
                   </p>
                   <button onClick={() => remove(it)} className="text-gray-400 hover:text-rose-600 flex-shrink-0" aria-label="Remove">

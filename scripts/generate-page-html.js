@@ -31,5 +31,12 @@ for (const [pathname, page] of Object.entries({ ...catalog, ...pages })) {
   const directory = path.join(build, pathname.slice(1));
   fs.mkdirSync(directory, { recursive: true });
   fs.writeFileSync(path.join(directory, "index.html"), html);
+  if (pathname.split("/").filter(Boolean).length === 3) {
+    const slug = pathname.split("/").pop();
+    const legacyDirectory = path.join(build, "product", slug);
+    fs.mkdirSync(legacyDirectory, { recursive: true });
+    fs.writeFileSync(path.join(legacyDirectory, "index.html"),
+      `<!doctype html><html lang="en"><head><meta charset="utf-8"><title>${escape(title)}</title><link rel="canonical" href="${escape(url)}"><meta http-equiv="refresh" content="0;url=${escape(url)}"></head><body><a href="${escape(url)}">View ${escape(page.title)}</a></body></html>`);
+  }
 }
 console.log(`Generated route HTML for ${Object.keys({ ...catalog, ...pages }).length} pages.`);

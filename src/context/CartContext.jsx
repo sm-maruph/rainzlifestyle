@@ -36,6 +36,7 @@ export function CartProvider({ children }) {
       if (i >= 0) next[i] = { ...next[i], qty: next[i].qty + qty };
       else next.push({
         cartId: `${product.id}-${size}-${color}-${Date.now()}`,
+        category: product.category, subcategory: product.subcategory,
         id: product.id, slug: product.slug, name: product.name, image: product.image,
         price: product.price, oldPrice: product.oldPrice, size, color, qty,
       });

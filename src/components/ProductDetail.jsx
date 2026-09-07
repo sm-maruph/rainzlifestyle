@@ -1,6 +1,7 @@
+import { productPath } from "../productPath";
 // src/components/ProductDetail.jsx — wired to CartContext + WishlistContext
 import { useEffect, useState } from "react";
-import { useParams, useNavigate, Link } from "react-router-dom";
+import { useParams, useLocation, useNavigate, Link } from "react-router-dom";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import LocalShippingOutlinedIcon from "@mui/icons-material/LocalShippingOutlined";
@@ -110,6 +111,7 @@ function SizeChart({ chart }) {
 
 export default function ProductDetail() {
   const { slug } = useParams();
+  const location = useLocation();
   const navigate = useNavigate();
   const { add } = useCart();
   const { has, toggle } = useWishlist();
@@ -172,7 +174,15 @@ export default function ProductDetail() {
     return () => { alive = false; };
   }, [slug]);
 
-  const openProduct = (p) => navigate(`/product/${p.slug}`);
+  useEffect(() => {
+    if (!product || product.slug !== slug) return;
+    const target = productPath(product);
+    if (location.pathname !== target) {
+      navigate({ pathname: target, search: location.search, hash: location.hash }, { replace: true });
+    }
+  }, [product, slug, location.pathname, location.search, location.hash, navigate]);
+
+  const openProduct = (p) => navigate(productPath(p));
   const scrollToReviews = () => document.getElementById("product-reviews")?.scrollIntoView({ behavior: "smooth", block: "start" });
 
   const needsSize = product?.sizes?.length > 0;

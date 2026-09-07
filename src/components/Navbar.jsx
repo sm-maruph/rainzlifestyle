@@ -1,3 +1,4 @@
+import { productPath } from "../productPath";
 import { useState, useEffect, useRef, forwardRef } from "react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
@@ -125,7 +126,7 @@ const Navbar = forwardRef(
       const sizeStock = product.sizeStock || {};
       const size = sizes.find((item) => !Object.keys(sizeStock).length || Number(sizeStock[item] || 0) > 0) || null;
       const color = product.colors?.[0]?.name || product.colors?.[0] || null;
-      if (sizes.length && !size) return go(`/product/${product.slug}`);
+      if (sizes.length && !size) return go(productPath(product));
       await addToBag(product, { size, color, qty: 1 });
     };
 
@@ -226,7 +227,7 @@ const Navbar = forwardRef(
                                 {(featuredByCat[catSlug(cat)] && featuredByCat[catSlug(cat)].length > 0)
                                   ? featuredByCat[catSlug(cat)].slice(0, 10).map((p) => (
                                     <div key={p.id ?? p.slug} className="group/card min-w-0">
-                                      <button onClick={() => go(`/product/${p.slug}`)} className="relative block w-full overflow-hidden border border-gray-200 bg-gray-50 text-left">
+                                      <button onClick={() => go(productPath(p))} className="relative block w-full overflow-hidden border border-gray-200 bg-gray-50 text-left">
                                         {Number(p.oldPrice) > Number(p.price) && (
                                           <span className="absolute left-1.5 top-1.5 z-10 rounded bg-black px-1.5 py-0.5 text-[9px] font-bold text-white">
                                             -{Math.round((1 - Number(p.price) / Number(p.oldPrice)) * 100)}%

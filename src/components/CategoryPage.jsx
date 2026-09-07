@@ -1,3 +1,4 @@
+import { productPath } from "../productPath";
 // src/components/CategoryPage.jsx — uniform cards, always-visible Add to Bag, size/color info, loading
 import { useEffect, useMemo, useState } from "react";
 import { useParams, useNavigate, useLocation, Link } from "react-router-dom";
@@ -207,7 +208,7 @@ export default function CategoryPage() {
   }, [category, subcategory, sort, isNewArrivals, page, pageSize]);
 
   useEffect(() => { setPage(1); }, [category, subcategory, sort]);
-  const openProduct = (p) => navigate(`/product/${p.slug}`);
+  const openProduct = (p) => navigate(productPath(p));
   const handleAdd = (p) => setQuickSlug(p.slug); // popup enforces size/color/qty
 
   return (

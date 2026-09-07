@@ -1,3 +1,4 @@
+import { productPath } from "../productPath";
 // src/components/SearchResults.jsx — /search?q= results page
 import { useEffect, useState, useCallback } from "react";
 import { useSearchParams, useNavigate, Link } from "react-router-dom";
@@ -124,9 +125,9 @@ export default function SearchResults() {
             <ProductTile
               key={p.id ?? p.slug}
               product={p}
-              onOpen={(prod) => navigate(`/product/${prod.slug}`)}
+              onOpen={(prod) => navigate(productPath(prod))}
               onAdd={(prod) => setQuickSlug(prod.slug)}
-              onBuyNow={(prod) => navigate(`/product/${prod.slug}`)}
+              onBuyNow={(prod) => navigate(productPath(prod))}
             />
           ))}
         </div>

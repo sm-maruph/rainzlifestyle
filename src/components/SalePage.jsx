@@ -1,3 +1,4 @@
+import { productPath } from "../productPath";
 // src/components/SalePage.jsx — shows products from active sale campaigns (computed prices)
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -105,7 +106,7 @@ export default function SalePage() {
     return list;
   }, [all, minOff, sort]);
 
-  const openProduct = (p) => navigate(`/product/${p.slug}`);
+  const openProduct = (p) => navigate(productPath(p));
   const handleAdd = (p) => setQuickSlug(p.slug);
   const pagedProducts = visible.slice((page - 1) * pageSize, page * pageSize);
 
