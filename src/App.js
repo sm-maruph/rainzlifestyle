@@ -25,8 +25,10 @@ import SalePage from "./components/SalePage";
 import MobileBottomNav from "./components/MobileBottomNav";
 import SearchResults from "./components/SearchResults";
 
-import AboutUs from "./components/AboutUs";
-import ContactUs from "./components/ContactUs";
+import StorePage from "./components/StorePage";
+import StoreSeo from "./components/StoreSeo";
+import storePages from "./storePages.json";
+
 
 // New admin dashboard (sidebar shell + landing page)
 import AdminLayout from "./components/admin/AdminLayout";
@@ -112,6 +114,7 @@ function App() {
           onLogout={logout}
         />
       )}
+      <StoreSeo />
       <ScrollToTopOnRefresh />
       <AutoScrollUp />
 
@@ -146,8 +149,7 @@ function App() {
 
           {/* Static routes (rank above the dynamic /:category in React Router v6) */}
           <Route path="/" element={<LandingComponent />} />
-          <Route path="/about-us" element={<AboutUs />} />
-          <Route path="/contact-us" element={<ContactUs />} />
+          {Object.keys(storePages).map((path) => <Route key={path} path={path} element={<StorePage />} />)}
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/new-arrivals" element={<CategoryPage />} />

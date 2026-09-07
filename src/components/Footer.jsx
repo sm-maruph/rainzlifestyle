@@ -15,12 +15,12 @@ const COLORS = {
 };
 
 const NAV_LINKS = [
-  { label: "About RainzLifestyle", href: "#" },
-  { label: "Terms & Conditions", href: "#" },
-  { label: "Privacy Policy", href: "#" },
-  { label: "Cancellation & Return Policy", href: "#" },
-  { label: "FAQs", href: "#" },
-  { label: "Contact Us", href: "#" },
+  { label: "About RainzLifestyle", href: "/about-us" },
+  { label: "Terms & Conditions", href: "/terms-and-conditions" },
+  { label: "Privacy Policy", href: "/privacy-policy" },
+  { label: "Cancellation & Return Policy", href: "/cancellation-return-policy" },
+  { label: "FAQs", href: "/faqs" },
+  { label: "Contact Us", href: "/contact-us" },
 ];
 
 /* ---- Social icons ---- */
@@ -113,7 +113,7 @@ const Footer = () => {
               <div className="min-w-0">
                 <span className="font-semibold text-white/80">Address:</span>
                 <span className="ml-0.5 text-white/70">
-                  {settings.address || "Setu Homes, 55-Box Nagar, Zoo Road, Mirpur-1, Dhaka-1216"}
+                  {settings.address || "Bangladesh"}
                   {settings.city ? `, ${settings.city}` : ""}
                 </span>
               </div>
@@ -132,7 +132,7 @@ const Footer = () => {
               <div>
                 <span className="font-semibold text-white/80">Email:</span>
                 <span className="ml-0.5 text-white/70">
-                  {settings.supportEmail || "support@rainzlifestyle.com"}
+                  {settings.supportEmail || "rainzlifestyle.official@gmail.com"}
                 </span>
               </div>
             </div>
@@ -200,7 +200,7 @@ const Footer = () => {
               </h3>
             </div>
             <div className="space-y-1 text-sm" style={{ color: COLORS.textMuted }}>
-              <p className="text-white">{settings.supportPhone || "+880 9677 666888"}</p>
+              <p className="text-white">{settings.supportPhone || "Contact us by email"}</p>
               <p>Customer Service</p>
               <p>Track your order or get help returning an order</p>
             </div>

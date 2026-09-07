@@ -1,0 +1,130 @@
+{
+  "/about-us": {
+    "title": "About Rainz Lifestyle",
+    "description": "Meet Rainz Lifestyle and explore our current men's clothing collection in Bangladesh.",
+    "sections": [
+      [
+        "Clothing for your everyday wardrobe",
+        "Rainz Lifestyle is an online clothing store in Bangladesh. Our current collection focuses on men's clothing, including shirts, T-shirts, polo shirts and denim."
+      ],
+      [
+        "Our collection",
+        "Browse the men's collection for available styles, sizes, colours and prices. Other categories will be introduced later."
+      ],
+      [
+        "Here to help",
+        "Contact our team for product questions, size guidance or help with an order."
+      ]
+    ]
+  },
+  "/contact-us": {
+    "title": "Contact Us",
+    "description": "Contact Rainz Lifestyle for product questions, sizing and order support.",
+    "sections": [
+      [
+        "Customer support",
+        "For help with an order, include your order number and the email address or phone number used at checkout. Never send passwords or payment security codes."
+      ],
+      [
+        "Before you order",
+        "Ask us about sizing, available styles or delivery details before placing your order."
+      ]
+    ]
+  },
+  "/terms-and-conditions": {
+    "title": "Terms & Conditions",
+    "description": "Information about shopping, product availability and orders at Rainz Lifestyle.",
+    "sections": [
+      [
+        "Shopping with Rainz Lifestyle",
+        "These terms apply to shopping on the Rainz Lifestyle website. Please read the product details and checkout information before placing an order."
+      ],
+      [
+        "Products and availability",
+        "Available sizes, colours and prices are shown on product pages. Product photographs may appear different depending on your screen. Contact us if you need help choosing a size."
+      ],
+      [
+        "Orders and payment",
+        "Provide accurate contact and delivery details when ordering. Review the items, delivery charge and total at checkout. Contact support with your order number if you need to correct an order or clarify its status."
+      ],
+      [
+        "Delivery and order support",
+        "Delivery availability and charges depend on your delivery location. Contact us to confirm any delivery deadline before ordering. For cancellation or return requests, see our Cancellation & Return Policy."
+      ],
+      [
+        "Questions",
+        "Contact our support team if you have questions about these terms or your purchase."
+      ]
+    ]
+  },
+  "/privacy-policy": {
+    "title": "Privacy Policy",
+    "description": "How information is used when you browse, create an account or place an order with Rainz Lifestyle.",
+    "sections": [
+      [
+        "Information used by the store",
+        "When you create an account or order, the store processes information you provide, such as your name, email, phone number, delivery address and order details."
+      ],
+      [
+        "How information is used",
+        "This information supports account access, order processing, delivery and customer support. Details needed to fulfil an order may be processed by our hosting and delivery service providers."
+      ],
+      [
+        "Browser storage and external services",
+        "The website uses browser storage to support shopping features such as your account, cart and wishlist. Following social or messaging links opens third-party services with their own privacy practices."
+      ],
+      [
+        "Your information and questions",
+        "Contact support to ask about your personal information or request a correction or deletion. Include enough detail to identify your account or order, but do not send your password."
+      ]
+    ]
+  },
+  "/cancellation-return-policy": {
+    "title": "Cancellation & Return Policy",
+    "description": "How to contact Rainz Lifestyle about cancelling an order, returns, exchanges or an item problem.",
+    "sections": [
+      [
+        "Cancellation requests",
+        "Contact support as soon as possible with your order number if you need to cancel or change an order. Our team will check its processing and delivery status and explain the available options."
+      ],
+      [
+        "Problems with an item",
+        "If you receive a damaged, incorrect or otherwise problematic item, contact support promptly with your order number, a description and relevant photographs. Keep the item and packaging while the issue is reviewed."
+      ],
+      [
+        "Returns and exchanges",
+        "Contact us before sending an item back. Our team will confirm eligibility, the return address and any applicable delivery costs. If a return or exchange is important to your purchase, confirm the applicable conditions with us before ordering."
+      ],
+      [
+        "Refund questions",
+        "For an approved refund, ask support to confirm the amount, payment method and expected processing time for your order."
+      ]
+    ]
+  },
+  "/faqs": {
+    "title": "Frequently Asked Questions",
+    "description": "Answers about Rainz Lifestyle's men's collection, sizes, checkout and order support.",
+    "sections": [
+      [
+        "Which products can I shop now?",
+        "Our men's collection is currently available. Products in other categories will be added later."
+      ],
+      [
+        "How do I choose a size?",
+        "Check the sizes and any size chart on the product page. Contact us for guidance if you are unsure before ordering."
+      ],
+      [
+        "How do I place an order?",
+        "Open a product, choose the required options, add it to your bag and continue to checkout. Review your contact details, address and total before submitting."
+      ],
+      [
+        "What does delivery cost?",
+        "The delivery charge is shown at checkout for your selected delivery area. Contact support if you need to confirm delivery availability or timing."
+      ],
+      [
+        "How can I track or change my order?",
+        "Use Track Order or contact support with your order number. For cancellation, returns and exchanges, read our Cancellation & Return Policy."
+      ]
+    ]
+  }
+}

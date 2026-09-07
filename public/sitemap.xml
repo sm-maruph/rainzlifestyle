@@ -4,22 +4,22 @@
     <loc>https://www.rainzlifestyle.com/</loc>
   </url>
   <url>
-    <loc>https://www.rainzlifestyle.com/new-arrivals</loc>
-  </url>
-  <url>
-    <loc>https://www.rainzlifestyle.com/sale</loc>
-  </url>
-  <url>
     <loc>https://www.rainzlifestyle.com/about-us</loc>
   </url>
   <url>
     <loc>https://www.rainzlifestyle.com/contact-us</loc>
   </url>
   <url>
-    <loc>https://www.rainzlifestyle.com/stores</loc>
+    <loc>https://www.rainzlifestyle.com/terms-and-conditions</loc>
   </url>
   <url>
-    <loc>https://www.rainzlifestyle.com/track-order</loc>
+    <loc>https://www.rainzlifestyle.com/privacy-policy</loc>
+  </url>
+  <url>
+    <loc>https://www.rainzlifestyle.com/cancellation-return-policy</loc>
+  </url>
+  <url>
+    <loc>https://www.rainzlifestyle.com/faqs</loc>
   </url>
   <url>
     <loc>https://www.rainzlifestyle.com/men</loc>
@@ -43,10 +43,22 @@
     <loc>https://www.rainzlifestyle.com/men/denim</loc>
   </url>
   <url>
-    <loc>https://www.rainzlifestyle.com/product/s26tkts08-regular-fit-2</loc>
+    <loc>https://www.rainzlifestyle.com/product/rainz-man-s-printed-crop-beach-shirt</loc>
   </url>
   <url>
-    <loc>https://www.rainzlifestyle.com/product/s26tkts08-regular-fit</loc>
+    <loc>https://www.rainzlifestyle.com/product/s26tkts03-drop-shoulder</loc>
+  </url>
+  <url>
+    <loc>https://www.rainzlifestyle.com/product/s26tkts02-slim-fit</loc>
+  </url>
+  <url>
+    <loc>https://www.rainzlifestyle.com/product/s26tkts01-regular-fit</loc>
+  </url>
+  <url>
+    <loc>https://www.rainzlifestyle.com/product/100-cotton-s-j-150-gsm</loc>
+  </url>
+  <url>
+    <loc>https://www.rainzlifestyle.com/product/rainz-man-s-light-weight-check-shirt</loc>
   </url>
   <url>
     <loc>https://www.rainzlifestyle.com/product/s26tkts04-slim-fit</loc>
@@ -62,9 +74,6 @@
   </url>
   <url>
     <loc>https://www.rainzlifestyle.com/product/denim-gsl-02-slim-basic</loc>
-  </url>
-  <url>
-    <loc>https://www.rainzlifestyle.com/product/s26tkts01-regular-fit</loc>
   </url>
   <url>
     <loc>https://www.rainzlifestyle.com/product/s26tktpl02-regular-fit</loc>

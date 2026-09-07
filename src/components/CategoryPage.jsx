@@ -1,6 +1,6 @@
 // src/components/CategoryPage.jsx — uniform cards, always-visible Add to Bag, size/color info, loading
 import { useEffect, useMemo, useState } from "react";
-import { useParams, useNavigate, Link } from "react-router-dom";
+import { useParams, useNavigate, useLocation, Link } from "react-router-dom";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
@@ -144,7 +144,7 @@ export default function CategoryPage() {
   const { category, subcategory } = useParams();
   const navigate = useNavigate();
 
-  const isNewArrivals = category === "new-arrivals";
+  const isNewArrivals = useLocation().pathname === "/new-arrivals";
 
   const [tree, setTree] = useState([]);
   const [products, setProducts] = useState([]);

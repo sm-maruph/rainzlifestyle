@@ -1,0 +1,98 @@
+{
+  "/": {
+    "title": "Men's Clothing in Bangladesh",
+    "description": "Shop men's shirts, T-shirts, polo shirts and denim at Rainz Lifestyle in Bangladesh."
+  },
+  "/men": {
+    "title": "Men's Clothing",
+    "description": "Explore men's shirts, T-shirts, polo shirts and denim. Browse available sizes and prices at Rainz Lifestyle."
+  },
+  "/men/full-sleeve": {
+    "title": "Men's Full Sleeve",
+    "description": "Shop men's full sleeve at Rainz Lifestyle. Explore available styles, sizes and prices."
+  },
+  "/men/half-sleeve": {
+    "title": "Men's Half Sleeve",
+    "description": "Shop men's half sleeve at Rainz Lifestyle. Explore available styles, sizes and prices."
+  },
+  "/men/printed": {
+    "title": "Men's Printed",
+    "description": "Shop men's printed at Rainz Lifestyle. Explore available styles, sizes and prices."
+  },
+  "/men/polo": {
+    "title": "Men's Polo",
+    "description": "Shop men's polo at Rainz Lifestyle. Explore available styles, sizes and prices."
+  },
+  "/men/round-neck": {
+    "title": "Men's Round neck",
+    "description": "Shop men's round neck at Rainz Lifestyle. Explore available styles, sizes and prices."
+  },
+  "/men/denim": {
+    "title": "Men's Denim",
+    "description": "Shop men's denim at Rainz Lifestyle. Explore available styles, sizes and prices."
+  },
+  "/product/rainz-man-s-printed-crop-beach-shirt": {
+    "title": "RAINZ MAN'S PRINTED CROP BEACH SHIRT",
+    "description": "RAINZ MAN'S PRINTED CROP BEACH SHIRT at Rainz Lifestyle. Price: BDT 1290. Check available sizes and colours and order online."
+  },
+  "/product/s26tkts03-drop-shoulder": {
+    "title": "S26TKTS03  DROP SHOULDER",
+    "description": "S26TKTS03  DROP SHOULDER at Rainz Lifestyle. Price: BDT 1350. Check available sizes and colours and order online."
+  },
+  "/product/s26tkts02-slim-fit": {
+    "title": "S26TKTS02 SLIM FIT",
+    "description": "S26TKTS02 SLIM FIT at Rainz Lifestyle. Price: BDT 880. Check available sizes and colours and order online."
+  },
+  "/product/s26tkts01-regular-fit": {
+    "title": "S26TKTS01 REGULAR FIT",
+    "description": "S26TKTS01 REGULAR FIT at Rainz Lifestyle. Price: BDT 970. Check available sizes and colours and order online."
+  },
+  "/product/100-cotton-s-j-150-gsm": {
+    "title": "100% COTTON S/J 150 GSM",
+    "description": "100% COTTON S/J 150 GSM at Rainz Lifestyle. Price: BDT 590. Check available sizes and colours and order online."
+  },
+  "/product/rainz-man-s-light-weight-check-shirt": {
+    "title": "RAINZ MAN'S LIGHT WEIGHT CHECK SHIRT",
+    "description": "RAINZ MAN'S LIGHT WEIGHT CHECK SHIRT at Rainz Lifestyle. Price: BDT 1790. Check available sizes and colours and order online."
+  },
+  "/product/s26tkts04-slim-fit": {
+    "title": "S26TKTS04 SLIM FIT",
+    "description": "S26TKTS04 SLIM FIT at Rainz Lifestyle. Price: BDT 1590. Check available sizes and colours and order online."
+  },
+  "/product/denim-gsl-01-slim-basic-slub": {
+    "title": "RAINZ MAN'S COTTON SPANDEX SLIM FIT PANT",
+    "description": "RAINZ MAN'S COTTON SPANDEX SLIM FIT PANT at Rainz Lifestyle. Price: BDT 2890. Check available sizes and colours and order online."
+  },
+  "/product/denim-gsl-01-straight-fit": {
+    "title": "RAINZ MAN'S COTTON SPANDEX REGULAR/SHORT FIT PANT",
+    "description": "RAINZ MAN'S COTTON SPANDEX REGULAR/SHORT FIT PANT at Rainz Lifestyle. Price: BDT 2790. Check available sizes and colours and order online."
+  },
+  "/product/denim-gsl-01-slim-basic": {
+    "title": "RAINZ MAN'S COTTON SPANDEX SLIM FIT PANT",
+    "description": "RAINZ MAN'S COTTON SPANDEX SLIM FIT PANT at Rainz Lifestyle. Price: BDT 2890. Check available sizes and colours and order online."
+  },
+  "/product/denim-gsl-02-slim-basic": {
+    "title": "RAINZ MAN'S COTTON SPANDEX SLIM FIT PANT",
+    "description": "RAINZ MAN'S COTTON SPANDEX SLIM FIT PANT at Rainz Lifestyle. Price: BDT 2990. Check available sizes and colours and order online."
+  },
+  "/product/s26tktpl02-regular-fit": {
+    "title": "S26TKTPL02 REGULAR FIT",
+    "description": "S26TKTPL02 REGULAR FIT at Rainz Lifestyle. Price: BDT 1850. Check available sizes and colours and order online."
+  },
+  "/product/s26tktpl01-regular-fit": {
+    "title": "S26TKTPL01 REGULAR FIT",
+    "description": "S26TKTPL01 REGULAR FIT at Rainz Lifestyle. Price: BDT 1760. Check available sizes and colours and order online."
+  },
+  "/product/printed-half-shirt": {
+    "title": "Printed Half Shirt",
+    "description": "Printed Half Shirt at Rainz Lifestyle. Price: BDT 1290. Check available sizes and colours and order online."
+  },
+  "/product/full-sleeve-shirt": {
+    "title": "RAINZ MAN'S COTTON LINEN CASUAL L/SLEEVE  SHIRT",
+    "description": "RAINZ MAN'S COTTON LINEN CASUAL L/SLEEVE  SHIRT at Rainz Lifestyle. Price: BDT 2290. Check available sizes and colours and order online."
+  },
+  "/product/s26tktpl01": {
+    "title": "RAINZ MAN'S COTTON LINEN SHORT SLEEVE SHIRT",
+    "description": "RAINZ MAN'S COTTON LINEN SHORT SLEEVE SHIRT at Rainz Lifestyle. Price: BDT 1850. Check available sizes and colours and order online."
+  }
+}
