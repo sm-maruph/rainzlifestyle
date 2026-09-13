@@ -1,4 +1,5 @@
 import { productPath } from "../productPath";
+import { colorImage } from "../productColors";
 // src/components/ProductDetail.jsx — wired to CartContext + WishlistContext
 import { useEffect, useState } from "react";
 import { useParams, useLocation, useNavigate, Link } from "react-router-dom";
@@ -57,16 +58,13 @@ function RelatedRow({ title, items, onOpen, onAdd }) {
 }
 
 function SizeChart({ chart }) {
-  const [unit, setUnit] = useState("in");
   const [open, setOpen] = useState(true);
   if (!chart?.columns?.length || !chart?.rows?.length) return null;
   const displayValue = (value, columnIndex) => {
     if (columnIndex === 0 || value === "" || value == null) return value;
     const number = Number(value);
     if (!Number.isFinite(number)) return value;
-    if (unit === "in") return Number.isInteger(number) ? number : Number(number.toFixed(2));
-    const cm = number * 2.54;
-    return Number.isInteger(cm) ? cm : Number(cm.toFixed(1));
+    return Number(number.toFixed(2));
   };
   return (
     <section className="overflow-hidden rounded-lg border border-gray-200 bg-white">
@@ -84,10 +82,7 @@ function SizeChart({ chart }) {
             <div>
               {chart.note && <p className="text-[10px] text-gray-500">{chart.note}</p>}
             </div>
-            <div className="inline-flex rounded-md bg-gray-100 p-0.5">
-              <button onClick={() => setUnit("in")} className={`rounded px-2.5 py-1 text-[10px] font-bold ${unit === "in" ? "bg-white text-gray-900 shadow-sm" : "text-gray-500"}`}>INCH</button>
-              <button onClick={() => setUnit("cm")} className={`rounded px-2.5 py-1 text-[10px] font-bold ${unit === "cm" ? "bg-white text-gray-900 shadow-sm" : "text-gray-500"}`}>CM</button>
-            </div>
+            <span className="rounded-md bg-gray-100 px-2.5 py-1 text-[10px] font-bold text-gray-900">Measurements in cm</span>
           </div>
           <div className="mt-2.5 max-h-64 overflow-auto rounded-md border border-gray-100">
             <table className="w-full min-w-[460px] border-collapse text-left text-[11px]">
@@ -142,7 +137,7 @@ export default function ProductDetail() {
         setProduct(p);
         if (p) {
           setMainImg(p.images?.[0] || p.image);
-          setColor(null);
+          setColor(p.colors?.[0]?.name || null);
           setSize(null);
           setQty(1);
           // Row 1 — same subcategory ("You may also like")
@@ -228,7 +223,7 @@ export default function ProductDetail() {
     setTransitionMode("checkout");
     window.setTimeout(() => navigate("/checkout", { state: { items: [{
       id: product.id, productId: product.id, slug: product.slug, name: product.name,
-      image: product.image, price: product.price, oldPrice: product.oldPrice, size, color, qty,
+      image: colorImage(product, color), price: product.price, oldPrice: product.oldPrice, size, color, qty,
     }] } }), 1400);
   };
 
@@ -304,7 +299,7 @@ export default function ProductDetail() {
             {(product.images || [product.image]).map((src, i) => (
               <button
                 key={i}
-                onClick={() => setMainImg(src)}
+                onClick={() => { setMainImg(src); setColor(product.colors?.[i]?.name || null); setError(""); }}
                 className="h-12 w-12 shrink-0 overflow-hidden rounded-md border-2 transition-colors sm:h-16 sm:w-16 sm:rounded-lg"
                 style={{ borderColor: mainImg === src ? BRAND : "#e5e7eb" }}
               >
@@ -353,7 +348,7 @@ export default function ProductDetail() {
               <p className="mb-2 text-xs font-semibold text-gray-700 sm:text-sm">Color: <span className="font-normal text-gray-500">{color || "Please select"}</span></p>
               <div className="flex gap-2">
                 {product.colors.map((c) => (
-                  <button key={c.name} onClick={() => { setColor(c.name); setError(""); }} title={c.name} className="h-7 w-7 rounded-full border-2 transition-transform hover:scale-110 sm:h-8 sm:w-8" style={{ backgroundColor: c.hex, borderColor: color === c.name ? BRAND : "#e5e7eb" }} />
+                  <button key={c.name} onClick={() => { setColor(c.name); setMainImg(colorImage(product, c.name)); setError(""); }} title={c.name} aria-label={c.name} aria-pressed={color === c.name} className="h-7 w-7 rounded-full border-2 transition-transform hover:scale-110 sm:h-8 sm:w-8" style={{ backgroundColor: c.hex, borderColor: color === c.name ? BRAND : "#e5e7eb" }} />
                 ))}
               </div>
             </div>

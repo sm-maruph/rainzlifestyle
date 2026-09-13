@@ -358,7 +358,7 @@ export default function AdminProducts() {
                   </label>
                 </div>
                 {form.id && existingImages.length > 0 && (
-                  <p className="text-[11px] text-gray-400 mt-1">Saved images stay as-is; new uploads are appended to the gallery.</p>
+                  <p className="text-[11px] text-gray-400 mt-1">Match images to colors in order: first image = first color, second image = second color. New uploads are appended to the gallery.</p>
                 )}
               </div>
 

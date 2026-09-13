@@ -1,6 +1,7 @@
 // Cart that uses the API when logged in, localStorage when guest.
 import { createContext, useContext, useEffect, useState, useCallback } from "react";
 import { useAuth } from "./AuthContext";
+import { colorImage } from "../productColors";
 import { getCart, addCartItem, updateCartQty, removeCartItem, clearCart } from "../api";
 
 const KEY = "rainz_cart";
@@ -33,11 +34,11 @@ export function CartProvider({ children }) {
     } else {
       const next = [...items];
       const i = next.findIndex((x) => x.id === product.id && x.size === size && x.color === color);
-      if (i >= 0) next[i] = { ...next[i], qty: next[i].qty + qty };
+      if (i >= 0) next[i] = { ...next[i], image: colorImage(product, color), qty: next[i].qty + qty };
       else next.push({
         cartId: `${product.id}-${size}-${color}-${Date.now()}`,
         category: product.category, subcategory: product.subcategory,
-        id: product.id, slug: product.slug, name: product.name, image: product.image,
+        id: product.id, slug: product.slug, name: product.name, image: colorImage(product, color),
         price: product.price, oldPrice: product.oldPrice, size, color, qty,
       });
       saveGuest(next);

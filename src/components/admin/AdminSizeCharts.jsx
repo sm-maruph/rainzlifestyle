@@ -94,7 +94,7 @@ export default function AdminSizeCharts() {
     setSaving(true); setError("");
     const payload = {
       name: form.name.trim(), title: form.title.trim() || "Size chart", note: form.note.trim(),
-      columns: form.columns, rows: form.rows, is_active: form.is_active,
+      columns: form.columns, rows: form.rows, is_active: form.is_active, unit: "cm",
     };
     try {
       if (form.id) await updateSizeChart(form.id, payload);
@@ -116,7 +116,7 @@ export default function AdminSizeCharts() {
       <div className="flex items-center justify-between gap-3">
         <div>
           <h2 className="text-xl sm:text-2xl font-extrabold text-gray-900">Size Charts</h2>
-          <p className="text-sm text-gray-500">Create reusable measurement templates for products.</p>
+          <p className="text-sm text-gray-500">Create reusable measurement templates for products. All measurements are in cm.</p>
         </div>
         <button onClick={startAdd} className="inline-flex items-center gap-1.5 rounded-lg px-4 py-2.5 text-sm font-semibold text-white" style={{ backgroundColor: BRAND }}>
           <AddOutlinedIcon style={{ fontSize: 18 }} /> New template
@@ -180,7 +180,7 @@ export default function AdminSizeCharts() {
 
               <div>
                 <div className="mb-2 flex items-center justify-between">
-                  <p className="text-sm font-bold text-gray-800">Measurements in inches</p>
+                  <p className="text-sm font-bold text-gray-800">Measurements in cm</p>
                   <button onClick={addRow} className="text-xs font-semibold" style={{ color: BRAND }}>+ Add size</button>
                 </div>
                 <div className="overflow-x-auto rounded-lg border border-gray-200">
