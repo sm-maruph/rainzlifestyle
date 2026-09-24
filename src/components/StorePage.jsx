@@ -1,6 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import { useSettings } from "../context/SettingsContext";
 import pages from "../storePages.json";
+import business from "../businessDetails.json";
 
 export default function StorePage() {
   const { pathname } = useLocation();
@@ -19,13 +20,23 @@ export default function StorePage() {
       {page.sections.map(([heading, text]) => (
         <section key={heading} className="mb-7"><h2 className="mb-3 text-xl font-semibold">{heading}</h2><p className="leading-7">{text}</p></section>
       ))}
+      {pathname === "/about-us" && <section className="mb-7">
+        <h2 className="mb-3 text-xl font-semibold">Company and management</h2>
+        <dl className="space-y-3">
+          <div><dt className="font-semibold">Business name</dt><dd>{business.registeredName}</dd></div>
+          <div><dt className="font-semibold">Proprietor</dt><dd>{business.proprietor}</dd></div>
+          <div><dt className="font-semibold">Trade license number</dt><dd>{business.tradeLicense}</dd></div>
+          <div><dt className="font-semibold">Licensing authority</dt><dd>{business.licensingAuthority}</dd></div>
+        </dl>
+      </section>}
+      {business.registeredAddress && ["/about-us", "/contact-us"].includes(pathname.replace(/\/$/, "")) && <section className="mb-7"><h2 className="mb-3 text-xl font-semibold">Registered business address</h2><p>{business.registeredAddress}</p></section>}
       <aside className="mt-10 rounded-xl border border-gray-200 bg-white p-6">
         <h2 className="text-xl font-semibold">Contact Rainz Lifestyle</h2>
         <p className="mt-3"><a href={`mailto:${email}`}>{email}</a></p>
         {settings.supportPhone && <p className="mt-2"><a href={`tel:${settings.supportPhone.replace(/[^+\d]/g, "")}`}>{settings.supportPhone}</a></p>}
         {settings.address && <p className="mt-2">{settings.address}{settings.city ? `, ${settings.city}` : ""}</p>}
         {settings.hours && <p className="mt-2">Customer service hours: {settings.hours}</p>}
-        <div className="mt-5 flex flex-wrap gap-5"><Link to="/men">Shop Men</Link><Link to="/track-order">Track Order</Link><Link to="/cancellation-return-policy">Cancellation & Returns</Link></div>
+        <div className="mt-5 flex flex-wrap gap-5"><Link to="/terms-and-conditions">Terms &amp; Conditions</Link><Link to="/privacy-policy">Privacy Policy</Link><Link to="/cancellation-return-policy">Return &amp; Refund Policy</Link><Link to="/delivery-policy">Delivery Policy</Link></div>
       </aside>
     </article>
   );

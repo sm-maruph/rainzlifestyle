@@ -1,3 +1,4 @@
+import StockBadge from "./StockBadge";
 import { productPath } from "../productPath";
 // src/components/SalePage.jsx — shows products from active sale campaigns (computed prices)
 import { useEffect, useMemo, useState } from "react";
@@ -53,8 +54,9 @@ function SaleCard({ product, onOpen, onAdd }) {
         {wished ? <FavoriteIcon style={{ fontSize: 17 }} /> : <FavoriteBorderIcon style={{ fontSize: 17 }} />}
       </button>
 
-      <div className="h-56 sm:h-60 flex items-center justify-center p-3 bg-gradient-to-b from-gray-50 to-gray-100 cursor-pointer" onClick={() => onOpen(product)}>
-        <img src={product.image} alt={product.name} loading="lazy" className="max-h-full max-w-full object-contain transition-transform duration-300 group-hover:scale-105" onError={(e) => imgFallback(e, product.name)} />
+      <div className="relative h-56 sm:h-60 flex items-center justify-center p-3 bg-gradient-to-b from-gray-50 to-gray-100 cursor-pointer" onClick={() => onOpen(product)}>
+        <StockBadge product={product} />
+          <img src={product.image} alt={product.name} loading="lazy" className="max-h-full max-w-full object-contain transition-transform duration-300 group-hover:scale-105" onError={(e) => imgFallback(e, product.name)} />
       </div>
 
       <div className="p-3 flex flex-col">
@@ -150,7 +152,7 @@ export default function SalePage() {
         {loading
           ? Array.from({ length: 10 }).map((_, i) => (
               <div key={i}>
-                <div className="h-56 sm:h-60 rounded-xl bg-gray-100 animate-pulse" />
+                <div className="relative h-56 sm:h-60 rounded-xl bg-gray-100 animate-pulse" />
                 <div className="h-3 bg-gray-100 rounded mt-2 w-3/4 animate-pulse" />
                 <div className="h-8 bg-gray-100 rounded mt-2 animate-pulse" />
               </div>

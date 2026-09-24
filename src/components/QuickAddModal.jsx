@@ -1,3 +1,4 @@
+import StockBadge from "./StockBadge";
 // src/components/QuickAddModal.jsx — choose size/color/qty before adding to the bag
 import { useEffect, useState } from "react";
 import CloseIcon from "@mui/icons-material/Close";
@@ -76,7 +77,7 @@ export default function QuickAddModal({ slug, onClose }) {
           <>
             <div className="p-5 space-y-4 max-h-[70vh] overflow-y-auto">
               <div className="flex gap-4">
-                <img src={product.image} alt={product.name} className="h-32 w-24 rounded-lg object-cover bg-gray-100" onError={(e) => imgFallback(e, product.name)} />
+                <div className="relative shrink-0"><StockBadge product={product} /><img src={product.image} alt={product.name} className="h-32 w-24 rounded-lg object-cover bg-gray-100" onError={(e) => imgFallback(e, product.name)} /></div>
                 <div className="min-w-0">
                   <p className="text-xs uppercase tracking-widest text-gray-400">{product.brand}</p>
                   <p className="text-sm font-semibold text-gray-900">{product.name}</p>

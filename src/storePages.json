@@ -37,23 +37,31 @@
     "sections": [
       [
         "Shopping with Rainz Lifestyle",
-        "These terms apply to shopping on the Rainz Lifestyle website. Please read the product details and checkout information before placing an order."
+        "These terms govern purchases from Rainz Lifestyle. Before placing an order, read these Terms & Conditions, our Privacy Policy, and our Return & Refund Policy. Checkout requires your explicit agreement to all three policies."
       ],
       [
-        "Products and availability",
-        "Available sizes, colours and prices are shown on product pages. Product photographs may appear different depending on your screen. Contact us if you need help choosing a size."
+        "Products, prices and availability",
+        "Prices are displayed in Bangladeshi Taka (BDT). Available quantities and size options are shown on product pages. Out-of-stock products cannot be ordered. Product colours may vary slightly between screens. Delivery charges and any applicable discounts are displayed at checkout before you place your order."
       ],
       [
         "Orders and payment",
-        "Provide accurate contact and delivery details when ordering. Review the items, delivery charge and total at checkout. Contact support with your order number if you need to correct an order or clarify its status."
+        "Provide accurate customer and delivery details. We accept cash on delivery and online payment through SSLCommerz using the methods available on its payment page. An online order is paid only after the payment gateway confirms the transaction. Contact us with your order number if a payment is deducted but not confirmed; do not place a duplicate order. Order fulfillment status is separate from payment status."
       ],
       [
-        "Delivery and order support",
-        "Delivery availability and charges depend on your delivery location. Contact us to confirm any delivery deadline before ordering. For cancellation or return requests, see our Cancellation & Return Policy."
+        "Delivery",
+        "Delivery is within 5 days inside Dhaka and within 10 days outside Dhaka, counted from order confirmation. We will contact you if a delivery delay occurs. See our Delivery Policy for the delivery process."
       ],
       [
-        "Questions",
-        "Contact our support team if you have questions about these terms or your purchase."
+        "Cancellation, returns and refunds",
+        "Contact customer support with your order number as soon as possible to request cancellation. Before dispatch, we will confirm whether cancellation is possible. For dispatched or delivered orders, follow our Return & Refund Policy. Approved refunds are processed within 7 to 10 working days after refund approval and, where a return is required, receipt and inspection of the returned item."
+      ],
+      [
+        "Third-party advertisements and services",
+        "Rainz Lifestyle does not display third-party advertisements. If third-party advertisements are introduced, Rainz Lifestyle will take responsibility for the advertisements it permits. Rainz Lifestyle remains responsible for customer information it shares with third parties in providing its services, as described in the Privacy Policy."
+      ],
+      [
+        "Customer support",
+        "For product, payment, delivery or policy questions, contact us using the email or phone number below. Include your order number where applicable."
       ]
     ]
   },
@@ -62,42 +70,58 @@
     "description": "How information is used when you browse, create an account or place an order with Rainz Lifestyle.",
     "sections": [
       [
-        "Information used by the store",
-        "When you create an account or order, the store processes information you provide, such as your name, email, phone number, delivery address and order details."
+        "Information we collect",
+        "We process information you provide when browsing, creating an account, contacting support or placing an order, including your name, email, phone number, delivery address and order details. Payment transaction references and confirmation status are used to reconcile payments."
       ],
       [
-        "How information is used",
-        "This information supports account access, order processing, delivery and customer support. Details needed to fulfil an order may be processed by our hosting and delivery service providers."
+        "How we use and share information",
+        "We use customer information to manage accounts, process orders and payments, arrange delivery, prevent misuse and respond to support requests. Necessary details may be shared with SSLCommerz, delivery partners and hosting or service providers for those purposes. Rainz Lifestyle is responsible for the customer information it shares with these third parties and limits sharing to what is needed to provide the service. We do not sell customer information for third-party advertising."
       ],
       [
-        "Browser storage and external services",
-        "The website uses browser storage to support shopping features such as your account, cart and wishlist. Following social or messaging links opens third-party services with their own privacy practices."
+        "Payment security",
+        "Online payment takes place on the SSLCommerz hosted payment page. Rainz Lifestyle does not collect or store your card number, CVV, banking password or payment OTP in its checkout. We retain transaction references and payment status for order verification and support. Never disclose your password, PIN, CVV or OTP to our support team."
       ],
       [
-        "Your information and questions",
-        "Contact support to ask about your personal information or request a correction or deletion. Include enough detail to identify your account or order, but do not send your password."
+        "Cookies and browser storage",
+        "The website uses browser storage for sign-in sessions, cart and wishlist features, guest order references and payment-return information. Essential cookies or similar technologies may also be used by our payment provider on its own payment page. You can clear or block cookies and site storage using your browser settings, but doing so may affect sign-in and shopping features."
+      ],
+      [
+        "Retention and access",
+        "We retain information as needed to fulfill orders, handle returns and payment disputes, and meet applicable record-keeping obligations. Access is limited to people and service providers who need it for these purposes."
+      ],
+      [
+        "Your choices and external links",
+        "Contact us to request access to, correction of or deletion of your information. Some records may need to be retained to complete an order or meet record-keeping obligations. Social and messaging links open external services whose privacy policies apply there."
       ]
     ]
   },
   "/cancellation-return-policy": {
-    "title": "Cancellation & Return Policy",
-    "description": "How to contact Rainz Lifestyle about cancelling an order, returns, exchanges or an item problem.",
+    "title": "Return & Refund Policy",
+    "description": "How to request a cancellation, return, exchange or refund from Rainz Lifestyle.",
     "sections": [
       [
-        "Cancellation requests",
-        "Contact support as soon as possible with your order number if you need to cancel or change an order. Our team will check its processing and delivery status and explain the available options."
+        "Cancellation",
+        "Contact us as soon as possible with your order number to request a cancellation or change. We will check whether the order has been dispatched and confirm the available options. A paid cancellation that we approve will be refunded under the timeline below."
       ],
       [
-        "Problems with an item",
-        "If you receive a damaged, incorrect or otherwise problematic item, contact support promptly with your order number, a description and relevant photographs. Keep the item and packaging while the issue is reviewed."
+        "Requesting a return",
+        "Contact us promptly after delivery with your order number, the item name, the reason for the return and photographs if the item is incorrect, damaged or defective. Our team will review your request and provide return instructions and the return address. Please contact us before shipping an item back."
       ],
       [
-        "Returns and exchanges",
-        "Contact us before sending an item back. Our team will confirm eligibility, the return address and any applicable delivery costs. If a return or exchange is important to your purchase, confirm the applicable conditions with us before ordering."
+        "Condition of returned items",
+        "For a size or change-of-mind return request, keep the item unused and unwashed, with original tags, packaging and proof of purchase. For damaged, defective or incorrect items, keep the item and packaging for review; the unused-condition requirement does not prevent reporting a defect discovered when checking the item."
       ],
       [
-        "Refund questions",
-        "For an approved refund, ask support to confirm the amount, payment method and expected processing time for your order."
+        "Return process and delivery costs",
+        "After reviewing your request, we will confirm eligibility, collection or shipping arrangements, and any return delivery costs before you send the item. Rainz Lifestyle covers return delivery costs for a confirmed incorrect or defective item. Once received, we inspect the item and notify you of the refund or exchange decision. Exchanges depend on stock availability."
+      ],
+      [
+        "Refund timeline: 7 to 10 working days",
+        "Approved refunds are processed within 7 to 10 working days after refund approval and, where a return is required, receipt and inspection of the returned item. Working days exclude weekends and public holidays. Online-payment refunds are returned through the original payment method. For cash-on-delivery purchases, customer support will agree a refund method with you. We will confirm the refundable amount, including any applicable delivery charge, when approving the refund."
+      ],
+      [
+        "Refund support",
+        "If your approved refund has not arrived after 10 working days, contact us with your order number and any refund reference. We will check its status with the payment provider and update you. Never send your PIN, password or OTP."
       ]
     ]
   },
@@ -119,11 +143,33 @@
       ],
       [
         "What does delivery cost?",
-        "The delivery charge is shown at checkout for your selected delivery area. Contact support if you need to confirm delivery availability or timing."
+        "The delivery charge is shown at checkout for your selected delivery area. Delivery is within 5 days inside Dhaka and within 10 days outside Dhaka from order confirmation."
       ],
       [
         "How can I track or change my order?",
-        "Use Track Order or contact support with your order number. For cancellation, returns and exchanges, read our Cancellation & Return Policy."
+        "Use Track Order or contact support with your order number. For cancellation, returns and exchanges, read our Return & Refund Policy."
+      ]
+    ]
+  },
+  "/delivery-policy": {
+    "title": "Delivery Policy",
+    "description": "Delivery timelines and the order delivery process for Rainz Lifestyle in Bangladesh.",
+    "sections": [
+      [
+        "Inside Dhaka",
+        "Delivery is within 5 days from order confirmation. The delivery charge is shown at checkout before you place your order."
+      ],
+      [
+        "Outside Dhaka",
+        "Delivery is within 10 days from order confirmation. The delivery charge is shown at checkout before you place your order."
+      ],
+      [
+        "Delivery process",
+        "We confirm your order and payment method, prepare available items, and hand the parcel to our delivery partner. Provide a complete address and an active phone number so the delivery partner can contact you. Use Track Order or contact our team with your order number for updates."
+      ],
+      [
+        "Delays and delivery problems",
+        "If an address is incomplete, an item becomes unavailable, or an unexpected disruption delays delivery, we will contact you with an update and explain the available options. Report a missing, damaged or incorrect parcel to customer support. Cancellation and refund requests are handled under our Return & Refund Policy."
       ]
     ]
   }

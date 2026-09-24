@@ -3,6 +3,7 @@
 const fs = require("fs");
 const path = require("path");
 const pages = require("../src/storePages.json");
+const business = require("../src/businessDetails.json");
 const catalog = require("../src/seoCatalog.json");
 const build = path.join(__dirname, "..", "build");
 const template = fs.readFileSync(path.join(build, "index.html"), "utf8");
@@ -25,6 +26,10 @@ for (const [pathname, page] of Object.entries({ ...catalog, ...pages })) {
   // These are the same information sections rendered by StorePage, available
   // before JavaScript loads as well. React replaces them when the app mounts.
   if (page.sections) {
+    if (pathname === "/about-us") page.sections = [...page.sections,
+      ["Company and management", `${business.registeredName}. Proprietor: ${business.proprietor}. Trade license: ${business.tradeLicense}. Licensing authority: ${business.licensingAuthority}.`],
+      ["Registered business address", business.registeredAddress]];
+    if (pathname === "/contact-us") page.sections = [...page.sections, ["Registered business address", business.registeredAddress]];
     const content = `<article><nav><a href="/">Home</a> / ${escape(page.title)}</nav><h1>${escape(page.title)}</h1><p>${escape(page.description)}</p>${page.sections.map(([heading, text]) => `<section><h2>${escape(heading)}</h2><p>${escape(text)}</p></section>`).join("")}<a href="/men">Shop Men</a> | <a href="/contact-us">Contact Us</a></article>`;
     html = html.replace('<div id="root"></div>', `<div id="root">${content}</div>`);
   }

@@ -1,3 +1,4 @@
+import StockBadge from "./StockBadge";
 import { productPath } from "../productPath";
 import { colorImage } from "../productColors";
 // src/components/ProductDetail.jsx — wired to CartContext + WishlistContext
@@ -33,6 +34,7 @@ function MiniCard({ product, onOpen, onAdd }) {
       <div className="relative overflow-hidden border border-gray-200 bg-gray-50 transition-shadow hover:shadow-lg">
         {discount > 0 && <span className="absolute left-1.5 top-1.5 z-10 rounded bg-black px-1.5 py-0.5 text-[9px] font-bold text-white">-{discount}%</span>}
         <div className="aspect-square flex items-center justify-center overflow-hidden bg-gray-50">
+          <StockBadge product={product} />
           <img src={product.image} alt={product.name} loading="lazy" className="h-full w-full object-contain transition-transform duration-300 group-hover:scale-105" onError={(e) => imgFallback(e, product.name)} />
         </div>
         <div className="absolute bottom-0 left-1/2 flex -translate-x-1/2 items-center gap-1 whitespace-nowrap rounded-t bg-white/95 px-2 py-0.5 text-[10px] shadow-sm">
@@ -189,6 +191,7 @@ export default function ProductDetail() {
     : product?.inStock;
 
   const validate = () => {
+    if (!productAvailable) { setError("This product is out of stock."); return false; }
     if (needsColor && !color) { setError("Please select a color first."); return false; }
     if (needsSize && !size) { setError("Please select a size first."); return false; }
     if (tracksSizeStock && Number(product.sizeStock[size] || 0) <= 0) { setError("The selected size is out of stock."); return false; }
@@ -309,7 +312,7 @@ export default function ProductDetail() {
           </div>
 
           <div
-            className="group order-1 min-w-0 flex-1 cursor-zoom-in overflow-hidden border border-gray-100 bg-gray-50 sm:order-2"
+            className="relative group order-1 min-w-0 flex-1 cursor-zoom-in overflow-hidden border border-gray-100 bg-gray-50 sm:order-2"
             onMouseMove={onZoomMove}
           >
             <img
@@ -323,6 +326,7 @@ export default function ProductDetail() {
 
         {/* Info */}
         <div className="relative min-w-0 rounded-lg border border-gray-200 bg-white p-4 sm:p-5">
+          <p className="mb-2 text-sm font-semibold text-gray-700">{selectedSizeStock != null ? `Stock for size ${size}: ${selectedSizeStock}` : `Available stock: ${Number(product.stock ?? Object.values(product.sizeStock || {}).reduce((sum, value) => sum + Number(value || 0), 0))}`} units</p>
           <h1 className="pr-14 text-xl font-bold leading-tight text-gray-900 sm:text-2xl">{product.name}</h1>
           <button onClick={() => toggle(product)} aria-label="Wishlist" className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full border border-gray-200 text-gray-500 transition hover:border-gray-400" style={{ color: wished ? BRAND : "#6b7280" }}>
             {wished ? <FavoriteIcon style={{ fontSize: 20 }} /> : <FavoriteBorderIcon style={{ fontSize: 20 }} />}

@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { Mail, Phone, Check, MapPin } from "lucide-react";
 import { useSettings } from "../context/SettingsContext";
+import business from "../businessDetails.json";
 
 const BRAND = "var(--brand)";
 
@@ -18,7 +19,8 @@ const NAV_LINKS = [
   { label: "About RainzLifestyle", href: "/about-us" },
   { label: "Terms & Conditions", href: "/terms-and-conditions" },
   { label: "Privacy Policy", href: "/privacy-policy" },
-  { label: "Cancellation & Return Policy", href: "/cancellation-return-policy" },
+  { label: "Return & Refund Policy", href: "/cancellation-return-policy" },
+  { label: "Delivery Policy", href: "/delivery-policy" },
   { label: "FAQs", href: "/faqs" },
   { label: "Contact Us", href: "/contact-us" },
 ];
@@ -246,6 +248,15 @@ const Footer = () => {
         </div>
       </div>
 
+      <div className="mx-auto max-w-7xl px-4 pb-6 text-sm sm:px-6">
+        <p>{business.registeredName} · Proprietor: {business.proprietor}</p>
+        <p className="mt-1">Trade license: {business.tradeLicense} · {business.licensingAuthority}</p>
+        {business.registeredAddress && <p className="mt-1">Registered address: {business.registeredAddress}</p>}
+        <p className="mt-2">Delivery: Inside Dhaka within 5 days · Outside Dhaka within 10 days</p>
+      </div>
+      <div className="bg-white px-3 py-4 sm:px-6">
+        <img src="/Payment%20Banner_Apr26-02.png" alt="Payment methods supported by SSLCommerz, including cards, mobile banking and internet banking" width="5235" height="586" className="mx-auto h-auto w-full max-w-[1600px]" loading="lazy" />
+      </div>
       {/* ---- Bottom bar ---- */}
       <div style={{ borderTop: `1px solid ${COLORS.divider}` }}>
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-2 px-4 py-4 text-xs sm:flex-row sm:px-6 md:px-8 lg:px-10">

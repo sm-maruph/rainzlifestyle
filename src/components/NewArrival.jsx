@@ -1,3 +1,4 @@
+import StockBadge from "./StockBadge";
 import { productPath } from "../productPath";
 // src/components/NewArrival.jsx — uniform cards, always-visible heart, quick-add popup
 import { useEffect, useState } from "react";
@@ -52,8 +53,9 @@ function ProductTile({ product, onOpen, onAddToCart, onBuyNow, onToggleWishlist,
       </button>
 
       {/* Image — FIXED height so every card is identical (independent of Tailwind aspect support) */}
-      <div className="h-44 sm:h-48 w-full bg-gradient-to-b from-gray-50 to-gray-100 flex items-center justify-center">
-        <img src={product.image} alt={product.name} loading="lazy" className="max-h-full max-w-full object-contain transition-transform duration-300 group-hover:scale-105" onError={imgFallback} />
+      <div className="relative h-44 sm:h-48 w-full bg-gradient-to-b from-gray-50 to-gray-100 flex items-center justify-center">
+        <StockBadge product={product} />
+          <img src={product.image} alt={product.name} loading="lazy" className="max-h-full max-w-full object-contain transition-transform duration-300 group-hover:scale-105" onError={imgFallback} />
       </div>
 
       {/* Info — fixed structure keeps all cards equal height */}
@@ -108,7 +110,7 @@ function ProductTile({ product, onOpen, onAddToCart, onBuyNow, onToggleWishlist,
 function SkeletonTile() {
   return (
     <div className="rounded-xl bg-white shadow-sm overflow-hidden">
-      <div className="h-44 sm:h-48 bg-gray-100 animate-pulse" />
+      <div className="relative h-44 sm:h-48 bg-gray-100 animate-pulse" />
       <div className="p-3 space-y-2">
         <div className="h-3 bg-gray-100 rounded w-3/4 animate-pulse" />
         <div className="h-7 bg-gray-100 rounded animate-pulse" />

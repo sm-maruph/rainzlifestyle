@@ -1,3 +1,4 @@
+import StockBadge from "./StockBadge";
 import { productPath } from "../productPath";
 // src/components/CategoryPage.jsx — uniform cards, always-visible Add to Bag, size/color info, loading
 import { useEffect, useMemo, useState } from "react";
@@ -47,6 +48,7 @@ export function LegacyProductCard({ product, accent, onOpen, onAdd }) {
 
         {/* Fixed-height image keeps every card identical */}
         <div className="h-56 sm:h-60 flex items-center justify-center bg-gradient-to-b from-gray-50 to-gray-100">
+          <StockBadge product={product} />
           <img src={product.image} alt={product.name} loading="lazy" className="max-h-full max-w-full object-contain transition-transform duration-300 group-hover:scale-105" onError={(e) => imgFallback(e, product.name)} />
         </div>
       </div>
@@ -108,7 +110,8 @@ function ReferenceProductCard({ product, accent, onOpen, onAdd }) {
         <button aria-label="Add to wishlist" onClick={(event) => { event.stopPropagation(); toggle(product); }} className="absolute bottom-2 right-2 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-white/95 shadow-md transition-transform hover:scale-105" style={{ color: wished ? accent : "#6b7280" }}>
           {wished ? <FavoriteIcon fontSize="small" /> : <FavoriteBorderIcon fontSize="small" />}
         </button>
-        <img src={product.image} alt={product.name} loading="lazy" className="h-full w-full object-contain transition-transform duration-500 group-hover:scale-[1.025]" onError={(event) => imgFallback(event, product.name)} />
+        <StockBadge product={product} />
+          <img src={product.image} alt={product.name} loading="lazy" className="h-full w-full object-contain transition-transform duration-500 group-hover:scale-[1.025]" onError={(event) => imgFallback(event, product.name)} />
       </div>
       <div className="relative flex min-h-[112px] flex-1 flex-col px-2.5 pb-3 pt-2.5">
         <p className="min-h-9 cursor-pointer text-xs leading-[1.35] text-gray-900 line-clamp-2" onClick={() => onOpen(product)}>{product.name}</p>

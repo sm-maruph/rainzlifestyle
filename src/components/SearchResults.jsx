@@ -1,3 +1,4 @@
+import StockBadge from "./StockBadge";
 import { productPath } from "../productPath";
 // src/components/SearchResults.jsx — /search?q= results page
 import { useEffect, useState, useCallback } from "react";
@@ -26,8 +27,9 @@ function ProductTile({ product, onOpen, onAdd, onBuyNow }) {
       <button aria-label="Wishlist" onClick={(e) => { e.stopPropagation(); toggle(product); }} className="absolute top-2 right-2 z-10 h-8 w-8 rounded-full bg-white/90 shadow flex items-center justify-center" style={{ color: wished ? BRAND : "#6b7280" }}>
         {wished ? <FavoriteIcon fontSize="small" /> : <FavoriteBorderIcon fontSize="small" />}
       </button>
-      <div className="h-52 sm:h-60 bg-gradient-to-b from-gray-50 to-gray-100 flex items-center justify-center p-3 cursor-pointer" onClick={() => onOpen(product)}>
-        <img src={product.image} alt={product.name} loading="lazy" className="max-h-full max-w-full object-contain transition-transform duration-300 group-hover:scale-105" onError={(e) => imgFallback(e, product.name)} />
+      <div className="relative h-52 sm:h-60 bg-gradient-to-b from-gray-50 to-gray-100 flex items-center justify-center p-3 cursor-pointer" onClick={() => onOpen(product)}>
+        <StockBadge product={product} />
+          <img src={product.image} alt={product.name} loading="lazy" className="max-h-full max-w-full object-contain transition-transform duration-300 group-hover:scale-105" onError={(e) => imgFallback(e, product.name)} />
       </div>
       <div className="px-3 pt-2 pb-3 flex flex-col">
         <p className="text-sm text-gray-800 truncate cursor-pointer hover:underline" onClick={() => onOpen(product)}>{product.name}</p>

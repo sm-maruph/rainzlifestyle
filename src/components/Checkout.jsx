@@ -9,6 +9,7 @@ import LocalOfferOutlinedIcon from "@mui/icons-material/LocalOfferOutlined";
 import CloseIcon from "@mui/icons-material/Close";
 import { placeOrder, initiatePayment, validateCoupon, rememberGuestOrder } from "../api";
 import { useCart } from "../context/CartContext";
+import PolicyAgreement from "./PolicyAgreement";
 
 const BRAND = "var(--brand)";
 const taka = (n) => `\u09F3${Number(n || 0).toLocaleString("en-BD")}`;
@@ -29,6 +30,7 @@ export default function Checkout() {
   const [errors, setErrors] = useState({});
   const [apiError, setApiError] = useState("");
   const [placing, setPlacing] = useState(false);
+  const [acceptedPolicies, setAcceptedPolicies] = useState(false);
   const [placed, setPlaced] = useState(null);
 
   // ----- Coupon state -----
@@ -81,6 +83,7 @@ export default function Checkout() {
   };
 
   const submitOrder = async () => {
+    if (!acceptedPolicies) { setApiError("Please read and agree to the store policies before placing your order."); return; }
     if (placing) return;
     if (items.length === 0) return;
     if (!validate()) return;
@@ -88,6 +91,7 @@ export default function Checkout() {
     setApiError("");
 
     const payload = {
+      accepted_policies: acceptedPolicies,
       customer_name: form.name.trim(),
       customer_email: payment === "online" ? form.email.trim() : undefined,
       customer_postcode: payment === "online" ? form.postcode.trim() : undefined,
@@ -159,7 +163,7 @@ export default function Checkout() {
   const field = (key) => ({ value: form[key], onChange: (e) => setForm((f) => ({ ...f, [key]: e.target.value })) });
 
   return (
-    <div className="w-full max-w-[1100px] mx-auto px-4 sm:px-6 py-5 sm:py-8 pb-28 lg:pb-8 overflow-x-hidden">
+    <div className="w-full max-w-[1100px] mx-auto px-4 sm:px-6 py-5 sm:py-8 pb-52 lg:pb-8 overflow-x-hidden">
       <h1 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-gray-900 mb-4 sm:mb-6">Checkout</h1>
 
       {apiError && <div className="mb-5 rounded-lg bg-red-50 text-red-700 text-sm px-4 py-3">{apiError}</div>}
@@ -211,8 +215,8 @@ export default function Checkout() {
             <h2 className="text-base sm:text-lg font-bold text-gray-900 mb-3">Delivery Option</h2>
             <div className="grid sm:grid-cols-2 gap-3">
               {[
-                { key: "inside", label: "Inside Dhaka", note: "Delivery in 1–2 days" },
-                { key: "outside", label: "Outside Dhaka", note: "Delivery in 3–5 days" },
+                { key: "inside", label: "Inside Dhaka", note: "Delivery within 5 days" },
+                { key: "outside", label: "Outside Dhaka", note: "Delivery within 10 days" },
               ].map((opt) => (
                 <label key={opt.key} className="flex items-center justify-between gap-2 rounded-lg border-2 px-3 sm:px-4 py-3 cursor-pointer transition-colors" style={{ borderColor: deliveryArea === opt.key ? BRAND : "#e5e7eb" }}>
                   <span className="flex items-center gap-3 min-w-0">
@@ -308,7 +312,8 @@ export default function Checkout() {
               <div className="flex justify-between gap-2 text-base font-bold text-gray-900 pt-2 border-t border-gray-100"><span>Total</span><span className="shrink-0">{taka(total)}</span></div>
             </div>
 
-            <button onClick={submitOrder} disabled={placing} className="hidden lg:block mt-5 w-full rounded-md py-3 text-sm font-bold text-white transition-opacity hover:opacity-90 disabled:opacity-60" style={{ backgroundColor: BRAND }}>
+            <div className="hidden lg:block mt-5"><PolicyAgreement checked={acceptedPolicies} onChange={setAcceptedPolicies} /></div>
+            <button onClick={submitOrder} disabled={placing || !acceptedPolicies} className="hidden lg:block mt-5 w-full rounded-md py-3 text-sm font-bold text-white transition-opacity hover:opacity-90 disabled:opacity-60" style={{ backgroundColor: BRAND }}>
               {placing ? "Placing order…" : payment === "online" ? `Pay Now · ${taka(total)}` : `Place Order (COD) · ${taka(total)}`}
             </button>
             <p className="mt-2 text-[11px] text-center text-gray-400">
@@ -319,12 +324,13 @@ export default function Checkout() {
       </div>
 
       {/* Mobile sticky place-order bar */}
-      <div className="lg:hidden fixed bottom-0 inset-x-0 z-40 bg-white border-t border-gray-200 px-4 py-3 flex items-center gap-3" style={{ paddingBottom: "calc(0.75rem + env(safe-area-inset-bottom))" }}>
+      <div className="lg:hidden fixed bottom-0 inset-x-0 z-40 bg-white border-t border-gray-200 px-4 py-3 flex flex-wrap items-center gap-3" style={{ paddingBottom: "calc(0.75rem + env(safe-area-inset-bottom))" }}>
+        <div className="w-full"><PolicyAgreement checked={acceptedPolicies} onChange={setAcceptedPolicies} /></div>
         <div className="shrink-0">
           <p className="text-[11px] text-gray-500 leading-none">Total</p>
           <p className="text-lg font-extrabold text-gray-900 leading-tight">{taka(total)}</p>
         </div>
-        <button onClick={submitOrder} disabled={placing} className="flex-1 min-w-0 rounded-md py-3 text-sm font-bold text-white transition-opacity hover:opacity-90 disabled:opacity-60" style={{ backgroundColor: BRAND }}>
+        <button onClick={submitOrder} disabled={placing || !acceptedPolicies} className="flex-1 min-w-0 rounded-md py-3 text-sm font-bold text-white transition-opacity hover:opacity-90 disabled:opacity-60" style={{ backgroundColor: BRAND }}>
           {placing ? "Placing…" : payment === "online" ? "Pay Now" : "Place Order (COD)"}
         </button>
       </div>

@@ -183,7 +183,7 @@ function App() {
         <ScrollToTop />
       </main>
 
-      {!isAdminPage && (
+      {!isAdminPage && location.pathname !== "/checkout" && (
         <a
           href="https://m.me/rainzlifestyle"
           target="_blank"
