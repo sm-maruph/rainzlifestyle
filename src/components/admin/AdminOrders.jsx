@@ -20,6 +20,7 @@ const STATUS_STYLE = {
 };
 const PAY_LABEL = { cod: "Cash on Delivery", bkash: "bKash", nagad: "Nagad", sslcommerz: "Card / Online" };
 const payLabel = (m) => PAY_LABEL[m] || m || "—";
+const paymentStatusLabel = (status) => status === "paid" ? "Paid" : status === "review" ? "Needs review" : "Unpaid / unconfirmed";
 const zoneLabel = (z) => (z === "inside_dhaka" ? "Inside Dhaka" : z === "outside_dhaka" ? "Outside Dhaka" : "—");
 const imgFallback = (e) => { e.target.onerror = null; e.target.src = "https://placehold.co/40x48/f3f4f6/9ca3af?text=R"; };
 
@@ -53,7 +54,7 @@ export default function AdminOrders() {
     const q = search.trim().toLowerCase();
     return orders.filter((o) => {
       if (tab !== "All" && o.status !== tab) return false;
-      if (q && !`${o.code} ${o.customerName}`.toLowerCase().includes(q)) return false;
+      if (q && ![o.code, o.customerName, o.phone, o.paymentTransactionId, o.paymentBankTransactionId].filter(Boolean).join(" ").toLowerCase().includes(q)) return false;
       return true;
     });
   }, [orders, tab, search]);
@@ -111,7 +112,7 @@ export default function AdminOrders() {
         <div className="flex items-center gap-2 w-full sm:w-auto">
           <div className="flex items-center rounded-lg border border-gray-200 px-3 bg-white focus-within:border-gray-400 flex-1 sm:w-72">
             <SearchIcon style={{ fontSize: 18, color: "#9ca3af" }} />
-            <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search order code or customer" className="flex-1 min-w-0 px-2 py-2.5 text-sm outline-none bg-transparent" />
+            <input value={search} onChange={(e) => setSearch(e.target.value)} aria-label="Search orders" placeholder="Order, customer, phone or transaction ID" className="flex-1 min-w-0 px-2 py-2.5 text-sm outline-none bg-transparent" />
           </div>
           <button onClick={load} className="p-2.5 rounded-lg border border-gray-200 text-gray-500 hover:bg-gray-50" title="Refresh"><RefreshIcon style={{ fontSize: 18 }} /></button>
         </div>
@@ -133,6 +134,7 @@ export default function AdminOrders() {
       </div>
 
       {/* Table */}
+      <p className="text-xs text-gray-500">Search covers the latest 200 orders within the selected status tab. Match the merchant transaction ID from SSLCommerz to the transaction ID in order details.</p>
       <div className="rounded-xl border border-gray-100 bg-white overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm min-w-[820px]">
@@ -220,6 +222,15 @@ export default function AdminOrders() {
                 <div className="rounded-lg bg-gray-50 p-4">
                   <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-1">Payment</p>
                   <p className="font-semibold text-gray-800">{payLabel(openOrder.paymentMethod)}</p>
+                  {openOrder.paymentMethod === "sslcommerz" && <div className="mt-3 space-y-2">
+                    <p className={`font-semibold ${openOrder.paymentStatus === "paid" ? "text-green-700" : "text-amber-700"}`}>Payment: {paymentStatusLabel(openOrder.paymentStatus)}</p>
+                    <dl className="space-y-2">
+                      <div><dt className="text-xs text-gray-500">Transaction ID (Merchant)</dt><dd className="m-0 font-mono text-xs break-all select-all text-gray-800">{openOrder.paymentTransactionId || "Not available"}</dd></div>
+                      <div><dt className="text-xs text-gray-500">Bank transaction ID</dt><dd className="m-0 font-mono text-xs break-all select-all text-gray-800">{openOrder.paymentBankTransactionId || "Not available"}</dd></div>
+                      {openOrder.paidAt && <div><dt className="text-xs text-gray-500">Payment verified at</dt><dd className="m-0 text-xs text-gray-800">{new Date(openOrder.paidAt).toLocaleString("en-GB")}</dd></div>}
+                    </dl>
+                    <p className="text-xs text-gray-500">Payment status is separate from order fulfillment. A paid order can still be Pending.</p>
+                  </div>}
                   <p className="text-gray-500 mt-2">Delivery: {zoneLabel(openOrder.deliveryZone)}</p>
                   {openOrder.couponCode && <p className="text-gray-500 mt-1">Coupon: {openOrder.couponCode}</p>}
                   {openOrder.note && <p className="text-gray-500 mt-1">Note: {openOrder.note}</p>}
