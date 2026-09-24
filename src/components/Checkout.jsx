@@ -7,7 +7,7 @@ import CreditCardOutlinedIcon from "@mui/icons-material/CreditCardOutlined";
 import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
 import LocalOfferOutlinedIcon from "@mui/icons-material/LocalOfferOutlined";
 import CloseIcon from "@mui/icons-material/Close";
-import { placeOrder, validateCoupon, rememberGuestOrder } from "../api";
+import { placeOrder, initiatePayment, validateCoupon, rememberGuestOrder } from "../api";
 import { useCart } from "../context/CartContext";
 
 const BRAND = "var(--brand)";
@@ -23,7 +23,7 @@ export default function Checkout() {
   const fromCart = !(buyNow && buyNow.length);
   const items = fromCart ? cart.items || [] : buyNow;
 
-  const [form, setForm] = useState({ name: "", phone: "", address: "", city: "", note: "" });
+  const [form, setForm] = useState({ name: "", email: "", postcode: "", phone: "", address: "", city: "", note: "" });
   const [deliveryArea, setDeliveryArea] = useState("inside");
   const [payment, setPayment] = useState("cod");
   const [errors, setErrors] = useState({});
@@ -74,11 +74,14 @@ export default function Checkout() {
     if (!form.name.trim()) e.name = "Name is required";
     if (!/^[0-9+\-\s]{6,}$/.test(form.phone.trim())) e.phone = "Valid phone is required";
     if (!form.address.trim()) e.address = "Address is required";
+    if (payment === "online" && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) e.email = "Valid email is required for online payment";
+    if (payment === "online" && (!form.postcode.trim() || form.postcode.trim().length > 30)) e.postcode = "Postal code is required for online payment (maximum 30 characters)";
     setErrors(e);
     return Object.keys(e).length === 0;
   };
 
   const submitOrder = async () => {
+    if (placing) return;
     if (items.length === 0) return;
     if (!validate()) return;
     setPlacing(true);
@@ -86,6 +89,8 @@ export default function Checkout() {
 
     const payload = {
       customer_name: form.name.trim(),
+      customer_email: payment === "online" ? form.email.trim() : undefined,
+      customer_postcode: payment === "online" ? form.postcode.trim() : undefined,
       customer_phone: form.phone.trim(),
       address: form.address.trim(),
       city: form.city.trim() || undefined,
@@ -105,9 +110,16 @@ export default function Checkout() {
     };
 
     try {
-      const res = await placeOrder(payload);
+      const res = await (payment === "online" ? initiatePayment(payload) : placeOrder(payload));
       // Remember this order on the device so guests can find it under "My Orders"
       rememberGuestOrder(res.order_code);
+      if (payment === "online") {
+        try {
+          sessionStorage.setItem(`rainz_payment_${res.payment_token}`, JSON.stringify({ fromCart, items }));
+        } catch { /* Payment can continue when browser storage is unavailable. */ }
+        window.location.assign(res.gateway_url || res.payment_url);
+        return;
+      }
       if (fromCart && cart.clear) cart.clear();
       setPlaced({ orderId: res.order_code, total: res.total ?? total, payment, deliveryArea });
       window.scrollTo({ top: 0, behavior: "smooth" });
@@ -169,6 +181,16 @@ export default function Checkout() {
                 <input {...field("phone")} type="tel" inputMode="tel" className="mt-1 w-full rounded-md border border-gray-200 px-3 py-2 text-sm outline-none focus:border-gray-400" placeholder="01XXXXXXXXX" />
                 {errors.phone && <p className="text-xs text-red-500 mt-1">{errors.phone}</p>}
               </div>
+              <div className="sm:col-span-2 min-w-0">
+                <label className="text-sm text-gray-600" htmlFor="checkout-email">Email {payment === "online" ? "*" : "(for online payment)"}</label>
+                <input id="checkout-email" {...field("email")} type="email" autoComplete="email" className="mt-1 w-full rounded-md border border-gray-200 px-3 py-2 text-sm outline-none focus:border-gray-400" placeholder="you@example.com" />
+                {errors.email && <p className="text-xs text-red-500 mt-1">{errors.email}</p>}
+              </div>
+              {payment === "online" && <div className="min-w-0">
+                <label className="text-sm text-gray-600" htmlFor="checkout-postcode">Postal code *</label>
+                <input id="checkout-postcode" {...field("postcode")} autoComplete="postal-code" maxLength={30} className="mt-1 w-full rounded-md border border-gray-200 px-3 py-2 text-sm outline-none focus:border-gray-400" placeholder="e.g. 1216" />
+                {errors.postcode && <p className="text-xs text-red-500 mt-1">{errors.postcode}</p>}
+              </div>}
               <div className="sm:col-span-2 min-w-0">
                 <label className="text-sm text-gray-600">Address *</label>
                 <textarea {...field("address")} rows={2} className="mt-1 w-full rounded-md border border-gray-200 px-3 py-2 text-sm outline-none focus:border-gray-400 resize-none" placeholder="House, road, area" />
@@ -290,7 +312,7 @@ export default function Checkout() {
               {placing ? "Placing order…" : payment === "online" ? `Pay Now · ${taka(total)}` : `Place Order (COD) · ${taka(total)}`}
             </button>
             <p className="mt-2 text-[11px] text-center text-gray-400">
-              {payment === "online" ? "Online payment gateway coming soon — order is recorded now." : "Delivery charge is collected with cash on delivery."}
+              {payment === "online" ? "You will be redirected to SSLCommerz to complete payment." : "Delivery charge is collected with cash on delivery."}
             </p>
           </div>
         </aside>

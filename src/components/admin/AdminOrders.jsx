@@ -166,7 +166,7 @@ export default function AdminOrders() {
                     <td className="py-3 px-4 text-gray-500">{fmtDate(o.createdAt)}</td>
                     <td className="py-3 px-4 text-gray-600">{itemCount(o)}</td>
                     <td className="py-3 px-4 font-semibold text-gray-800">{taka(o.total)}</td>
-                    <td className="py-3 px-4 text-gray-600 whitespace-nowrap">{payLabel(o.paymentMethod)}</td>
+                    <td className="py-3 px-4 text-gray-600 whitespace-nowrap">{payLabel(o.paymentMethod)}{o.paymentMethod === "sslcommerz" && <span className="block text-xs font-semibold">{o.paymentStatus === "paid" ? "Paid" : o.paymentStatus === "review" ? "Needs review" : "Unpaid / unconfirmed"}</span>}</td>
                     <td className="py-3 px-4">
                       <select value={o.status} disabled={savingId === o.id} onChange={(e) => changeStatus(o, e.target.value)}
                         className={`text-xs font-semibold rounded-full px-2.5 py-1 outline-none cursor-pointer border-0 ${STATUS_STYLE[o.status] || "bg-gray-100 text-gray-600"}`}>

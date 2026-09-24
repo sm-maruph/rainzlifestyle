@@ -17,6 +17,7 @@ function mapOrderRow(o) {
     total: Number(o.total || 0),
     couponCode: o.coupon_code || null,
     paymentMethod: o.payment_method,
+    paymentStatus: o.payment_status || "pending",
     status: o.status,
     note: o.note || "",
     createdAt: o.created_at,
@@ -37,6 +38,9 @@ function mapOrderRow(o) {
 export async function placeOrder(payload) {
   return api.post("/orders", payload); // -> { order_code, subtotal, delivery, discount, total }
 }
+
+export const initiatePayment = (payload) => api.post("/payments/init", payload);
+export const getPaymentStatus = (token) => api.get(`/payments/status/${encodeURIComponent(token)}`);
 
 export async function trackOrder(code) {
   return mapOrderRow(await api.get(`/orders/track/${code}`));

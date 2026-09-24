@@ -14,6 +14,7 @@ import LandingComponent from "./components/LandingPage";
 import CategoryPage from "./components/CategoryPage";
 import ProductDetail from "./components/ProductDetail";
 import Checkout from "./components/Checkout";
+import PaymentResult from "./components/PaymentResult";
 import Login from "./components/Login";
 import Register from "./components/Register";
 import Wishlist from "./components/Wishlist";
@@ -99,7 +100,7 @@ function App() {
   const isLoginPage = ["/login", "/register"].includes(location.pathname);
   const stillLoading = authLoading || settingsLoading;
 
-  if (settings.maintenance && !stillLoading && !isAdmin && !isAdminPage && !isLoginPage) {
+  if (settings.maintenance && !stillLoading && !isAdmin && !isAdminPage && !isLoginPage && !location.pathname.startsWith("/payment/")) {
     return <MaintenancePage />;
   }
 
@@ -156,6 +157,8 @@ function App() {
           <Route path="/product/:slug" element={<ProductDetail />} />
           <Route path="/:category/:subcategory/:slug" element={<ProductDetail />} />
           <Route path="/checkout" element={<Checkout />} />
+          <Route path="/payment/success" element={<PaymentResult success />} />
+          <Route path="/payment/failed" element={<PaymentResult />} />
           <Route path="/wishlist" element={<Wishlist />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/track-order" element={<TrackOrder />} />
